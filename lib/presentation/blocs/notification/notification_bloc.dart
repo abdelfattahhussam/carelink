@@ -1,0 +1,179 @@
+import 'dart:async';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:equatable/equatable.dart';
+import '../../../data/models/notification_model.dart';
+import '../../../data/services/notification_service.dart';
+import '../auth/auth_bloc.dart';
+
+// ─── EVENTS ───
+
+abstract class NotificationEvent extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+class NotificationsFetchRequested extends NotificationEvent {
+  final bool forceRefresh;
+  NotificationsFetchRequested({this.forceRefresh = false});
+  @override
+  List<Object?> get props => [forceRefresh];
+}
+
+class NotificationMarkReadRequested extends NotificationEvent {
+  final String notificationId;
+  NotificationMarkReadRequested({required this.notificationId});
+  @override
+  List<Object?> get props => [notificationId];
+}
+
+class NotificationDismissRequested extends NotificationEvent {
+  final String notificationId;
+  NotificationDismissRequested({required this.notificationId});
+  @override
+  List<Object?> get props => [notificationId];
+}
+
+// ─── STATES ───
+
+abstract class NotificationState extends Equatable {
+  @override
+  List<Object?> get props => [];
+}
+
+class NotificationInitial extends NotificationState {}
+class NotificationLoading extends NotificationState {}
+
+class NotificationsLoaded extends NotificationState {
+  final List<NotificationModel> notifications;
+  int get unreadCount => notifications.where((n) => !n.isRead).length;
+  NotificationsLoaded({required this.notifications});
+  @override
+  List<Object?> get props => [notifications];
+}
+
+class NotificationError extends NotificationState {
+  final String message;
+  NotificationError({required this.message});
+  @override
+  List<Object?> get props => [message];
+}
+
+// ─── BLOC ───
+
+class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
+  final NotificationService _service;
+  final AuthBloc _authBloc;
+  late final StreamSubscription<AuthState> _authSubscription;
+
+  /// Keyed by userId
+  final Map<String, List<NotificationModel>> _cache = {};
+
+  NotificationBloc({
+    required AuthBloc authBloc,
+    required NotificationService service,
+  })  : _authBloc = authBloc,
+        _service = service,
+        super(NotificationInitial()) {
+    on<NotificationsFetchRequested>(_onFetch);
+    on<NotificationMarkReadRequested>(_onMarkRead);
+    on<NotificationDismissRequested>(_onDismiss);
+
+    // Clear cache on logout
+    _authSubscription = _authBloc.stream.listen((state) {
+      if (state is AuthUnauthenticated) {
+        _cache.clear();
+      }
+    });
+  }
+
+  @override
+  Future<void> close() {
+    _authSubscription.cancel();
+    return super.close();
+  }
+
+  Future<void> _onFetch(
+    NotificationsFetchRequested event,
+    Emitter<NotificationState> emit,
+  ) async {
+    final authState = _authBloc.state;
+    if (authState is! AuthAuthenticated) {
+      emit(NotificationsLoaded(notifications: const []));
+      return;
+    }
+
+    final userId = authState.user.id;
+    final userRole = authState.user.role;
+
+    // Use cache if available and not forcing refresh
+    if (!event.forceRefresh && _cache.containsKey(userId)) {
+      emit(NotificationsLoaded(notifications: _cache[userId]!));
+      return;
+    }
+
+    emit(NotificationLoading());
+    try {
+      final notifications = await _service.getNotifications();
+      
+      // Secondary safety filtering
+      final filtered = notifications.where((n) {
+        return n.userId == userId || n.targetRole == userRole;
+      }).toList();
+      
+      _cache[userId] = filtered;
+      emit(NotificationsLoaded(notifications: filtered));
+    } catch (e) {
+      emit(NotificationError(message: e.toString()));
+    }
+  }
+
+  Future<void> _onMarkRead(
+    NotificationMarkReadRequested event,
+    Emitter<NotificationState> emit,
+  ) async {
+    // Optimistic update to avoid full screen flicker
+    if (state is NotificationsLoaded) {
+      final currentList = List<NotificationModel>.from((state as NotificationsLoaded).notifications);
+      final index = currentList.indexWhere((n) => n.id == event.notificationId);
+      if (index != -1 && !currentList[index].isRead) {
+        currentList[index] = currentList[index].copyWith(isRead: true);
+        final authState = _authBloc.state;
+        if (authState is AuthAuthenticated) {
+          _cache[authState.user.id] = currentList;
+        }
+        emit(NotificationsLoaded(notifications: currentList));
+      }
+    }
+
+    try {
+      await _service.markAsRead(event.notificationId);
+    } catch (e) {
+      // Background failure can be ignored for optimistic UI
+    }
+  }
+
+  Future<void> _onDismiss(
+    NotificationDismissRequested event,
+    Emitter<NotificationState> emit,
+  ) async {
+    // Optimistically remove from list immediately
+    if (state is NotificationsLoaded) {
+      final currentList = List<NotificationModel>.from((state as NotificationsLoaded).notifications);
+      currentList.removeWhere((n) => n.id == event.notificationId);
+      
+      final authState = _authBloc.state;
+      if (authState is AuthAuthenticated) {
+        _cache[authState.user.id] = currentList;
+      }
+      emit(NotificationsLoaded(notifications: currentList));
+    }
+    
+    // Optionally trigger mark as read so backend knows it's consumed
+    try {
+      await _service.markAsRead(event.notificationId);
+    } catch (e) {
+      debugPrint('NotificationBloc: Failed to mark as read on dismiss: $e');
+    }
+  }
+}
