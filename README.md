@@ -138,6 +138,15 @@ Live chat between users and pharmacies
 Maps for nearby pharmacies
 OCR prescription scanning
 Analytics dashboard
+
+🚀 Future Improvements
+Real backend API integration
+Push notifications
+Live chat between users and pharmacies
+Maps for nearby pharmacies
+OCR prescription scanning
+Analytics dashboard
+---
 📫 Contact
 
 Abdelfattah Hussam
@@ -153,3 +162,4 @@ Built with passion for healthcare innovation.
 CareLink — Connecting People to Care.
 
 </div> ```
+---
