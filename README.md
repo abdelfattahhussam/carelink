@@ -124,20 +124,6 @@ Implemented Arabic / English support with RTL readiness.
 
 ---
 
-## 📸 Screenshots
-
-> Add real screenshots here for stronger recruiter impact.
-
-- Onboarding  
-- Login  
-- Dashboard  
-- Search Medicines  
-- Request Flow  
-- QR Pickup  
-- Dark Mode
-
----
-
 ## ⚙️ Installation
 
 ```bash
