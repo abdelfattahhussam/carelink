@@ -131,35 +131,30 @@ git clone https://github.com/To7a-2003/carelink.git
 cd carelink
 flutter pub get
 flutter run
-🚀 Future Improvements
-Real backend API integration
-Push notifications
-Live chat between users and pharmacies
-Maps for nearby pharmacies
-OCR prescription scanning
-Analytics dashboard
+```
 
-🚀 Future Improvements
-Real backend API integration
-Push notifications
-Live chat between users and pharmacies
-Maps for nearby pharmacies
-OCR prescription scanning
-Analytics dashboard
----
-📫 Contact
+## 🚀 Future Improvements
 
+- Real backend API integration
+- Push notifications
+- Live chat between users and pharmacies
+- Maps for nearby pharmacies
+- OCR prescription scanning
+- Analytics dashboard
+
+## 📫 Contact
 Abdelfattah Hussam
 
-🌐 Portfolio: https://abdelfattahhussam.github.io
-💼 LinkedIn: https://linkedin.com/in/abdelfattahhussam
-💻 GitHub: https://github.com/abdelfattahhussam
-📧 Email: abdelfattahhussam9@gmail.com
+- 🌐 Portfolio: https://abdelfattahhussam.github.io
+- 💼 LinkedIn: https://linkedin.com/in/abdelfattahhussam
+- 💻 GitHub: https://github.com/abdelfattahhussam
+- 📧 Email: abdelfattahhussam9@gmail.com
+---
+
 <div align="center">
 
 Built with passion for healthcare innovation.
 
-CareLink — Connecting People to Care.
+**CareLink — Connecting People to Care.**
 
-</div> ```
----
+</div>
