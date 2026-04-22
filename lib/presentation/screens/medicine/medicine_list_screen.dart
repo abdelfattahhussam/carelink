@@ -368,6 +368,23 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                                           m.category,
                                           style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
                                         ),
+                                        if (m.pharmacyName != null && m.pharmacyName!.isNotEmpty) ...[
+                                          const SizedBox(height: 4),
+                                          Row(
+                                            children: [
+                                              Icon(Icons.local_pharmacy_outlined, size: 12, color: AppColors.textLight),
+                                              const SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  '${AppLocalizations.of(context)!.availableAtPharmacy} ${m.pharmacyName}',
+                                                  style: TextStyle(fontSize: 11, color: AppColors.textLight, fontWeight: FontWeight.w500),
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                         const SizedBox(height: 10),
                                         Wrap(
                                           spacing: 8,

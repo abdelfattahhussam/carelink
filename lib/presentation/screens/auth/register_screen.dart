@@ -326,9 +326,10 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                 AppTextField(
                                   controller: _phoneController,
                                   label: AppLocalizations.of(context)!.phone,
-                                  hint: '+20 1234567890',
+                                  hint: '01234567890',
                                   prefixIcon: Icons.phone_outlined,
                                   keyboardType: TextInputType.phone,
+                                  maxLength: 11,
                                   validator: (v) => Validators.phone(v,
                                     requiredMsg: AppLocalizations.of(context)!.phoneRequired,
                                     invalidMsg: AppLocalizations.of(context)!.phoneInvalid,
@@ -342,6 +343,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                   hint: '29901011234567',
                                   prefixIcon: Icons.badge_outlined,
                                   keyboardType: TextInputType.number,
+                                  maxLength: 14,
                                   validator: (v) => Validators.nationalId(
                                     v, 
                                     AppLocalizations.of(context)!.nationalIdRequired,

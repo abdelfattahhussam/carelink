@@ -8,7 +8,7 @@ class DonationModel extends Equatable {
   final String medicineName;
   final String donorId;
   final String donorName;
-  final String status; // 'pending', 'approved', 'rejected'
+  final String status; // 'pending', 'approved', 'rejected', 'rejectedPermanent'
   final String? qrCode; // Generated only after approval
   final int quantity;
   final MedicineUnit unit;
@@ -16,6 +16,8 @@ class DonationModel extends Equatable {
   final String? boxImagePath; // Added box image path
   final String? reviewReason;
   final String? reviewedBy;
+  final String? pharmacyId; // Nullable for backward compat
+  final String? pharmacyName;
   final DateTime createdAt;
 
   const DonationModel({
@@ -32,12 +34,16 @@ class DonationModel extends Equatable {
     this.boxImagePath,
     this.reviewReason,
     this.reviewedBy,
+    this.pharmacyId,
+    this.pharmacyName,
     required this.createdAt,
   });
 
   bool get isPending => status == 'pending';
   bool get isApproved => status == 'approved';
-  bool get isRejected => status == 'rejected';
+  bool get isRejected => status == 'rejected' || status == 'rejectedPermanent';
+  bool get isRejectedPermanent => status == 'rejectedPermanent';
+  bool get canResubmit => isRejected && !isRejectedPermanent;
   bool get isDelivered => status == 'delivered';
   bool get isDelivering => status == 'delivering';
   bool get hasQrCode => qrCode != null && qrCode!.isNotEmpty;
@@ -59,6 +65,8 @@ class DonationModel extends Equatable {
       boxImagePath: json['boxImagePath'],
       reviewReason: json['reviewReason'],
       reviewedBy: json['reviewedBy'],
+      pharmacyId: json['pharmacyId'],
+      pharmacyName: json['pharmacyName'],
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
@@ -80,6 +88,8 @@ class DonationModel extends Equatable {
       'boxImagePath': boxImagePath,
       'reviewReason': reviewReason,
       'reviewedBy': reviewedBy,
+      'pharmacyId': pharmacyId,
+      'pharmacyName': pharmacyName,
       'createdAt': createdAt.toIso8601String(),
     };
   }
@@ -99,6 +109,8 @@ class DonationModel extends Equatable {
         boxImagePath,
         reviewReason,
         reviewedBy,
+        pharmacyId,
+        pharmacyName,
         createdAt,
       ];
 }

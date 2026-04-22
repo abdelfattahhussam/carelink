@@ -37,4 +37,8 @@ class ApiEndpoints {
   // Pharmacist
   static const String reviewDonation = '/pharmacist/review';
   static const String approveRequest = '/pharmacist/approve-request';
+
+  // Pharmacies
+  static const String pharmacies = '/pharmacies';
+  static String pharmacyByPharmacist(String id) => '/pharmacies/pharmacist/$id';
 }

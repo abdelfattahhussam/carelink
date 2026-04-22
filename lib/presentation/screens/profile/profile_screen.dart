@@ -336,6 +336,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               label: l10n.phone,
               prefixIcon: Icons.phone_outlined,
               keyboardType: TextInputType.phone,
+              maxLength: 11,
               validator: (v) => Validators.phone(v,
                 requiredMsg: l10n.phoneRequired,
                 invalidMsg: l10n.phoneInvalid,

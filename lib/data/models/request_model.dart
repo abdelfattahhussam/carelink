@@ -16,6 +16,8 @@ class RequestModel extends Equatable {
   final String reason;
   final String? qrCode; // Generated after pharmacist approval
   final String? prescriptionPath; // Added for prescription uploads
+  final String? pharmacyId; // Nullable for backward compat
+  final String? pharmacyName;
   
   // Review fields
   final int? approvedBoxes;
@@ -40,6 +42,8 @@ class RequestModel extends Equatable {
     required this.reason,
     this.qrCode,
     this.prescriptionPath,
+    this.pharmacyId,
+    this.pharmacyName,
     this.approvedBoxes,
     this.approvedStrips,
     this.reviewReason,
@@ -72,6 +76,8 @@ class RequestModel extends Equatable {
       reason: json['reason'] ?? '',
       qrCode: json['qrCode'],
       prescriptionPath: json['prescriptionPath'],
+      pharmacyId: json['pharmacyId'],
+      pharmacyName: json['pharmacyName'],
       approvedBoxes: json['approvedBoxes'],
       approvedStrips: json['approvedStrips'],
       reviewReason: json['reviewReason'],
@@ -98,6 +104,8 @@ class RequestModel extends Equatable {
       'reason': reason,
       'qrCode': qrCode,
       'prescriptionPath': prescriptionPath,
+      'pharmacyId': pharmacyId,
+      'pharmacyName': pharmacyName,
       'approvedBoxes': approvedBoxes,
       'approvedStrips': approvedStrips,
       'reviewReason': reviewReason,
@@ -111,5 +119,6 @@ class RequestModel extends Equatable {
   List<Object?> get props => [
     id, status, isUrgent, qrCode, unit, prescriptionPath,
     approvedBoxes, approvedStrips, reviewReason, reviewedAt,
+    pharmacyId, pharmacyName,
   ];
 }

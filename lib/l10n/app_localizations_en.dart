@@ -826,7 +826,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneRequired => 'Phone number is required';
 
   @override
-  String get phoneInvalid => 'Please enter a valid phone number';
+  String get phoneInvalid => 'Phone number must be exactly 11 digits';
 
   @override
   String get requestDetails => 'Request Details';
@@ -875,4 +875,46 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get retry => 'Retry';
+
+  @override
+  String get selectPharmacy => 'Select Pharmacy';
+
+  @override
+  String get pharmacyRequired => 'Please select a pharmacy';
+
+  @override
+  String get filterByGovernorate => 'Governorate';
+
+  @override
+  String get filterByCity => 'City';
+
+  @override
+  String get filterByDistrict => 'District';
+
+  @override
+  String get allGovernorates => 'All Governorates';
+
+  @override
+  String get allCities => 'All Cities';
+
+  @override
+  String get allDistricts => 'All Districts';
+
+  @override
+  String get resubmitToAnotherPharmacy => 'Resubmit to Another Pharmacy';
+
+  @override
+  String get noPharmaciesFound => 'No pharmacies found';
+
+  @override
+  String get noPharmaciesInArea => 'No pharmacies available in this area';
+
+  @override
+  String get pharmacyLocation => 'Pharmacy Location';
+
+  @override
+  String get availableAtPharmacy => 'Available at';
+
+  @override
+  String get donatedTo => 'Donated to';
 }

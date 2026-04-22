@@ -121,6 +121,7 @@ class AppTextField extends StatelessWidget {
   final String? initialValue;
   final bool? enabled; // Added to support read-only/disabled states
   final String? helperText; // Added for hints/notes
+  final int? maxLength; // Added to support limiting input length
 
   const AppTextField({
     super.key,
@@ -139,6 +140,7 @@ class AppTextField extends StatelessWidget {
     this.initialValue,
     this.enabled,
     this.helperText,
+    this.maxLength,
   });
 
   @override
@@ -154,10 +156,12 @@ class AppTextField extends StatelessWidget {
       enabled: enabled,
       onTap: onTap,
       onChanged: onChanged,
+      maxLength: maxLength,
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         helperText: helperText,
+        counterText: "", // Hide the counter for a cleaner look
         prefixIcon: prefixIcon != null
             ? Icon(prefixIcon, size: 22)
             : null,

@@ -17,6 +17,8 @@ class DonationService {
     required String unit,
     String? category,
     String? boxImagePath,
+    required String pharmacyId,
+    required String pharmacyName,
   }) async {
     final response = await _dio.post(
       ApiEndpoints.donations,
@@ -28,6 +30,8 @@ class DonationService {
         'unit': unit,
         'category': category ?? 'General',
         'boxImagePath': boxImagePath,
+        'pharmacyId': pharmacyId,
+        'pharmacyName': pharmacyName,
       },
     );
 

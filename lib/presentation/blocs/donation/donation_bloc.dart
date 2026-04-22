@@ -26,6 +26,8 @@ class DonationCreateRequested extends DonationEvent {
   final String unit;
   final String? category;
   final String? boxImagePath;
+  final String pharmacyId;
+  final String pharmacyName;
 
   DonationCreateRequested({
     required this.name,
@@ -35,10 +37,12 @@ class DonationCreateRequested extends DonationEvent {
     required this.unit,
     this.category,
     this.boxImagePath,
+    required this.pharmacyId,
+    required this.pharmacyName,
   });
 
   @override
-  List<Object?> get props => [name, notes, expiryDate, quantity, unit, boxImagePath];
+  List<Object?> get props => [name, notes, expiryDate, quantity, unit, boxImagePath, pharmacyId, pharmacyName];
 }
 
 class DonationReviewRequested extends DonationEvent {
@@ -161,6 +165,8 @@ class DonationBloc extends Bloc<DonationEvent, DonationState> {
         unit: event.unit,
         category: event.category,
         boxImagePath: event.boxImagePath,
+        pharmacyId: event.pharmacyId,
+        pharmacyName: event.pharmacyName,
       );
       emit(DonationCreated(donation: donation));
     } on DioException catch (e) {

@@ -9,7 +9,10 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/shared_widgets.dart';
 import '../../../data/models/medicine_unit.dart';
+import '../../../data/models/pharmacy_model.dart';
 import '../../blocs/donation/donation_bloc.dart';
+import '../../blocs/pharmacy/pharmacy_bloc.dart';
+import 'pharmacy_picker_screen.dart';
 
 /// Donation form screen — allows donors to submit medicine details
 class DonationScreen extends StatefulWidget {
@@ -30,6 +33,9 @@ class _DonationScreenState extends State<DonationScreen> {
   
   String? _boxImagePath;
   final ImagePicker _picker = ImagePicker();
+
+  PharmacyModel? _selectedPharmacy;
+  bool _pharmacyError = false;
 
   @override
   void dispose() { 
@@ -97,6 +103,24 @@ class _DonationScreenState extends State<DonationScreen> {
     }
   }
 
+  Future<void> _pickPharmacy() async {
+    final pharmacy = await Navigator.push<PharmacyModel>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: context.read<PharmacyBloc>(),
+          child: const PharmacyPickerScreen(),
+        ),
+      ),
+    );
+    if (pharmacy != null) {
+      setState(() {
+        _selectedPharmacy = pharmacy;
+        _pharmacyError = false;
+      });
+    }
+  }
+
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     
@@ -116,6 +140,14 @@ class _DonationScreenState extends State<DonationScreen> {
       return;
     }
 
+    if (_selectedPharmacy == null) {
+      setState(() => _pharmacyError = true);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.pharmacyRequired), backgroundColor: AppColors.error)
+      );
+      return;
+    }
+
     context.read<DonationBloc>().add(DonationCreateRequested(
       name: _nameCtrl.text.trim(), 
       notes: _notesCtrl.text.trim(),
@@ -124,6 +156,8 @@ class _DonationScreenState extends State<DonationScreen> {
       category: _category,
       unit: _unit.value,
       boxImagePath: _boxImagePath,
+      pharmacyId: _selectedPharmacy!.id,
+      pharmacyName: _selectedPharmacy!.name,
     ));
   }
 
@@ -176,6 +210,10 @@ class _DonationScreenState extends State<DonationScreen> {
                   Expanded(child: Text(l10n.yourDonationWillBe, style: Theme.of(context).textTheme.bodySmall)),
                 ]),
               ),
+              const SizedBox(height: 24),
+
+              // Pharmacy Picker
+              _buildPharmacyPicker(l10n),
               const SizedBox(height: 24),
 
               // Medicine Name
@@ -281,6 +319,90 @@ class _DonationScreenState extends State<DonationScreen> {
               const SizedBox(height: 32),
             ]),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPharmacyPicker(AppLocalizations l10n) {
+    return GestureDetector(
+      onTap: _pickPharmacy,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: _selectedPharmacy != null
+              ? AppColors.primary.withValues(alpha: 0.05)
+              : Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: _pharmacyError
+                ? AppColors.error
+                : _selectedPharmacy != null
+                    ? AppColors.primary
+                    : AppColors.divider.withValues(alpha: 0.5),
+            width: _selectedPharmacy != null || _pharmacyError ? 2 : 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.04),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                color: _selectedPharmacy != null
+                    ? AppColors.success.withValues(alpha: 0.1)
+                    : AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(14),
+              ),
+              child: Icon(
+                _selectedPharmacy != null
+                    ? Icons.check_circle_rounded
+                    : Icons.local_pharmacy_outlined,
+                color: _selectedPharmacy != null ? AppColors.success : AppColors.primary,
+                size: 24,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _selectedPharmacy?.name ?? l10n.selectPharmacy,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      color: _selectedPharmacy != null
+                          ? Theme.of(context).textTheme.titleMedium?.color
+                          : AppColors.textLight,
+                    ),
+                  ),
+                  if (_selectedPharmacy != null) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      _selectedPharmacy!.fullLocation,
+                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    ),
+                  ] else if (_pharmacyError) ...[
+                    const SizedBox(height: 4),
+                    Text(
+                      l10n.pharmacyRequired,
+                      style: const TextStyle(fontSize: 12, color: AppColors.error),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded, color: AppColors.textLight, size: 22),
+          ],
         ),
       ),
     );

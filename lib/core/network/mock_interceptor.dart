@@ -41,6 +41,59 @@ class MockInterceptor extends Interceptor {
     },
   ];
 
+  static final List<Map<String, dynamic>> _pharmacies = [
+    {
+      'id': 'pharm-1',
+      'name': 'صيدلية النور',
+      'pharmacistId': 'user-3',
+      'governorate': 'القاهرة',
+      'city': 'مدينة نصر',
+      'district': 'الحي الثامن',
+      'address': 'شارع عباس العقاد',
+      'isActive': true,
+    },
+    {
+      'id': 'pharm-2',
+      'name': 'صيدلية الشفاء',
+      'pharmacistId': 'user-4',
+      'governorate': 'القاهرة',
+      'city': 'المعادي',
+      'district': 'المعادي الجديدة',
+      'address': 'شارع الكورنيش',
+      'isActive': true,
+    },
+    {
+      'id': 'pharm-3',
+      'name': 'صيدلية الأمل',
+      'pharmacistId': 'user-5',
+      'governorate': 'الإسكندرية',
+      'city': 'سيدي بشر',
+      'district': 'سيدي بشر قبلي',
+      'address': 'شارع الملك فيصل',
+      'isActive': true,
+    },
+    {
+      'id': 'pharm-4',
+      'name': 'صيدلية الحياة',
+      'pharmacistId': 'user-6',
+      'governorate': 'الجيزة',
+      'city': 'الدقي',
+      'district': 'وسط الدقي',
+      'address': 'شارع التحرير',
+      'isActive': true,
+    },
+    {
+      'id': 'pharm-5',
+      'name': 'صيدلية الرعاية',
+      'pharmacistId': 'user-7',
+      'governorate': 'القاهرة',
+      'city': 'مدينة نصر',
+      'district': 'الحي العاشر',
+      'address': 'شارع مكرم عبيد',
+      'isActive': true,
+    },
+  ];
+
   static final List<Map<String, dynamic>> _medicines = [
     {
       'id': 'med-1',
@@ -54,6 +107,8 @@ class MockInterceptor extends Interceptor {
       'status': 'approved',
       'imageUrl': '',
       'category': 'Antibiotics',
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
     },
     {
@@ -68,6 +123,8 @@ class MockInterceptor extends Interceptor {
       'status': 'approved',
       'imageUrl': '',
       'category': 'Pain Relief',
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(days: 3)).toIso8601String(),
     },
     {
@@ -82,6 +139,8 @@ class MockInterceptor extends Interceptor {
       'status': 'approved',
       'imageUrl': '',
       'category': 'Digestive',
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
     },
     {
@@ -96,6 +155,8 @@ class MockInterceptor extends Interceptor {
       'status': 'pending',
       'imageUrl': '',
       'category': 'Diabetes',
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
     },
     {
@@ -110,6 +171,8 @@ class MockInterceptor extends Interceptor {
       'status': 'expired',
       'imageUrl': '',
       'category': 'Cardiovascular',
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(days: 200)).toIso8601String(),
     },
     {
@@ -124,6 +187,8 @@ class MockInterceptor extends Interceptor {
       'status': 'approved',
       'imageUrl': '',
       'category': 'Pain Relief',
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(hours: 12)).toIso8601String(),
     },
   ];
@@ -141,6 +206,8 @@ class MockInterceptor extends Interceptor {
       'unit': 'strip',
       'notes': '',
       'reviewedBy': 'user-3',
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
     },
     {
@@ -155,6 +222,8 @@ class MockInterceptor extends Interceptor {
       'unit': 'box',
       'notes': '',
       'reviewedBy': null,
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
     },
   ];
@@ -172,6 +241,8 @@ class MockInterceptor extends Interceptor {
       'isUrgent': false,
       'reason': 'Needed for chronic pain management',
       'qrCode': 'QR-REQ-001',
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
     },
     {
@@ -186,6 +257,8 @@ class MockInterceptor extends Interceptor {
       'isUrgent': true,
       'reason': 'Urgent: severe acid reflux episodes',
       'qrCode': null,
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(hours: 6)).toIso8601String(),
     },
   ];
@@ -258,6 +331,12 @@ class MockInterceptor extends Interceptor {
         response = _handleGetProfile(options);
       } else if (path.contains('/auth/profile') && method == 'POST') {
         response = _handleUpdateProfile(options);
+
+      // ─── PHARMACIES ─── (must be before /pharmacist routes)
+      } else if (path.contains('/pharmacies/pharmacist/') && method == 'GET') {
+        response = _handleGetPharmacyByPharmacist(options);
+      } else if (path.contains('/pharmacies') && method == 'GET') {
+        response = _handleGetPharmacies(options);
 
       // ─── DONATIONS ───
       } else if (path.contains('/donations/pending') && method == 'GET') {
@@ -370,6 +449,20 @@ class MockInterceptor extends Interceptor {
     };
     _users.add(newUser);
 
+    // Auto-create pharmacy when pharmacist registers
+    if (data?['role'] == 'pharmacist') {
+      _pharmacies.add({
+        'id': 'pharm-${_uuid.v4().substring(0, 8)}',
+        'name': data?['pharmacyName'] ?? 'صيدلية جديدة',
+        'pharmacistId': id,
+        'governorate': data?['governorate'] ?? '',
+        'city': data?['city'] ?? '',
+        'district': data?['village'] ?? '',
+        'address': data?['street'] ?? '',
+        'isActive': true,
+      });
+    }
+
     return Response(
       requestOptions: options,
       statusCode: 201,
@@ -429,6 +522,46 @@ class MockInterceptor extends Interceptor {
     );
   }
 
+  // ─── PHARMACY HANDLERS ───
+
+  Response _handleGetPharmacies(RequestOptions options) {
+    final gov = options.queryParameters['governorate'];
+    final city = options.queryParameters['city'];
+    final district = options.queryParameters['district'];
+
+    var result = List<Map<String, dynamic>>.from(_pharmacies)
+        .where((p) => p['isActive'] == true)
+        .toList();
+
+    if (gov != null) result = result.where((p) => p['governorate'] == gov).toList();
+    if (city != null) result = result.where((p) => p['city'] == city).toList();
+    if (district != null) result = result.where((p) => p['district'] == district).toList();
+
+    return Response(
+      requestOptions: options,
+      statusCode: 200,
+      data: {'success': true, 'data': result.map((p) => Map<String, dynamic>.from(p)).toList()},
+    );
+  }
+
+  Response _handleGetPharmacyByPharmacist(RequestOptions options) {
+    final pharmacistId = options.path.split('/').last;
+    final pharmacy = _pharmacies
+        .where((p) => p['pharmacistId'] == pharmacistId)
+        .firstOrNull;
+
+    if (pharmacy == null) {
+      return Response(requestOptions: options, statusCode: 404,
+          data: {'error': 'No pharmacy found for this pharmacist'});
+    }
+
+    return Response(
+      requestOptions: options,
+      statusCode: 200,
+      data: {'success': true, 'data': Map<String, dynamic>.from(pharmacy)},
+    );
+  }
+
   // ─── DONATION HANDLERS ───
 
   Response _handleGetDonations(RequestOptions options) {
@@ -436,8 +569,20 @@ class MockInterceptor extends Interceptor {
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     List<Map<String, dynamic>> result = _donations;
-    if (user != null && user['role'] == 'donor') {
-      result = _donations.where((d) => d['donorId'] == user['id']).toList();
+
+    if (user != null) {
+      if (user['role'] == 'donor') {
+        // Donor sees only his own donations
+        result = _donations.where((d) => d['donorId'] == user['id']).toList();
+      } else if (user['role'] == 'pharmacist') {
+        // Pharmacist sees only donations for his pharmacy
+        final pharmacy = _pharmacies
+            .where((p) => p['pharmacistId'] == user['id'])
+            .firstOrNull;
+        if (pharmacy != null) {
+          result = _donations.where((d) => d['pharmacyId'] == pharmacy['id']).toList();
+        }
+      }
     }
 
     return Response(
@@ -466,7 +611,21 @@ class MockInterceptor extends Interceptor {
   }
 
   Response _handleGetPendingDonations(RequestOptions options) {
-    final pending = _donations.where((d) => d['status'] == 'pending').toList();
+    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final user = _users.where((u) => u['token'] == token).firstOrNull;
+
+    var pending = _donations.where((d) => d['status'] == 'pending').toList();
+
+    // Pharmacist sees only pending donations for his pharmacy
+    if (user != null && user['role'] == 'pharmacist') {
+      final pharmacy = _pharmacies
+          .where((p) => p['pharmacistId'] == user['id'])
+          .firstOrNull;
+      if (pharmacy != null) {
+        pending = pending.where((d) => d['pharmacyId'] == pharmacy['id']).toList();
+      }
+    }
+
     return Response(
       requestOptions: options,
       statusCode: 200,
@@ -495,6 +654,8 @@ class MockInterceptor extends Interceptor {
       'status': 'pending',
       'imageUrl': '',
       'category': data?['category'] ?? 'General',
+      'pharmacyId': data?['pharmacyId'],
+      'pharmacyName': data?['pharmacyName'],
       'createdAt': DateTime.now().toIso8601String(),
     };
     _medicines.add(medicine);
@@ -513,6 +674,8 @@ class MockInterceptor extends Interceptor {
       'notes': '',
       'boxImagePath': data?['boxImagePath'],
       'reviewedBy': null,
+      'pharmacyId': data?['pharmacyId'],
+      'pharmacyName': data?['pharmacyName'],
       'createdAt': DateTime.now().toIso8601String(),
     };
     _donations.add(donation);
@@ -558,8 +721,18 @@ class MockInterceptor extends Interceptor {
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     List<Map<String, dynamic>> result = _requests;
-    if (user != null && user['role'] == 'patient') {
-      result = _requests.where((r) => r['patientId'] == user['id']).toList();
+    if (user != null) {
+      if (user['role'] == 'patient') {
+        result = _requests.where((r) => r['patientId'] == user['id']).toList();
+      } else if (user['role'] == 'pharmacist') {
+        // Pharmacist sees only requests for his pharmacy
+        final pharmacy = _pharmacies
+            .where((p) => p['pharmacistId'] == user['id'])
+            .firstOrNull;
+        if (pharmacy != null) {
+          result = _requests.where((r) => r['pharmacyId'] == pharmacy['id']).toList();
+        }
+      }
     }
 
     // Sort: urgent first, then by date
@@ -624,6 +797,8 @@ class MockInterceptor extends Interceptor {
       'reason': data?['reason'] ?? '',
       'prescriptionPath': data?['prescriptionPath'],
       'qrCode': null,
+      'pharmacyId': med['pharmacyId'],
+      'pharmacyName': med['pharmacyName'],
       'createdAt': DateTime.now().toIso8601String(),
     };
     _requests.add(request);

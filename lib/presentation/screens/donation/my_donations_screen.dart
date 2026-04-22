@@ -6,7 +6,11 @@ import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/shared_widgets.dart';
 import '../../../core/widgets/shimmer_loading.dart';
+import '../../../data/models/donation_model.dart';
+import '../../../data/models/pharmacy_model.dart';
 import '../../blocs/donation/donation_bloc.dart';
+import '../../blocs/pharmacy/pharmacy_bloc.dart';
+import 'pharmacy_picker_screen.dart';
 
 /// Shows the list of donor's own donations with status
 class MyDonationsScreen extends StatefulWidget {
@@ -22,12 +26,37 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
     context.read<DonationBloc>().add(DonationsFetchRequested());
   }
 
+  void _resubmit(BuildContext context, DonationModel donation) async {
+    final pharmacy = await Navigator.push<PharmacyModel>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: context.read<PharmacyBloc>(),
+          child: const PharmacyPickerScreen(),
+        ),
+      ),
+    );
+    if (pharmacy != null && context.mounted) {
+      context.read<DonationBloc>().add(DonationCreateRequested(
+        name: donation.medicineName,
+        notes: donation.notes,
+        expiryDate: donation.createdAt.toIso8601String(),
+        quantity: donation.quantity,
+        unit: donation.unit.toJson(),
+        pharmacyId: pharmacy.id,
+        pharmacyName: pharmacy.name,
+      ));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          AppLocalizations.of(context)!.myDonations,
+          l10n.myDonations,
           style: const TextStyle(fontWeight: FontWeight.w700),
         ),
         centerTitle: true,
@@ -50,8 +79,8 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
               child = EmptyStateWidget(
                 key: const ValueKey('empty'),
                 icon: Icons.volunteer_activism,
-                title: AppLocalizations.of(context)!.noDonationsYet,
-                subtitle: AppLocalizations.of(context)!.startByDonating,
+                title: l10n.noDonationsYet,
+                subtitle: l10n.startByDonating,
               );
             } else {
               child = ListView.builder(
@@ -106,6 +135,24 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
+                              // Pharmacy name
+                              if (d.pharmacyName != null && d.pharmacyName!.isNotEmpty) ...[
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Icon(Icons.local_pharmacy_outlined, size: 14, color: AppColors.textLight),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        '${l10n.donatedTo} ${d.pharmacyName}',
+                                        style: TextStyle(fontSize: 12, color: AppColors.textLight, fontWeight: FontWeight.w500),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                               const SizedBox(height: 14),
                               Row(
                                 children: [
@@ -130,7 +177,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                                             const Icon(Icons.qr_code_2_rounded, size: 16, color: AppColors.info),
                                             const SizedBox(width: 6),
                                             Text(
-                                              AppLocalizations.of(context)!.qr,
+                                              l10n.qr,
                                               style: const TextStyle(
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w700,
@@ -162,13 +209,31 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                                        child: Column(
                                          crossAxisAlignment: CrossAxisAlignment.start,
                                          children: [
-                                           const Text("Reason for rejection:", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.error)),
+                                           Text(l10n.reasonForRejection, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.error)),
                                            const SizedBox(height: 2),
-                                           Text(d.reviewReason ?? d.notes!, style: const TextStyle(fontSize: 12, color: AppColors.error, fontWeight: FontWeight.w500)),
+                                           Text(d.reviewReason ?? d.notes, style: const TextStyle(fontSize: 12, color: AppColors.error, fontWeight: FontWeight.w500)),
                                          ],
                                        ),
                                      ),
                                    ],
+                                 ),
+                               ),
+                             ],
+                             // Resubmit button for rejected (non-permanent) donations
+                             if (d.canResubmit) ...[
+                               const SizedBox(height: 12),
+                               SizedBox(
+                                 width: double.infinity,
+                                 child: OutlinedButton.icon(
+                                   icon: const Icon(Icons.refresh, size: 16),
+                                   label: Text(l10n.resubmitToAnotherPharmacy),
+                                   onPressed: () => _resubmit(context, d),
+                                   style: OutlinedButton.styleFrom(
+                                     foregroundColor: AppColors.primary,
+                                     side: BorderSide(color: AppColors.primary.withValues(alpha: 0.4)),
+                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                     padding: const EdgeInsets.symmetric(vertical: 10),
+                                   ),
                                  ),
                                ),
                              ],

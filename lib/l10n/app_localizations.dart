@@ -1631,7 +1631,7 @@ abstract class AppLocalizations {
   /// No description provided for @phoneInvalid.
   ///
   /// In en, this message translates to:
-  /// **'Please enter a valid phone number'**
+  /// **'Phone number must be exactly 11 digits'**
   String get phoneInvalid;
 
   /// No description provided for @requestDetails.
@@ -1729,6 +1729,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Retry'**
   String get retry;
+
+  /// No description provided for @selectPharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Pharmacy'**
+  String get selectPharmacy;
+
+  /// No description provided for @pharmacyRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a pharmacy'**
+  String get pharmacyRequired;
+
+  /// No description provided for @filterByGovernorate.
+  ///
+  /// In en, this message translates to:
+  /// **'Governorate'**
+  String get filterByGovernorate;
+
+  /// No description provided for @filterByCity.
+  ///
+  /// In en, this message translates to:
+  /// **'City'**
+  String get filterByCity;
+
+  /// No description provided for @filterByDistrict.
+  ///
+  /// In en, this message translates to:
+  /// **'District'**
+  String get filterByDistrict;
+
+  /// No description provided for @allGovernorates.
+  ///
+  /// In en, this message translates to:
+  /// **'All Governorates'**
+  String get allGovernorates;
+
+  /// No description provided for @allCities.
+  ///
+  /// In en, this message translates to:
+  /// **'All Cities'**
+  String get allCities;
+
+  /// No description provided for @allDistricts.
+  ///
+  /// In en, this message translates to:
+  /// **'All Districts'**
+  String get allDistricts;
+
+  /// No description provided for @resubmitToAnotherPharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Resubmit to Another Pharmacy'**
+  String get resubmitToAnotherPharmacy;
+
+  /// No description provided for @noPharmaciesFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No pharmacies found'**
+  String get noPharmaciesFound;
+
+  /// No description provided for @noPharmaciesInArea.
+  ///
+  /// In en, this message translates to:
+  /// **'No pharmacies available in this area'**
+  String get noPharmaciesInArea;
+
+  /// No description provided for @pharmacyLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pharmacy Location'**
+  String get pharmacyLocation;
+
+  /// No description provided for @availableAtPharmacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Available at'**
+  String get availableAtPharmacy;
+
+  /// No description provided for @donatedTo.
+  ///
+  /// In en, this message translates to:
+  /// **'Donated to'**
+  String get donatedTo;
 }
 
 class _AppLocalizationsDelegate

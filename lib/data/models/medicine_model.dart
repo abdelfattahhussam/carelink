@@ -14,6 +14,8 @@ class MedicineModel extends Equatable {
   final String status; // 'pending', 'approved', 'rejected', 'expired'
   final String imageUrl;
   final String category;
+  final String? pharmacyId; // Nullable for backward compat
+  final String? pharmacyName;
   final DateTime createdAt;
 
   const MedicineModel({
@@ -28,6 +30,8 @@ class MedicineModel extends Equatable {
     required this.status,
     required this.imageUrl,
     required this.category,
+    this.pharmacyId,
+    this.pharmacyName,
     required this.createdAt,
   });
 
@@ -54,6 +58,8 @@ class MedicineModel extends Equatable {
       status: json['status'] ?? 'pending',
       imageUrl: json['imageUrl'] ?? '',
       category: json['category'] ?? 'General',
+      pharmacyId: json['pharmacyId'],
+      pharmacyName: json['pharmacyName'],
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
@@ -73,10 +79,12 @@ class MedicineModel extends Equatable {
       'status': status,
       'imageUrl': imageUrl,
       'category': category,
+      'pharmacyId': pharmacyId,
+      'pharmacyName': pharmacyName,
       'createdAt': createdAt.toIso8601String(),
     };
   }
 
   @override
-  List<Object?> get props => [id, name, status, quantity, unit, expiryDate];
+  List<Object?> get props => [id, name, status, quantity, unit, expiryDate, pharmacyId, pharmacyName];
 }

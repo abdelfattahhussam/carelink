@@ -13,6 +13,7 @@ import 'data/services/medicine_service.dart';
 import 'data/services/request_service.dart';
 import 'data/services/qr_service.dart';
 import 'data/services/notification_service.dart';
+import 'data/services/pharmacy_service.dart';
 import 'presentation/blocs/auth/auth_bloc.dart';
 import 'presentation/blocs/donation/donation_bloc.dart';
 import 'presentation/blocs/medicine/medicine_bloc.dart';
@@ -21,6 +22,7 @@ import 'presentation/blocs/notification/notification_bloc.dart';
 import 'presentation/blocs/qr/qr_bloc.dart';
 import 'presentation/blocs/settings/settings_cubit.dart';
 import 'presentation/blocs/settings/settings_state.dart';
+import 'presentation/blocs/pharmacy/pharmacy_bloc.dart';
 
 /// Root application widget with all BLoC providers
 class CareLinkApp extends StatefulWidget {
@@ -40,6 +42,7 @@ class _CareLinkAppState extends State<CareLinkApp> {
   late final RequestService _requestService;
   late final QrService _qrService;
   late final NotificationService _notificationService;
+  late final PharmacyService _pharmacyService;
 
   @override
   void initState() {
@@ -58,6 +61,7 @@ class _CareLinkAppState extends State<CareLinkApp> {
     _requestService = RequestService(dio: dio);
     _qrService = QrService(dio: dio);
     _notificationService = NotificationService(dio: dio);
+    _pharmacyService = PharmacyService(dio: dio);
 
     // 4. Now bind service to AuthBloc and trigger initial auth check
     _authBloc.init(service: _authService);
@@ -82,6 +86,7 @@ class _CareLinkAppState extends State<CareLinkApp> {
           ),
         ),
         BlocProvider(create: (_) => QrBloc(service: _qrService)),
+        BlocProvider(create: (_) => PharmacyBloc(service: _pharmacyService)),
       ],
       child: BlocBuilder<SettingsCubit, SettingsState>(
         builder: (context, settingsState) {

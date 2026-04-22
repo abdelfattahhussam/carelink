@@ -817,7 +817,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phoneRequired => 'رقم الهاتف مطلوب';
 
   @override
-  String get phoneInvalid => 'يرجى إدخال رقم هاتف صالح';
+  String get phoneInvalid => 'يجب أن يتكون رقم الهاتف من 11 رقم';
 
   @override
   String get requestDetails => 'تفاصيل الطلب';
@@ -866,4 +866,46 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get retry => 'إعادة محاولة';
+
+  @override
+  String get selectPharmacy => 'اختر صيدلية';
+
+  @override
+  String get pharmacyRequired => 'من فضلك اختر صيدلية';
+
+  @override
+  String get filterByGovernorate => 'المحافظة';
+
+  @override
+  String get filterByCity => 'المدينة';
+
+  @override
+  String get filterByDistrict => 'المركز';
+
+  @override
+  String get allGovernorates => 'كل المحافظات';
+
+  @override
+  String get allCities => 'كل المدن';
+
+  @override
+  String get allDistricts => 'كل المراكز';
+
+  @override
+  String get resubmitToAnotherPharmacy => 'إعادة التبرع لصيدلية أخرى';
+
+  @override
+  String get noPharmaciesFound => 'لا توجد صيداليات';
+
+  @override
+  String get noPharmaciesInArea => 'لا توجد صيداليات متاحة في هذه المنطقة';
+
+  @override
+  String get pharmacyLocation => 'موقع الصيدلية';
+
+  @override
+  String get availableAtPharmacy => 'متاح في';
+
+  @override
+  String get donatedTo => 'تبرع لـ';
 }
