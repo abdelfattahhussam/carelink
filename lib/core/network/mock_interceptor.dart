@@ -279,6 +279,8 @@ class MockInterceptor extends Interceptor {
     },
   ];
 
+  static final Set<String> _dismissedExpiryIds = {};
+
   static final List<Map<String, dynamic>> _notifications = [
     {
       'id': 'notif-1',
@@ -1101,7 +1103,8 @@ class MockInterceptor extends Interceptor {
             n['body']?.toString().contains(medName) == true,
           );
 
-          if (!alreadyExists) {
+          if (!_dismissedExpiryIds.contains('expiry-${med['id']}') &&
+              !alreadyExists) {
             result.add({
               'id': 'expiry-${med['id']}',
               'title': 'تحذير: انتهاء صلاحية قريب',
@@ -1126,8 +1129,14 @@ class MockInterceptor extends Interceptor {
 
   Response _handleMarkRead(RequestOptions options) {
     final id = options.path.split('/').last;
-    // Remove the notification — dismissed notifications should not reappear
-    _notifications.removeWhere((n) => n['id'] == id);
+
+    if (id.startsWith('expiry-')) {
+      // Expiry warnings are dynamic — track dismissal separately
+      _dismissedExpiryIds.add(id);
+    } else {
+      // Regular notifications — remove from store
+      _notifications.removeWhere((n) => n['id'] == id);
+    }
 
     return Response(
       requestOptions: options,

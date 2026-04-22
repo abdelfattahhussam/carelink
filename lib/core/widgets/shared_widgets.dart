@@ -11,7 +11,7 @@ import '../../presentation/blocs/settings/settings_state.dart';
 import '../../presentation/blocs/notification/notification_bloc.dart';
 
 /// Primary action button with gradient background
-class AppButton extends StatelessWidget {
+class AppButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
@@ -30,55 +30,87 @@ class AppButton extends StatelessWidget {
   });
 
   @override
+  State<AppButton> createState() => _AppButtonState();
+}
+
+class _AppButtonState extends State<AppButton> {
+  bool _isPressed = false;
+
+  void _setPressed(bool pressed) {
+    if (widget.onPressed == null || widget.isLoading) return;
+    if (_isPressed != pressed) {
+      setState(() => _isPressed = pressed);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    if (isOutlined) {
+    if (widget.isOutlined) {
       return SizedBox(
-        width: width ?? double.infinity,
+        width: widget.width ?? double.infinity,
         height: 54,
-        child: OutlinedButton(
-          onPressed: isLoading ? null : onPressed,
-          child: _buildChild(context, outlined: true),
+        child: Listener(
+          onPointerDown: (_) => _setPressed(true),
+          onPointerUp: (_) => _setPressed(false),
+          onPointerCancel: (_) => _setPressed(false),
+          child: AnimatedScale(
+            scale: _isPressed ? 0.97 : 1.0,
+            duration: const Duration(milliseconds: 100),
+            curve: Curves.easeInOut,
+            child: OutlinedButton(
+              onPressed: widget.isLoading ? null : widget.onPressed,
+              child: _buildChild(context, outlined: true),
+            ),
+          ),
         ),
       );
     }
 
+    final isDisabled = widget.onPressed == null || widget.isLoading;
+
     return SizedBox(
-      width: width ?? double.infinity,
+      width: widget.width ?? double.infinity,
       height: 54,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          gradient: onPressed != null && !isLoading
-              ? AppColors.primaryGradient
-              : null,
-          color: onPressed == null || isLoading
-              ? AppColors.textLight.withValues(alpha: 0.3)
-              : null,
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: onPressed != null && !isLoading
-              ? [
-                  BoxShadow(
-                    color: AppColors.primary.withValues(alpha: 0.3),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : null,
-        ),
-        child: ElevatedButton(
-          onPressed: isLoading ? null : onPressed,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-            disabledBackgroundColor: Colors.transparent,
+      child: Listener(
+        onPointerDown: (_) => _setPressed(true),
+        onPointerUp: (_) => _setPressed(false),
+        onPointerCancel: (_) => _setPressed(false),
+        child: AnimatedScale(
+          scale: _isPressed ? 0.97 : 1.0,
+          duration: const Duration(milliseconds: 100),
+          curve: Curves.easeInOut,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: !isDisabled ? AppColors.primaryGradient : null,
+              color: isDisabled ? AppColors.textLight.withValues(alpha: 0.3) : null,
+              borderRadius: BorderRadius.circular(14),
+              boxShadow: !isDisabled
+                  ? [
+                      BoxShadow(
+                        color: AppColors.primary.withValues(alpha: _isPressed ? 0.15 : 0.3),
+                        blurRadius: _isPressed ? 6 : 12,
+                        offset: Offset(0, _isPressed ? 2 : 4),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: ElevatedButton(
+              onPressed: widget.isLoading ? null : widget.onPressed,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                disabledBackgroundColor: Colors.transparent,
+              ),
+              child: _buildChild(context),
+            ),
           ),
-          child: _buildChild(context),
         ),
       ),
     );
   }
 
   Widget _buildChild(BuildContext context, {bool outlined = false}) {
-    if (isLoading) {
+    if (widget.isLoading) {
       return SizedBox(
         height: 22,
         width: 22,
@@ -89,18 +121,18 @@ class AppButton extends StatelessWidget {
       );
     }
 
-    if (icon != null) {
+    if (widget.icon != null) {
       return Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 20),
+          Icon(widget.icon, size: 20),
           const SizedBox(width: 8),
-          Text(text),
+          Text(widget.text),
         ],
       );
     }
 
-    return Text(text);
+    return Text(widget.text);
   }
 }
 

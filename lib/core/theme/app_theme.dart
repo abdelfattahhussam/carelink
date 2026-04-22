@@ -14,8 +14,12 @@ class AppTheme {
       onPrimary: AppColors.textOnPrimary,
       primaryContainer: AppColors.primaryContainer,
       secondary: AppColors.secondary,
+      onSecondary: Colors.white,
       secondaryContainer: AppColors.secondaryContainer,
+      tertiary: AppColors.accent,
+      tertiaryContainer: AppColors.accentContainer,
       surface: AppColors.surface,
+      onSurface: AppColors.textPrimary,
       error: AppColors.error,
     );
 
@@ -91,10 +95,11 @@ class AppTheme {
 
       // Cards
       cardTheme: CardThemeData(
-        elevation: 0,
+        elevation: 2,
+        shadowColor: AppColors.textPrimary.withValues(alpha: 0.08),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: AppColors.divider.withValues(alpha: 0.5)),
+          side: BorderSide(color: AppColors.divider.withValues(alpha: 0.4)),
         ),
         color: AppColors.card,
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
@@ -230,8 +235,12 @@ class AppTheme {
       onPrimary: AppColors.textPrimaryDark,
       primaryContainer: AppColors.primaryDark,
       secondary: AppColors.secondaryLight,
+      onSecondary: AppColors.backgroundDark,
       secondaryContainer: AppColors.secondary,
+      tertiary: AppColors.accentLight,
+      tertiaryContainer: AppColors.accent,
       surface: AppColors.surfaceDark,
+      onSurface: AppColors.textPrimaryDark,
       error: AppColors.error,
     );
 
