@@ -8,6 +8,7 @@ import '../../../core/widgets/shared_widgets.dart';
 import '../../../data/models/user_model.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/medicine/medicine_bloc.dart';
+import '../../blocs/pharmacy/pharmacy_bloc.dart';
 
 class MedicineListScreen extends StatefulWidget {
   const MedicineListScreen({super.key});
@@ -17,6 +18,14 @@ class MedicineListScreen extends StatefulWidget {
 
 class _MedicineListScreenState extends State<MedicineListScreen> {
   final _searchCtrl = TextEditingController();
+  String? _filterGovernorate;
+  String? _filterCity;
+  String? _filterCategory;
+  bool _filterAvailableNow = false;
+  bool _filterExpiringSoon = false;
+  bool _filterLowStock = false;
+  bool _filterExpired = false;
+  bool _filterOutOfStock = false;
 
   bool get _isPatient {
     final authState = context.read<AuthBloc>().state;
@@ -27,6 +36,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
   void initState() {
     super.initState();
     context.read<MedicineBloc>().add(MedicinesFetchRequested());
+    context.read<PharmacyBloc>().add(PharmaciesLoadRequested());
   }
 
   @override
@@ -233,11 +243,301 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
     ),
   );
 
+  Widget _buildFilterBar() {
+    final l10n = AppLocalizations.of(context)!;
+    
+    if (!_isPatient) {
+      final hasFilter = _filterExpiringSoon || _filterLowStock || _filterExpired || _filterOutOfStock;
+
+      return Container(
+        height: 44,
+        margin: const EdgeInsets.only(bottom: 4),
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          children: [
+            _filterChip(
+              label: l10n.filterExpiringSoon,
+              isActive: _filterExpiringSoon,
+              icon: Icons.timer_outlined,
+              onTap: () => setState(() => _filterExpiringSoon = !_filterExpiringSoon),
+              hideArrow: true,
+            ),
+            const SizedBox(width: 8),
+            _filterChip(
+              label: l10n.filterLowStock,
+              isActive: _filterLowStock,
+              icon: Icons.inventory_2_outlined,
+              onTap: () => setState(() => _filterLowStock = !_filterLowStock),
+              hideArrow: true,
+            ),
+            const SizedBox(width: 8),
+            _filterChip(
+              label: l10n.filterExpired,
+              isActive: _filterExpired,
+              icon: Icons.event_busy_rounded,
+              onTap: () => setState(() => _filterExpired = !_filterExpired),
+              hideArrow: true,
+            ),
+            const SizedBox(width: 8),
+            _filterChip(
+              label: l10n.filterOutOfStock,
+              isActive: _filterOutOfStock,
+              icon: Icons.highlight_off_rounded,
+              onTap: () => setState(() => _filterOutOfStock = !_filterOutOfStock),
+              hideArrow: true,
+            ),
+            const SizedBox(width: 8),
+            if (hasFilter)
+              GestureDetector(
+                onTap: () => setState(() {
+                  _filterExpiringSoon = false;
+                  _filterLowStock = false;
+                  _filterExpired = false;
+                  _filterOutOfStock = false;
+                }),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.clear_rounded, size: 14, color: AppColors.error),
+                      const SizedBox(width: 4),
+                      Text(
+                        l10n.clearFilter,
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.error),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      );
+    }
+
+    return BlocBuilder<PharmacyBloc, PharmacyState>(
+      builder: (context, pharmacyState) {
+        if (pharmacyState is! PharmaciesLoaded) return const SizedBox.shrink();
+        final hasFilter = _filterGovernorate != null || 
+                          _filterCity != null || 
+                          _filterCategory != null || 
+                          _filterAvailableNow;
+
+        return Container(
+          height: 44,
+          margin: const EdgeInsets.only(bottom: 4),
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            children: [
+              // Governorate chip
+              _filterChip(
+                label: _filterGovernorate ?? l10n.allGovernorates,
+                isActive: _filterGovernorate != null,
+                icon: Icons.map_outlined,
+                onTap: () => _showPickerSheet(
+                  context,
+                  title: l10n.filterByGovernorate,
+                  items: pharmacyState.governorates,
+                  onSelected: (val) {
+                    setState(() {
+                      _filterGovernorate = val;
+                      _filterCity = null;
+                    });
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+
+              // City chip — only when governorate selected
+              if (_filterGovernorate != null) ...[
+                _filterChip(
+                  label: _filterCity ?? l10n.allCities,
+                  isActive: _filterCity != null,
+                  icon: Icons.location_city_outlined,
+                  onTap: () {
+                    final cities = pharmacyState.pharmacies
+                        .where((p) => p.governorate == _filterGovernorate)
+                        .map((p) => p.city)
+                        .toSet()
+                        .toList()..sort();
+                    _showPickerSheet(
+                      context,
+                      title: l10n.filterByCity,
+                      items: cities,
+                      onSelected: (val) => setState(() => _filterCity = val),
+                    );
+                  },
+                ),
+                const SizedBox(width: 8),
+              ],
+
+              // Available filter
+              _filterChip(
+                label: l10n.filterAvailableNow,
+                isActive: _filterAvailableNow,
+                icon: Icons.check_circle_outline,
+                onTap: () => setState(() => _filterAvailableNow = !_filterAvailableNow),
+                hideArrow: true,
+              ),
+              const SizedBox(width: 8),
+
+              // Category filter
+              _filterChip(
+                label: _filterCategory ?? l10n.filterCategory,
+                isActive: _filterCategory != null,
+                icon: Icons.category_outlined,
+                onTap: () {
+                  final medicineState = context.read<MedicineBloc>().state;
+                  if (medicineState is MedicinesLoaded) {
+                     final categories = medicineState.medicines.map((m) => m.category).toSet().toList()..sort();
+                     _showPickerSheet(
+                       context,
+                       title: l10n.allCategories,
+                       items: categories,
+                       onSelected: (val) => setState(() => _filterCategory = val),
+                     );
+                  }
+                },
+              ),
+              const SizedBox(width: 8),
+
+              // Clear button — only when any filter active
+              if (hasFilter)
+                GestureDetector(
+                  onTap: () => setState(() {
+                    _filterGovernorate = null;
+                    _filterCity = null;
+                    _filterCategory = null;
+                    _filterAvailableNow = false;
+                  }),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: AppColors.error.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.clear_rounded, size: 14, color: AppColors.error),
+                        const SizedBox(width: 4),
+                        Text(
+                          l10n.clearFilter,
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.error),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _filterChip({
+    required String label,
+    required bool isActive,
+    required IconData icon,
+    required VoidCallback onTap,
+    bool hideArrow = false,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isActive
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : Theme.of(context).cardColor,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isActive
+                ? AppColors.primary
+                : Theme.of(context).dividerColor.withValues(alpha: 0.3),
+            width: isActive ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: isActive ? AppColors.primary : AppColors.textLight),
+            const SizedBox(width: 6),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                color: isActive ? AppColors.primary : AppColors.textSecondary,
+              ),
+            ),
+            const SizedBox(width: 4),
+            if (!hideArrow)
+              Icon(
+                Icons.keyboard_arrow_down_rounded,
+                size: 16,
+                color: isActive ? AppColors.primary : AppColors.textLight,
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPickerSheet(
+    BuildContext context, {
+    required String title,
+    required List<String> items,
+    required ValueChanged<String> onSelected,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (_) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            Container(
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.textLight.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+            const SizedBox(height: 8),
+            ...items.map((item) => ListTile(
+              title: Text(item, style: const TextStyle(fontWeight: FontWeight.w600)),
+              onTap: () {
+                Navigator.pop(context);
+                onSelected(item);
+              },
+            )),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Medicines', style: TextStyle(fontWeight: FontWeight.w700)),
+        title: Text(AppLocalizations.of(context)!.medicines, style: const TextStyle(fontWeight: FontWeight.w700)),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -296,15 +596,59 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
               ),
             ),
           ),
+          _buildFilterBar(),
           Expanded(
             child: BlocBuilder<MedicineBloc, MedicineState>(
               builder: (context, state) {
-                if (state is MedicineLoading)
+                if (state is MedicineLoading) {
                   return const Center(child: CircularProgressIndicator());
-                if (state is MedicineError)
+                }
+                if (state is MedicineError) {
                   return Center(child: Text(state.message));
+                }
                 if (state is MedicinesLoaded) {
-                  if (state.medicines.isEmpty) {
+                  final pharmacyState = context.watch<PharmacyBloc>().state;
+                  
+                  // Get pharmacy IDs that match location filter
+                  Set<String>? allowedPharmacyIds;
+                  if (_isPatient && pharmacyState is PharmaciesLoaded &&
+                      (_filterGovernorate != null || _filterCity != null)) {
+                    allowedPharmacyIds = pharmacyState.pharmacies.where((p) {
+                      if (_filterGovernorate != null && p.governorate != _filterGovernorate) return false;
+                      if (_filterCity != null && p.city != _filterCity) return false;
+                      return true;
+                    }).map((p) => p.id).toSet();
+                  }
+
+                  // Apply filter to medicines
+                  var medicines = state.medicines;
+
+                  if (_isPatient) {
+                    if (allowedPharmacyIds != null) {
+                      medicines = medicines.where((m) => m.pharmacyId == null || allowedPharmacyIds!.contains(m.pharmacyId)).toList();
+                    }
+                    if (_filterCategory != null) {
+                      medicines = medicines.where((m) => m.category == _filterCategory).toList();
+                    }
+                    if (_filterAvailableNow) {
+                      medicines = medicines.where((m) => m.inStock && !m.isExpired).toList();
+                    }
+                  } else {
+                    if (_filterExpiringSoon) {
+                      medicines = medicines.where((m) => m.daysUntilExpiry <= 30 && !m.isExpired).toList();
+                    }
+                    if (_filterLowStock) {
+                      medicines = medicines.where((m) => m.quantity <= 10 && m.inStock).toList();
+                    }
+                    if (_filterExpired) {
+                      medicines = medicines.where((m) => m.isExpired).toList();
+                    }
+                    if (_filterOutOfStock) {
+                      medicines = medicines.where((m) => !m.inStock).toList();
+                    }
+                  }
+
+                  if (medicines.isEmpty) {
                     return EmptyStateWidget(
                       icon: Icons.medication_outlined,
                       title: AppLocalizations.of(context)!.noMedicinesFound,
@@ -313,9 +657,9 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                   }
                   return ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    itemCount: state.medicines.length,
+                    itemCount: medicines.length,
                     itemBuilder: (context, i) {
-                      final m = state.medicines[i];
+                      final m = medicines[i];
                       return Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         decoration: BoxDecoration(

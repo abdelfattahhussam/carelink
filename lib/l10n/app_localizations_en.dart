@@ -640,6 +640,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your request was approved. You can now pick up your medicine.';
 
   @override
+  String get notifDonationRejectedTitle => 'Donation Rejected';
+
+  @override
+  String get notifDonationRejectedBody =>
+      'Your donation was reviewed and rejected by the pharmacist.';
+
+  @override
+  String get notifRequestRejectedTitle => 'Request Rejected';
+
+  @override
+  String get notifRequestRejectedBody =>
+      'Your medicine request was rejected. Please check the reason.';
+
+  @override
   String get notifExpiryWarningTitle => 'Expiry Warning';
 
   @override
@@ -917,4 +931,37 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get donatedTo => 'Donated to';
+
+  @override
+  String get clearFilter => 'Clear';
+
+  @override
+  String get filterExpiringSoon => 'Expiring Soon';
+
+  @override
+  String get filterLowStock => 'Low Stock';
+
+  @override
+  String get filterExpired => 'Expired';
+
+  @override
+  String get filterOutOfStock => 'Out of Stock';
+
+  @override
+  String get filterCategory => 'Category';
+
+  @override
+  String get filterAvailableNow => 'Available Now';
+
+  @override
+  String get allCategories => 'All Categories';
+
+  @override
+  String get all => 'All';
+
+  @override
+  String get noRequestsFound => 'No Requests Found';
+
+  @override
+  String get noDonationsFound => 'No Donations Found';
 }

@@ -191,6 +191,22 @@ class MockInterceptor extends Interceptor {
       'pharmacyName': 'صيدلية النور',
       'createdAt': DateTime.now().subtract(const Duration(hours: 12)).toIso8601String(),
     },
+    {
+      'id': 'med-7',
+      'name': 'Aspirin 100mg',
+      'description': 'Blood thinner — low dose',
+      'expiryDate': DateTime.now().add(const Duration(days: 20)).toIso8601String(),
+      'quantity': 10,
+      'unit': 'strip',
+      'donorId': 'user-1',
+      'donorName': 'Ahmed Hassan',
+      'status': 'approved',
+      'imageUrl': '',
+      'category': 'Cardiovascular',
+      'pharmacyId': 'pharm-1',
+      'pharmacyName': 'صيدلية النور',
+      'createdAt': DateTime.now().subtract(const Duration(days: 25)).toIso8601String(),
+    },
   ];
 
   static final List<Map<String, dynamic>> _donations = [
@@ -423,13 +439,21 @@ class MockInterceptor extends Interceptor {
       );
     }
 
+    // TODO(backend): Real API must validate password server-side with hashing.
+    // Mock intentionally accepts any password for development convenience.
+    // Remove this comment and enforce real auth when connecting to backend.
+    if (password.isEmpty) {
+      return Response(
+        requestOptions: options,
+        statusCode: 401,
+        data: {'error': 'Invalid email or password'},
+      );
+    }
+
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {
-        'success': true,
-        'data': Map<String, dynamic>.from(user),
-      },
+      data: {'success': true, 'data': Map<String, dynamic>.from(user)},
     );
   }
 
@@ -601,6 +625,14 @@ class MockInterceptor extends Interceptor {
     final index = _donations.indexWhere((d) => d['id'] == id);
     if (index >= 0) {
       _donations[index] = Map<String, dynamic>.from(_donations[index])..['status'] = status;
+      // Issue #2: Mark medicine as approved only upon delivery
+      if (status == 'delivered') {
+        final medId = _donations[index]['medicineId'];
+        final medIndex = _medicines.indexWhere((m) => m['id'] == medId);
+        if (medIndex >= 0) {
+          _medicines[medIndex]['status'] = 'approved';
+        }
+      }
       return Response(
         requestOptions: options,
         statusCode: 200,
@@ -690,22 +722,49 @@ class MockInterceptor extends Interceptor {
   // ─── MEDICINE HANDLERS ───
 
   Response _handleGetMedicines(RequestOptions options) {
-    final approved = _medicines.where((m) => m['status'] == 'approved').toList();
+    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final user = _users.where((u) => u['token'] == token).firstOrNull;
+
+    var result = _medicines.where((m) => m['status'] == 'approved').toList();
+
+    // Issue #1: Pharmacist sees ONLY his pharmacy's medicines
+    if (user != null && user['role'] == 'pharmacist') {
+      final pharmacy = _pharmacies
+          .where((p) => p['pharmacistId'] == user['id'])
+          .firstOrNull;
+      if (pharmacy != null) {
+        result = result.where((m) => m['pharmacyId'] == pharmacy['id']).toList();
+      }
+    }
+
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': approved.map((m) => Map<String, dynamic>.from(m)).toList()},
+      data: {'success': true, 'data': result.map((m) => Map<String, dynamic>.from(m)).toList()},
     );
   }
 
   Response _handleSearchMedicines(RequestOptions options) {
+    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final user = _users.where((u) => u['token'] == token).firstOrNull;
     final query = (options.queryParameters['q'] ?? '').toString().toLowerCase();
-    final results = _medicines
+    
+    var results = _medicines
         .where((m) =>
             m['status'] == 'approved' &&
             (m['name'].toString().toLowerCase().contains(query) ||
              m['category'].toString().toLowerCase().contains(query)))
         .toList();
+
+    // Issue #1: Pharmacist sees ONLY his pharmacy's medicines
+    if (user != null && user['role'] == 'pharmacist') {
+      final pharmacy = _pharmacies
+          .where((p) => p['pharmacistId'] == user['id'])
+          .firstOrNull;
+      if (pharmacy != null) {
+        results = results.where((m) => m['pharmacyId'] == pharmacy['id']).toList();
+      }
+    }
 
     return Response(
       requestOptions: options,
@@ -758,6 +817,19 @@ class MockInterceptor extends Interceptor {
     final index = _requests.indexWhere((r) => r['id'] == id);
     if (index >= 0) {
       _requests[index] = Map<String, dynamic>.from(_requests[index])..['status'] = status;
+      // Issue #3: Stock decreases only after patient receives it
+      if (status == 'delivered') {
+        final medId = _requests[index]['medicineId'];
+        final medIndex = _medicines.indexWhere((m) => m['id'] == medId);
+        if (medIndex >= 0) {
+          final currentQty = _medicines[medIndex]['quantity'] as int;
+          final unit = _medicines[medIndex]['unit']?.toString().toLowerCase() ?? 'box';
+          final approvedBoxes = _requests[index]['approvedBoxes'] as int? ?? 0;
+          final approvedStrips = _requests[index]['approvedStrips'] as int? ?? 0;
+          final deducted = unit == 'strip' ? approvedStrips : approvedBoxes;
+          _medicines[medIndex]['quantity'] = (currentQty - deducted).clamp(0, currentQty);
+        }
+      }
       return Response(
         requestOptions: options,
         statusCode: 200,
@@ -826,16 +898,34 @@ class MockInterceptor extends Interceptor {
       _donations[donIndex]['status'] = 'approved';
       _donations[donIndex]['qrCode'] = 'QR-DON-${_uuid.v4().substring(0, 6).toUpperCase()}';
 
-      // Also update medicine status
-      final medId = _donations[donIndex]['medicineId'];
-      final medIndex = _medicines.indexWhere((m) => m['id'] == medId);
-      if (medIndex >= 0) {
-        _medicines[medIndex]['status'] = 'approved';
-      }
+      // Issue #2: DO NOT set medicine status to approved yet
+      // final medId = _donations[donIndex]['medicineId'];
+      // final medIndex = _medicines.indexWhere((m) => m['id'] == medId);
+      // if (medIndex >= 0) { ... }
     } else {
       _donations[donIndex]['status'] = 'rejected';
     }
     _donations[donIndex]['notes'] = data?['notes'] ?? '';
+
+    // Generate notification for donor
+    final donorId = _donations[donIndex]['donorId'] as String?;
+    final medicineName = _donations[donIndex]['medicineName'] ?? 'الدواء';
+
+    if (action == 'approve') {
+      _addNotification(
+        userId: donorId,
+        title: 'تمت الموافقة على تبرعك',
+        body: 'تمت الموافقة على تبرعك بـ $medicineName. شكراً لك!',
+        type: 'donationApproved',
+      );
+    } else {
+      _addNotification(
+        userId: donorId,
+        title: 'تم رفض تبرعك',
+        body: 'تم رفض تبرعك بـ $medicineName. يمكنك إعادة التبرع لصيدلية أخرى.',
+        type: 'donationRejected',
+      );
+    }
 
     return Response(
       requestOptions: options,
@@ -865,18 +955,8 @@ class MockInterceptor extends Interceptor {
       _requests[reqIndex]['reviewedBy'] = user?['id'];
       _requests[reqIndex]['reviewedAt'] = DateTime.now().toIso8601String();
 
-      // Decrease stock
-      final medId = _requests[reqIndex]['medicineId'];
-      final medIndex = _medicines.indexWhere((m) => m['id'] == medId);
-      if (medIndex >= 0) {
-        final currentQty = _medicines[medIndex]['quantity'] as int;
-        final unit = _medicines[medIndex]['unit']?.toString().toLowerCase() ?? 'box';
-        final approvedBoxes = data?['approvedBoxes'] as int? ?? 0;
-        final approvedStrips = data?['approvedStrips'] as int? ?? 0;
-        
-        final deducted = unit == 'strip' ? approvedStrips : approvedBoxes;
-        _medicines[medIndex]['quantity'] = (currentQty - deducted).clamp(0, currentQty);
-      }
+      // Issue #3: DO NOT decrease stock right away
+      // Stock is reduced in _handleUpdateRequestStatus when request status becomes 'delivered'
     } else {
       _requests[reqIndex]['status'] = 'rejected';
       _requests[reqIndex]['approvedBoxes'] = data?['approvedBoxes'] ?? 0;
@@ -884,6 +964,26 @@ class MockInterceptor extends Interceptor {
       _requests[reqIndex]['reviewReason'] = data?['reviewReason'];
       _requests[reqIndex]['reviewedBy'] = user?['id'];
       _requests[reqIndex]['reviewedAt'] = DateTime.now().toIso8601String();
+    }
+
+    // Generate notification for patient
+    final patientId = _requests[reqIndex]['patientId'] as String?;
+    final reqMedicineName = _requests[reqIndex]['medicineName'] ?? 'الدواء';
+
+    if (action == 'approve') {
+      _addNotification(
+        userId: patientId,
+        title: 'تمت الموافقة على طلبك',
+        body: 'تمت الموافقة على طلبك لـ $reqMedicineName. توجه للصيدلية لاستلامه.',
+        type: 'requestApproved',
+      );
+    } else {
+      _addNotification(
+        userId: patientId,
+        title: 'تم رفض طلبك',
+        body: 'تم رفض طلبك لـ $reqMedicineName. يمكنك تقديم طلب جديد.',
+        type: 'requestRejected',
+      );
     }
 
     return Response(
@@ -936,6 +1036,26 @@ class MockInterceptor extends Interceptor {
     );
   }
 
+  /// Helper to add a notification to the in-memory store
+  void _addNotification({
+    required String? userId,      // null = role-wide
+    String? targetRole,           // used when userId is null
+    required String title,
+    required String body,
+    required String type,
+  }) {
+    _notifications.add({
+      'id': 'notif-${_uuid.v4().substring(0, 8)}',
+      'title': title,
+      'body': body,
+      'type': type,
+      'isRead': false,
+      'userId': userId,
+      'targetRole': targetRole,
+      'createdAt': DateTime.now().toIso8601String(),
+    });
+  }
+
   // ─── NOTIFICATION HANDLERS ───
 
   Response _handleGetNotifications(RequestOptions options) {
@@ -953,6 +1073,50 @@ class MockInterceptor extends Interceptor {
       return isForThisUser || isRoleWide;
     }).toList();
 
+    // Add expiry warnings for pharmacist role
+    if (user['role'] == 'pharmacist') {
+      final pharmacy = _pharmacies
+          .where((p) => p['pharmacistId'] == user['id'])
+          .firstOrNull;
+
+      if (pharmacy != null) {
+        final now = DateTime.now();
+        final expiringSoon = _medicines.where((m) {
+          if (m['pharmacyId'] != pharmacy['id']) return false;
+          if (m['status'] != 'approved') return false;
+          final expiryDate = DateTime.tryParse(m['expiryDate'] ?? '');
+          if (expiryDate == null) return false;
+          final daysLeft = expiryDate.difference(now).inDays;
+          return daysLeft >= 0 && daysLeft <= 30;
+        }).toList();
+
+        for (final med in expiringSoon) {
+          final expiryDate = DateTime.parse(med['expiryDate']);
+          final daysLeft = expiryDate.difference(now).inDays;
+          final medName = med['name'] ?? 'دواء';
+
+          // Avoid duplicate expiry warnings for same medicine
+          final alreadyExists = result.any((n) =>
+            n['type'] == 'expiryWarning' &&
+            n['body']?.toString().contains(medName) == true,
+          );
+
+          if (!alreadyExists) {
+            result.add({
+              'id': 'expiry-${med['id']}',
+              'title': 'تحذير: انتهاء صلاحية قريب',
+              'body': '$medName ينتهي خلال $daysLeft يوم',
+              'type': 'expiryWarning',
+              'isRead': false,
+              'userId': user['id'],
+              'targetRole': 'pharmacist',
+              'createdAt': now.toIso8601String(),
+            });
+          }
+        }
+      }
+    }
+
     return Response(
       requestOptions: options,
       statusCode: 200,
@@ -962,11 +1126,8 @@ class MockInterceptor extends Interceptor {
 
   Response _handleMarkRead(RequestOptions options) {
     final id = options.path.split('/').last;
-    final index = _notifications.indexWhere((n) => n['id'] == id);
-    if (index >= 0) {
-      _notifications[index] = Map<String, dynamic>.from(_notifications[index])
-        ..['isRead'] = true; // ✅ mark as read, keep in list
-    }
+    // Remove the notification — dismissed notifications should not reappear
+    _notifications.removeWhere((n) => n['id'] == id);
 
     return Response(
       requestOptions: options,

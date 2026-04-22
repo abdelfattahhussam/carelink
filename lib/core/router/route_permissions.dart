@@ -13,4 +13,6 @@ const Map<String, AppPermission> routePermissions = {
   '/my-requests': AppPermission.viewMyRequests,
   '/donor-home': AppPermission.viewMyDonations,
   '/patient-home': AppPermission.viewMyRequests,
+  '/notifications': AppPermission.viewNotifications,
+  '/medicines': AppPermission.viewMedicines,
 };

@@ -198,6 +198,10 @@
   "notifNewRequestBody": "هناك طلب دواء جديد ينتظر مراجعتك.",
   "notifRequestApprovedTitle": "تم قبول الطلب",
   "notifRequestApprovedBody": "تمت الموافقة على طلبك. يمكنك الآن استلام الدواء.",
+  "notifDonationRejectedTitle": "تم رفض التبرع",
+  "notifDonationRejectedBody": "تمت مراجعة تبرعك ورفضه من قبل الصيدلي.",
+  "notifRequestRejectedTitle": "تم رفض الطلب",
+  "notifRequestRejectedBody": "تم رفض طلب الدواء الخاص بك. يرجى مراجعة السبب.",
   "notifExpiryWarningTitle": "تنبيه انتهاء صلاحية",
   "notifExpiryWarningBody": "بعض الأدوية في مخزونك تقترب من تاريخ انتهاء الصلاحية.",
   "captureIdFront": "تصوير وجه البطاقة",
@@ -285,5 +289,16 @@
   "noPharmaciesInArea": "لا توجد صيداليات متاحة في هذه المنطقة",
   "pharmacyLocation": "موقع الصيدلية",
   "availableAtPharmacy": "متاح في",
-  "donatedTo": "تبرع لـ"
+  "donatedTo": "تبرع لـ",
+  "clearFilter": "مسح الفلتر",
+  "filterExpiringSoon": "قرب انتهاء الصلاحية",
+  "filterLowStock": "قليل بالمخزن",
+  "filterExpired": "منتهي الصلاحية",
+  "filterOutOfStock": "نفد من المخزن",
+  "filterCategory": "الفئة",
+  "filterAvailableNow": "متوفر الآن",
+  "allCategories": "كل الفئات",
+  "all": "الكل",
+  "noRequestsFound": "لا توجد طلبات هنا",
+  "noDonationsFound": "لا توجد تبرعات هنا"
 }

@@ -76,6 +76,9 @@ class AuthService {
     // In a real app, this would be a PATCH or PUT request
     final response = await _dio.post(
       ApiEndpoints.profile, // Assuming profile endpoint supports updates
+      // TODO(security): Remove userId from request body before production.
+      // The backend should extract userId from the JWT token, not from the body.
+      // Sending userId in the body allows potential IDOR attacks.
       data: {
         'userId': userId,
         'name': name,

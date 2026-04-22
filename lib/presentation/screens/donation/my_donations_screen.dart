@@ -20,6 +20,8 @@ class MyDonationsScreen extends StatefulWidget {
 }
 
 class _MyDonationsScreenState extends State<MyDonationsScreen> {
+  String _selectedFilter = 'all';
+
   @override
   void initState() {
     super.initState();
@@ -83,12 +85,30 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                 subtitle: l10n.startByDonating,
               );
             } else {
-              child = ListView.builder(
+              var filteredDonations = state.donations.toList();
+              // Sort newest first
+              filteredDonations.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+              
+              if (_selectedFilter != 'all') {
+                filteredDonations = filteredDonations.where((d) => d.status == _selectedFilter).toList();
+              }
+
+              child = Column(
+                children: [
+                  _buildFilterRow(context),
+                  Expanded(
+                    child: filteredDonations.isEmpty
+                        ? EmptyStateWidget(
+                            icon: Icons.filter_alt_off_outlined,
+                            title: l10n.noDonationsFound,
+                            subtitle: l10n.tryDifferentSearch,
+                          )
+                        : ListView.builder(
                 key: const ValueKey('list'),
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                itemCount: state.donations.length,
+                itemCount: filteredDonations.length,
                 itemBuilder: (context, i) {
-                  final d = state.donations[i];
+                  final d = filteredDonations[i];
                   return Container(
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(20),
@@ -244,15 +264,71 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                     ),
                   );
                 },
-              );
-            }
-          } else {
-            child = const SizedBox.shrink(key: ValueKey('none'));
-          }
+              ),
+            ),
+          ],
+        );
+      }
+    } else {
+      child = const SizedBox.shrink(key: ValueKey('none'));
+    }
 
-          return AnimatedSwitcher(
-            duration: const Duration(milliseconds: 400),
-            child: child,
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 400),
+      child: child,
+    );
+  },
+),
+);
+}
+
+  Widget _buildFilterRow(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final filters = [
+      {'key': 'all', 'label': l10n.all},
+      {'key': 'pending', 'label': l10n.pending},
+      {'key': 'approved', 'label': l10n.approved},
+      {'key': 'rejected', 'label': l10n.rejected},
+      {'key': 'delivered', 'label': l10n.delivered},
+    ];
+
+    return Container(
+      height: 48,
+      margin: const EdgeInsets.only(bottom: 8),
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        itemCount: filters.length,
+        itemBuilder: (context, i) {
+          final f = filters[i];
+          final isActive = _selectedFilter == f['key'];
+          return Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: ChoiceChip(
+              showCheckmark: false,
+              label: Text(
+                f['label']!,
+                style: TextStyle(
+                  fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
+                  fontSize: 13,
+                  color: isActive ? Colors.white : AppColors.textSecondary,
+                ),
+              ),
+              selected: isActive,
+              selectedColor: AppColors.primary,
+              backgroundColor: Theme.of(context).cardColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: isActive ? AppColors.primary : AppColors.divider.withValues(alpha: 0.5),
+                ),
+              ),
+              onSelected: (selected) {
+                if (selected) {
+                  setState(() => _selectedFilter = f['key']!);
+                }
+              },
+            ),
           );
         },
       ),

@@ -198,6 +198,10 @@
   "notifNewRequestBody": "A new medicine request is awaiting your review.",
   "notifRequestApprovedTitle": "Request Approved",
   "notifRequestApprovedBody": "Your request was approved. You can now pick up your medicine.",
+  "notifDonationRejectedTitle": "Donation Rejected",
+  "notifDonationRejectedBody": "Your donation was reviewed and rejected by the pharmacist.",
+  "notifRequestRejectedTitle": "Request Rejected",
+  "notifRequestRejectedBody": "Your medicine request was rejected. Please check the reason.",
   "notifExpiryWarningTitle": "Expiry Warning",
   "notifExpiryWarningBody": "Some medicines in your inventory are nearing expiry.",
   "@typeLabel": { "placeholders": { "type": { "type": "String" } } },
@@ -299,5 +303,16 @@
   "noPharmaciesInArea": "No pharmacies available in this area",
   "pharmacyLocation": "Pharmacy Location",
   "availableAtPharmacy": "Available at",
-  "donatedTo": "Donated to"
+  "donatedTo": "Donated to",
+  "clearFilter": "Clear",
+  "filterExpiringSoon": "Expiring Soon",
+  "filterLowStock": "Low Stock",
+  "filterExpired": "Expired",
+  "filterOutOfStock": "Out of Stock",
+  "filterCategory": "Category",
+  "filterAvailableNow": "Available Now",
+  "allCategories": "All Categories",
+  "all": "All",
+  "noRequestsFound": "No Requests Found",
+  "noDonationsFound": "No Donations Found"
 }

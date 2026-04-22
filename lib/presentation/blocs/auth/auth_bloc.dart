@@ -208,6 +208,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final user = await _authService!.login(event.email, event.password);
 
       final prefs = await SharedPreferences.getInstance();
+      // TODO(security): Replace SharedPreferences with flutter_secure_storage
+      // before production. SharedPreferences is unencrypted on Android.
       await prefs.setString('auth_token', user.token);
       await prefs.setString('user_data', jsonEncode(user.toJson()));
 
@@ -244,6 +246,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
 
       final prefs = await SharedPreferences.getInstance();
+      // TODO(security): Replace SharedPreferences with flutter_secure_storage
+      // before production. SharedPreferences is unencrypted on Android.
       await prefs.setString('auth_token', user.token);
       await prefs.setString('user_data', jsonEncode(user.toJson()));
 

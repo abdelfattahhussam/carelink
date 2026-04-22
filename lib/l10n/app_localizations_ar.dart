@@ -634,6 +634,20 @@ class AppLocalizationsAr extends AppLocalizations {
       'تمت الموافقة على طلبك. يمكنك الآن استلام الدواء.';
 
   @override
+  String get notifDonationRejectedTitle => 'تم رفض التبرع';
+
+  @override
+  String get notifDonationRejectedBody =>
+      'تمت مراجعة تبرعك ورفضه من قبل الصيدلي.';
+
+  @override
+  String get notifRequestRejectedTitle => 'تم رفض الطلب';
+
+  @override
+  String get notifRequestRejectedBody =>
+      'تم رفض طلب الدواء الخاص بك. يرجى مراجعة السبب.';
+
+  @override
   String get notifExpiryWarningTitle => 'تنبيه انتهاء صلاحية';
 
   @override
@@ -908,4 +922,37 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get donatedTo => 'تبرع لـ';
+
+  @override
+  String get clearFilter => 'مسح الفلتر';
+
+  @override
+  String get filterExpiringSoon => 'قرب انتهاء الصلاحية';
+
+  @override
+  String get filterLowStock => 'قليل بالمخزن';
+
+  @override
+  String get filterExpired => 'منتهي الصلاحية';
+
+  @override
+  String get filterOutOfStock => 'نفد من المخزن';
+
+  @override
+  String get filterCategory => 'الفئة';
+
+  @override
+  String get filterAvailableNow => 'متوفر الآن';
+
+  @override
+  String get allCategories => 'كل الفئات';
+
+  @override
+  String get all => 'الكل';
+
+  @override
+  String get noRequestsFound => 'لا توجد طلبات هنا';
+
+  @override
+  String get noDonationsFound => 'لا توجد تبرعات هنا';
 }

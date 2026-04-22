@@ -187,6 +187,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
         '${l10n.nationalId}: ${user?.nationalId ?? '—'}',
         style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
       ),
+      if (user?.isPharmacist == true && user?.pharmacyName?.isNotEmpty == true) ...[
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.storefront_outlined, size: 16, color: AppColors.primary),
+            const SizedBox(width: 6),
+            Text(user!.pharmacyName!, style: Theme.of(context).textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+          ],
+        ),
+      ],
+      if (user != null && (user.governorate?.isNotEmpty == true || user.city?.isNotEmpty == true)) ...[
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.location_on_outlined, size: 16, color: AppColors.textSecondary),
+            const SizedBox(width: 6),
+            Flexible(
+              child: Text(
+                [user.governorate, user.city, user.village, user.street]
+                    .where((s) => s != null && s.isNotEmpty)
+                    .join('، '),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
+                textAlign: TextAlign.center,
+              ),
+            ),
+          ],
+        ),
+      ],
     ]);
   }
 

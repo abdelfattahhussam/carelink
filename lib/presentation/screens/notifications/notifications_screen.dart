@@ -19,42 +19,43 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationBloc>().add(NotificationsFetchRequested());
+    // Always force refresh to catch new notifications from recent actions
+    context.read<NotificationBloc>().add(
+      NotificationsFetchRequested(forceRefresh: true),
+    );
   }
 
   IconData _iconForType(NotificationType type) => switch (type) {
-    NotificationType.donationApproved => Icons.check_circle_rounded,
-    NotificationType.newRequest => Icons.inbox_rounded,
-    NotificationType.requestApproved => Icons.thumb_up_rounded,
-    NotificationType.expiryWarning => Icons.warning_amber_rounded,
+    NotificationType.donationApproved  => Icons.check_circle_rounded,
+    NotificationType.donationRejected  => Icons.cancel_rounded,
+    NotificationType.newRequest        => Icons.inbox_rounded,
+    NotificationType.requestApproved   => Icons.thumb_up_rounded,
+    NotificationType.requestRejected   => Icons.thumb_down_rounded,
+    NotificationType.expiryWarning     => Icons.warning_amber_rounded,
   };
 
   Color _colorForType(NotificationType type) => switch (type) {
-    NotificationType.donationApproved => AppColors.success,
-    NotificationType.newRequest => AppColors.info,
-    NotificationType.requestApproved => AppColors.primary,
-    NotificationType.expiryWarning => AppColors.warning,
+    NotificationType.donationApproved  => AppColors.success,
+    NotificationType.donationRejected  => AppColors.error,
+    NotificationType.newRequest        => AppColors.info,
+    NotificationType.requestApproved   => AppColors.primary,
+    NotificationType.requestRejected   => AppColors.error,
+    NotificationType.expiryWarning     => AppColors.warning,
   };
 
   String _getLocalizedTitle(BuildContext context, NotificationModel n) {
     final l10n = AppLocalizations.of(context)!;
     return switch (n.type) {
-      NotificationType.donationApproved => l10n.notifDonationApprovedTitle,
-      NotificationType.newRequest => l10n.notifNewRequestTitle,
-      NotificationType.requestApproved => l10n.notifRequestApprovedTitle,
-      NotificationType.expiryWarning => l10n.notifExpiryWarningTitle,
+      NotificationType.donationApproved  => l10n.notifDonationApprovedTitle,
+      NotificationType.donationRejected  => l10n.notifDonationRejectedTitle,
+      NotificationType.newRequest        => l10n.notifNewRequestTitle,
+      NotificationType.requestApproved   => l10n.notifRequestApprovedTitle,
+      NotificationType.requestRejected   => l10n.notifRequestRejectedTitle,
+      NotificationType.expiryWarning     => l10n.notifExpiryWarningTitle,
     };
   }
 
-  String _getLocalizedBody(BuildContext context, NotificationModel n) {
-    final l10n = AppLocalizations.of(context)!;
-    return switch (n.type) {
-      NotificationType.donationApproved => l10n.notifDonationApprovedBody,
-      NotificationType.newRequest => l10n.notifNewRequestBody,
-      NotificationType.requestApproved => l10n.notifRequestApprovedBody,
-      NotificationType.expiryWarning => l10n.notifExpiryWarningBody,
-    };
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -127,10 +128,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             
                             switch (n.type) {
                               case NotificationType.donationApproved:
+                              case NotificationType.donationRejected:
                                 context.push('/my-donations');
                               case NotificationType.newRequest:
                                 context.push('/manage-requests');
                               case NotificationType.requestApproved:
+                              case NotificationType.requestRejected:
                                 context.push('/my-requests');
                               case NotificationType.expiryWarning:
                                 context.push('/medicines');
@@ -176,7 +179,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
-                                        _getLocalizedBody(context, n),
+                                        n.body,
                                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                                           color: Theme.of(context).textTheme.bodySmall?.color,
                                           height: 1.5,

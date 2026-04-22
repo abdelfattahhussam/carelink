@@ -3,13 +3,18 @@ import 'user_model.dart';
 
 enum NotificationType {
   donationApproved,
+  donationRejected,
   newRequest,
   requestApproved,
+  requestRejected,
   expiryWarning;
 
   String toJson() => name;
   static NotificationType fromJson(String json) =>
-      NotificationType.values.firstWhere((e) => e.name == json, orElse: () => NotificationType.donationApproved);
+      NotificationType.values.firstWhere(
+        (e) => e.name == json,
+        orElse: () => NotificationType.donationApproved,
+      );
 }
 
 /// Notification model for in-app notifications
@@ -39,10 +44,14 @@ class NotificationModel extends Equatable {
     switch (type) {
       case NotificationType.donationApproved:
         return 'check_circle';
+      case NotificationType.donationRejected:
+        return 'cancel';
       case NotificationType.newRequest:
         return 'inbox';
       case NotificationType.requestApproved:
         return 'thumb_up';
+      case NotificationType.requestRejected:
+        return 'thumb_down';
       case NotificationType.expiryWarning:
         return 'warning';
     }

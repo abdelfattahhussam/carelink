@@ -1286,6 +1286,30 @@ abstract class AppLocalizations {
   /// **'Your request was approved. You can now pick up your medicine.'**
   String get notifRequestApprovedBody;
 
+  /// No description provided for @notifDonationRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation Rejected'**
+  String get notifDonationRejectedTitle;
+
+  /// No description provided for @notifDonationRejectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your donation was reviewed and rejected by the pharmacist.'**
+  String get notifDonationRejectedBody;
+
+  /// No description provided for @notifRequestRejectedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Request Rejected'**
+  String get notifRequestRejectedTitle;
+
+  /// No description provided for @notifRequestRejectedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your medicine request was rejected. Please check the reason.'**
+  String get notifRequestRejectedBody;
+
   /// No description provided for @notifExpiryWarningTitle.
   ///
   /// In en, this message translates to:
@@ -1813,6 +1837,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Donated to'**
   String get donatedTo;
+
+  /// No description provided for @clearFilter.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clearFilter;
+
+  /// No description provided for @filterExpiringSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Expiring Soon'**
+  String get filterExpiringSoon;
+
+  /// No description provided for @filterLowStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Stock'**
+  String get filterLowStock;
+
+  /// No description provided for @filterExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Expired'**
+  String get filterExpired;
+
+  /// No description provided for @filterOutOfStock.
+  ///
+  /// In en, this message translates to:
+  /// **'Out of Stock'**
+  String get filterOutOfStock;
+
+  /// No description provided for @filterCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get filterCategory;
+
+  /// No description provided for @filterAvailableNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Available Now'**
+  String get filterAvailableNow;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get allCategories;
+
+  /// No description provided for @all.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get all;
+
+  /// No description provided for @noRequestsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Requests Found'**
+  String get noRequestsFound;
+
+  /// No description provided for @noDonationsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'No Donations Found'**
+  String get noDonationsFound;
 }
 
 class _AppLocalizationsDelegate
