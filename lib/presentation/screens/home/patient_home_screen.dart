@@ -24,7 +24,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationBloc>().add(NotificationsFetchRequested());
+    context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
     context.read<RequestBloc>().add(RequestsFetchRequested());
     context.read<MedicineBloc>().add(MedicinesFetchRequested());
   }
@@ -41,7 +41,7 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             appBar: HomeAppBar(user: user),
             body: RefreshIndicator(
               onRefresh: () async {
-                context.read<NotificationBloc>().add(NotificationsFetchRequested());
+                context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
                 context.read<RequestBloc>().add(RequestsFetchRequested());
                 context.read<MedicineBloc>().add(MedicinesFetchRequested());
               },

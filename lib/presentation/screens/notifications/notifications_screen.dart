@@ -123,8 +123,10 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(24),
                           onTap: () {
-                            // Dismiss it so it doesn't appear again
-                            context.read<NotificationBloc>().add(NotificationDismissRequested(notificationId: n.id));
+                            // Mark as read (not dismiss) so it stays in the list
+                            if (!n.isRead) {
+                              context.read<NotificationBloc>().add(NotificationMarkReadRequested(notificationId: n.id));
+                            }
                             
                             switch (n.type) {
                               case NotificationType.donationApproved:

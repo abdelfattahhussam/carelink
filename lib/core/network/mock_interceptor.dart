@@ -714,6 +714,21 @@ class MockInterceptor extends Interceptor {
     };
     _donations.add(donation);
 
+    // Notify the pharmacist of the target pharmacy about the new donation
+    final pharmacyId = data?['pharmacyId'] as String?;
+    if (pharmacyId != null) {
+      final pharmacy = _pharmacies.where((p) => p['id'] == pharmacyId).firstOrNull;
+      if (pharmacy != null) {
+        final pharmacistId = pharmacy['pharmacistId'] as String?;
+        _addNotification(
+          userId: pharmacistId,
+          title: 'New Donation Received',
+          body: 'A new donation of ${data?['name'] ?? 'medicine'} has been submitted for review.',
+          type: 'newRequest',
+        );
+      }
+    }
+
     return Response(
       requestOptions: options,
       statusCode: 201,
@@ -877,6 +892,21 @@ class MockInterceptor extends Interceptor {
     };
     _requests.add(request);
 
+    // Notify the pharmacist of the target pharmacy about the new request
+    final pharmacyId = med['pharmacyId'] as String?;
+    if (pharmacyId != null) {
+      final pharmacy = _pharmacies.where((p) => p['id'] == pharmacyId).firstOrNull;
+      if (pharmacy != null) {
+        final pharmacistId = pharmacy['pharmacistId'] as String?;
+        _addNotification(
+          userId: pharmacistId,
+          title: 'New Medicine Request',
+          body: '${user?['name'] ?? 'A patient'} has requested ${med['name'] ?? 'medicine'}.',
+          type: 'newRequest',
+        );
+      }
+    }
+
     return Response(
       requestOptions: options,
       statusCode: 201,
@@ -911,20 +941,20 @@ class MockInterceptor extends Interceptor {
 
     // Generate notification for donor
     final donorId = _donations[donIndex]['donorId'] as String?;
-    final medicineName = _donations[donIndex]['medicineName'] ?? 'الدواء';
+    final medicineName = _donations[donIndex]['medicineName'] ?? 'Medicine';
 
     if (action == 'approve') {
       _addNotification(
         userId: donorId,
-        title: 'تمت الموافقة على تبرعك',
-        body: 'تمت الموافقة على تبرعك بـ $medicineName. شكراً لك!',
+        title: 'Donation Approved',
+        body: 'Your donation of $medicineName has been approved. Thank you!',
         type: 'donationApproved',
       );
     } else {
       _addNotification(
         userId: donorId,
-        title: 'تم رفض تبرعك',
-        body: 'تم رفض تبرعك بـ $medicineName. يمكنك إعادة التبرع لصيدلية أخرى.',
+        title: 'Donation Rejected',
+        body: 'Your donation of $medicineName was rejected. You may re-donate to another pharmacy.',
         type: 'donationRejected',
       );
     }
@@ -970,20 +1000,20 @@ class MockInterceptor extends Interceptor {
 
     // Generate notification for patient
     final patientId = _requests[reqIndex]['patientId'] as String?;
-    final reqMedicineName = _requests[reqIndex]['medicineName'] ?? 'الدواء';
+    final reqMedicineName = _requests[reqIndex]['medicineName'] ?? 'Medicine';
 
     if (action == 'approve') {
       _addNotification(
         userId: patientId,
-        title: 'تمت الموافقة على طلبك',
-        body: 'تمت الموافقة على طلبك لـ $reqMedicineName. توجه للصيدلية لاستلامه.',
+        title: 'Request Approved',
+        body: 'Your request for $reqMedicineName has been approved. Visit the pharmacy for pickup.',
         type: 'requestApproved',
       );
     } else {
       _addNotification(
         userId: patientId,
-        title: 'تم رفض طلبك',
-        body: 'تم رفض طلبك لـ $reqMedicineName. يمكنك تقديم طلب جديد.',
+        title: 'Request Rejected',
+        body: 'Your request for $reqMedicineName was rejected. You may submit a new request.',
         type: 'requestRejected',
       );
     }
@@ -1107,13 +1137,13 @@ class MockInterceptor extends Interceptor {
               !alreadyExists) {
             result.add({
               'id': 'expiry-${med['id']}',
-              'title': 'تحذير: انتهاء صلاحية قريب',
-              'body': '$medName ينتهي خلال $daysLeft يوم',
+              'title': 'Expiry Warning',
+              'body': '$medName expires in $daysLeft days',
               'type': 'expiryWarning',
               'isRead': false,
               'userId': user['id'],
               'targetRole': 'pharmacist',
-              'createdAt': now.toIso8601String(),
+              'createdAt': expiryDate.subtract(const Duration(days: 30)).toIso8601String(),
             });
           }
         }
@@ -1134,8 +1164,11 @@ class MockInterceptor extends Interceptor {
       // Expiry warnings are dynamic — track dismissal separately
       _dismissedExpiryIds.add(id);
     } else {
-      // Regular notifications — remove from store
-      _notifications.removeWhere((n) => n['id'] == id);
+      // Mark notification as read (not delete)
+      final idx = _notifications.indexWhere((n) => n['id'] == id);
+      if (idx >= 0) {
+        _notifications[idx]['isRead'] = true;
+      }
     }
 
     return Response(

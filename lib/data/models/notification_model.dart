@@ -99,5 +99,5 @@ class NotificationModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, isRead, userId];
+  List<Object?> get props => [id, title, body, type, isRead, userId, targetRole, createdAt];
 }

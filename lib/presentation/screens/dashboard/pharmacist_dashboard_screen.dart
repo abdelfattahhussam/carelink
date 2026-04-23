@@ -23,7 +23,7 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationBloc>().add(NotificationsFetchRequested());
+    context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
     context.read<MedicineBloc>().add(MedicinesFetchRequested());
     context.read<RequestBloc>().add(RequestsFetchRequested());
     final authState = context.read<AuthBloc>().state;
@@ -82,7 +82,7 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
 
   void _refreshData(UserModel user) {
     context.read<MedicineBloc>().add(MedicinesFetchRequested());
-    context.read<NotificationBloc>().add(NotificationsFetchRequested());
+    context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
     context.read<DonationBloc>().add(PendingDonationsFetchRequested());
     context.read<RequestBloc>().add(RequestsFetchRequested());
   }

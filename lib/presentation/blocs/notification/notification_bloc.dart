@@ -66,9 +66,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final AuthBloc _authBloc;
   late final StreamSubscription<AuthState> _authSubscription;
 
-  /// Keyed by userId
-  final Map<String, List<NotificationModel>> _cache = {};
-
   NotificationBloc({
     required AuthBloc authBloc,
     required NotificationService service,
@@ -79,10 +76,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     on<NotificationMarkReadRequested>(_onMarkRead);
     on<NotificationDismissRequested>(_onDismiss);
 
-    // Clear cache on logout
+    // Reset state on logout
     _authSubscription = _authBloc.stream.listen((state) {
       if (state is AuthUnauthenticated) {
-        _cache.clear();
+        // ignore: invalid_use_of_visible_for_testing_member
+        emit(NotificationInitial());
       }
     });
   }
@@ -106,12 +104,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     final userId = authState.user.id;
     final userRole = authState.user.role;
 
-    // Use cache if available and not forcing refresh
-    if (!event.forceRefresh && _cache.containsKey(userId)) {
-      emit(NotificationsLoaded(notifications: _cache[userId]!));
-      return;
-    }
-
     emit(NotificationLoading());
     try {
       final notifications = await _service.getNotifications();
@@ -121,7 +113,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         return n.userId == userId || n.targetRole == userRole;
       }).toList();
       
-      _cache[userId] = filtered;
       emit(NotificationsLoaded(notifications: filtered));
     } catch (e) {
       emit(NotificationError(message: e.toString()));
@@ -138,10 +129,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       final index = currentList.indexWhere((n) => n.id == event.notificationId);
       if (index != -1 && !currentList[index].isRead) {
         currentList[index] = currentList[index].copyWith(isRead: true);
-        final authState = _authBloc.state;
-        if (authState is AuthAuthenticated) {
-          _cache[authState.user.id] = currentList;
-        }
         emit(NotificationsLoaded(notifications: currentList));
       }
     }
@@ -158,22 +145,31 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     Emitter<NotificationState> emit,
   ) async {
     // Optimistically remove from list immediately
+    NotificationModel? removedNotification;
+    int removedIndex = -1;
+
     if (state is NotificationsLoaded) {
       final currentList = List<NotificationModel>.from((state as NotificationsLoaded).notifications);
-      currentList.removeWhere((n) => n.id == event.notificationId);
-      
-      final authState = _authBloc.state;
-      if (authState is AuthAuthenticated) {
-        _cache[authState.user.id] = currentList;
+      removedIndex = currentList.indexWhere((n) => n.id == event.notificationId);
+      if (removedIndex >= 0) {
+        removedNotification = currentList[removedIndex];
+        currentList.removeAt(removedIndex);
       }
       emit(NotificationsLoaded(notifications: currentList));
     }
     
-    // Optionally trigger mark as read so backend knows it's consumed
+    // Trigger mark as read so backend knows it's consumed
     try {
       await _service.markAsRead(event.notificationId);
     } catch (e) {
       debugPrint('NotificationBloc: Failed to mark as read on dismiss: $e');
+      // Rollback: re-insert the notification on failure
+      if (removedNotification != null && state is NotificationsLoaded) {
+        final rollbackList = List<NotificationModel>.from((state as NotificationsLoaded).notifications);
+        rollbackList.insert(removedIndex.clamp(0, rollbackList.length), removedNotification);
+        emit(NotificationsLoaded(notifications: rollbackList));
+      }
     }
   }
 }
+

@@ -23,7 +23,7 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationBloc>().add(NotificationsFetchRequested());
+    context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
     context.read<DonationBloc>().add(DonationsFetchRequested());
   }
 
@@ -39,7 +39,7 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
             appBar: HomeAppBar(user: user),
             body: RefreshIndicator(
               onRefresh: () async {
-                context.read<NotificationBloc>().add(NotificationsFetchRequested());
+                context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
                 context.read<DonationBloc>().add(DonationsFetchRequested());
               },
               child: SingleChildScrollView(
