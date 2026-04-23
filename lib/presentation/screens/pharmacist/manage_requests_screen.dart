@@ -8,6 +8,7 @@ import '../../../core/widgets/shared_widgets.dart';
 import '../../../core/widgets/shimmer_loading.dart';
 import '../../blocs/medicine/medicine_bloc.dart';
 import '../../blocs/request/request_bloc.dart';
+import '../../blocs/notification/notification_bloc.dart';
 import '../../../data/models/request_model.dart';
 import 'widgets/request_decision_bottom_sheet.dart';
 
@@ -56,6 +57,7 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
               ),
             );
             context.read<RequestBloc>().add(RequestsFetchRequested());
+            context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
           }
         },
         builder: (context, state) {

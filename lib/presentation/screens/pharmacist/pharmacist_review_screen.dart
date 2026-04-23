@@ -8,6 +8,7 @@ import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/shared_widgets.dart';
 import '../../../core/widgets/shimmer_loading.dart';
 import '../../blocs/donation/donation_bloc.dart';
+import '../../blocs/notification/notification_bloc.dart';
 
 /// Pharmacist review screen — approve/reject pending donations
 class PharmacistReviewScreen extends StatefulWidget {
@@ -178,6 +179,7 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
             final msg = state.action == DonationReviewAction.approve ? 'Donation approved! QR code generated.' : 'Donation rejected.';
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: state.action == DonationReviewAction.approve ? AppColors.success : AppColors.error));
             context.read<DonationBloc>().add(PendingDonationsFetchRequested());
+            context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
           }
         },
         builder: (context, state) {
