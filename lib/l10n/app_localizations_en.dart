@@ -633,6 +633,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'A new medicine request is awaiting your review.';
 
   @override
+  String get notifNewDonationTitle => 'New Donation';
+
+  @override
+  String get notifNewDonationBody =>
+      'A new medicine donation has been submitted for review.';
+
+  @override
   String get notifRequestApprovedTitle => 'Request Approved';
 
   @override

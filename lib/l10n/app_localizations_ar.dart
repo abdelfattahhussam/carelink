@@ -627,6 +627,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notifNewRequestBody => 'هناك طلب دواء جديد ينتظر مراجعتك.';
 
   @override
+  String get notifNewDonationTitle => 'تبرع جديد';
+
+  @override
+  String get notifNewDonationBody => 'تم تقديم تبرع دواء جديد ينتظر مراجعتك.';
+
+  @override
   String get notifRequestApprovedTitle => 'تم قبول الطلب';
 
   @override

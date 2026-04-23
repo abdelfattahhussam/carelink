@@ -23,4 +23,9 @@ class NotificationService {
   Future<void> markAsRead(String notificationId) async {
     await _dio.post(ApiEndpoints.markRead(notificationId));
   }
+
+  /// Permanently dismiss/delete a notification
+  Future<void> dismissNotification(String notificationId) async {
+    await _dio.delete('${ApiEndpoints.notifications}/$notificationId');
+  }
 }

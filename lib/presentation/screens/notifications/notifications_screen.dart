@@ -29,6 +29,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     NotificationType.donationApproved  => Icons.check_circle_rounded,
     NotificationType.donationRejected  => Icons.cancel_rounded,
     NotificationType.newRequest        => Icons.inbox_rounded,
+    NotificationType.newDonation       => Icons.volunteer_activism_rounded,
     NotificationType.requestApproved   => Icons.thumb_up_rounded,
     NotificationType.requestRejected   => Icons.thumb_down_rounded,
     NotificationType.expiryWarning     => Icons.warning_amber_rounded,
@@ -38,6 +39,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     NotificationType.donationApproved  => AppColors.success,
     NotificationType.donationRejected  => AppColors.error,
     NotificationType.newRequest        => AppColors.info,
+    NotificationType.newDonation       => AppColors.info,
     NotificationType.requestApproved   => AppColors.primary,
     NotificationType.requestRejected   => AppColors.error,
     NotificationType.expiryWarning     => AppColors.warning,
@@ -49,6 +51,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       NotificationType.donationApproved  => l10n.notifDonationApprovedTitle,
       NotificationType.donationRejected  => l10n.notifDonationRejectedTitle,
       NotificationType.newRequest        => l10n.notifNewRequestTitle,
+      NotificationType.newDonation       => l10n.notifNewDonationTitle,
       NotificationType.requestApproved   => l10n.notifRequestApprovedTitle,
       NotificationType.requestRejected   => l10n.notifRequestRejectedTitle,
       NotificationType.expiryWarning     => l10n.notifExpiryWarningTitle,
@@ -134,6 +137,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 context.push('/my-donations');
                               case NotificationType.newRequest:
                                 context.push('/manage-requests');
+                              case NotificationType.newDonation:
+                                context.push('/review-donations');
                               case NotificationType.requestApproved:
                               case NotificationType.requestRejected:
                                 context.push('/my-requests');

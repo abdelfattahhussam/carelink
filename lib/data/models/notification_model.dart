@@ -4,6 +4,7 @@ import 'user_model.dart';
 enum NotificationType {
   donationApproved,
   donationRejected,
+  newDonation,
   newRequest,
   requestApproved,
   requestRejected,
@@ -46,6 +47,8 @@ class NotificationModel extends Equatable {
         return 'check_circle';
       case NotificationType.donationRejected:
         return 'cancel';
+      case NotificationType.newDonation:
+        return 'volunteer_activism';
       case NotificationType.newRequest:
         return 'inbox';
       case NotificationType.requestApproved:

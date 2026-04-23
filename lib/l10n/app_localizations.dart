@@ -1274,6 +1274,18 @@ abstract class AppLocalizations {
   /// **'A new medicine request is awaiting your review.'**
   String get notifNewRequestBody;
 
+  /// No description provided for @notifNewDonationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Donation'**
+  String get notifNewDonationTitle;
+
+  /// No description provided for @notifNewDonationBody.
+  ///
+  /// In en, this message translates to:
+  /// **'A new medicine donation has been submitted for review.'**
+  String get notifNewDonationBody;
+
   /// No description provided for @notifRequestApprovedTitle.
   ///
   /// In en, this message translates to:

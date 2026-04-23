@@ -298,7 +298,7 @@ class MockInterceptor extends Interceptor {
       'body': 'Sara Mohamed has requested Paracetamol 500mg.',
       'type': 'newRequest',
       'isRead': false,
-      'userId': null, // Role-wide notification
+      'userId': 'user-3', // Scoped to seed pharmacist only
       'targetRole': 'pharmacist',
       'createdAt': DateTime.now().subtract(const Duration(hours: 3)).toIso8601String(),
     },
@@ -311,16 +311,6 @@ class MockInterceptor extends Interceptor {
       'userId': 'user-2', // Private notification
       'targetRole': 'patient',
       'createdAt': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
-    },
-    {
-      'id': 'notif-4',
-      'title': 'Medicine Expiring Soon',
-      'body': 'Omeprazole 20mg will expire in 90 days.',
-      'type': 'expiryWarning',
-      'isRead': false,
-      'userId': null, // Role-wide notification
-      'targetRole': 'pharmacist',
-      'createdAt': DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
     },
   ];
 
@@ -397,6 +387,8 @@ class MockInterceptor extends Interceptor {
       // ─── NOTIFICATIONS ───
       } else if (path.contains('/notifications/read/') && method == 'POST') {
         response = _handleMarkRead(options);
+      } else if (path.contains('/notifications/') && method == 'DELETE') {
+        response = _handleDismissNotification(options);
       } else if (path.contains('/notifications') && method == 'GET') {
         response = _handleGetNotifications(options);
       } else {
@@ -724,7 +716,7 @@ class MockInterceptor extends Interceptor {
           userId: pharmacistId,
           title: 'New Donation Received',
           body: 'A new donation of ${data?['name'] ?? 'medicine'} has been submitted for review.',
-          type: 'newRequest',
+          type: 'newDonation',
         );
       }
     }
@@ -1169,6 +1161,23 @@ class MockInterceptor extends Interceptor {
       if (idx >= 0) {
         _notifications[idx]['isRead'] = true;
       }
+    }
+
+    return Response(
+      requestOptions: options,
+      statusCode: 200,
+      data: {'success': true},
+    );
+  }
+
+  /// Permanently delete a notification from the store
+  Response _handleDismissNotification(RequestOptions options) {
+    final id = options.path.split('/').last;
+
+    if (id.startsWith('expiry-')) {
+      _dismissedExpiryIds.add(id);
+    } else {
+      _notifications.removeWhere((n) => n['id'] == id);
     }
 
     return Response(

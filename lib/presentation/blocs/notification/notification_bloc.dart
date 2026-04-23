@@ -158,11 +158,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       emit(NotificationsLoaded(notifications: currentList));
     }
     
-    // Trigger mark as read so backend knows it's consumed
+    // Permanently delete from backend
     try {
-      await _service.markAsRead(event.notificationId);
+      await _service.dismissNotification(event.notificationId);
     } catch (e) {
-      debugPrint('NotificationBloc: Failed to mark as read on dismiss: $e');
+      debugPrint('NotificationBloc: Failed to dismiss notification: $e');
       // Rollback: re-insert the notification on failure
       if (removedNotification != null && state is NotificationsLoaded) {
         final rollbackList = List<NotificationModel>.from((state as NotificationsLoaded).notifications);

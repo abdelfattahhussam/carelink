@@ -196,6 +196,8 @@
   "notifDonationApprovedBody": "تم التحقق من تبرعك بنجاح من قبل فريقنا.",
   "notifNewRequestTitle": "طلب جديد",
   "notifNewRequestBody": "هناك طلب دواء جديد ينتظر مراجعتك.",
+  "notifNewDonationTitle": "تبرع جديد",
+  "notifNewDonationBody": "تم تقديم تبرع دواء جديد ينتظر مراجعتك.",
   "notifRequestApprovedTitle": "تم قبول الطلب",
   "notifRequestApprovedBody": "تمت الموافقة على طلبك. يمكنك الآن استلام الدواء.",
   "notifDonationRejectedTitle": "تم رفض التبرع",

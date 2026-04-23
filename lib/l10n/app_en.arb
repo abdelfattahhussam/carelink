@@ -196,6 +196,8 @@
   "notifDonationApprovedBody": "Your donation has been verified by our team.",
   "notifNewRequestTitle": "New Request",
   "notifNewRequestBody": "A new medicine request is awaiting your review.",
+  "notifNewDonationTitle": "New Donation",
+  "notifNewDonationBody": "A new medicine donation has been submitted for review.",
   "notifRequestApprovedTitle": "Request Approved",
   "notifRequestApprovedBody": "Your request was approved. You can now pick up your medicine.",
   "notifDonationRejectedTitle": "Donation Rejected",
