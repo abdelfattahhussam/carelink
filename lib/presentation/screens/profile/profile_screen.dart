@@ -161,7 +161,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             decoration: BoxDecoration(shape: BoxShape.circle, border: Border.all(color: AppColors.primary, width: 2)),
             child: CircleAvatar(
               radius: 50,
-              backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerHighest,
               backgroundImage: user?.profilePicturePath != null ? FileImage(File(user!.profilePicturePath!)) : null,
               child: user?.profilePicturePath == null 
                 ? Text(user?.name.isNotEmpty == true ? user!.name[0].toUpperCase() : 'U', style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold, color: AppColors.primary))
@@ -260,7 +260,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ? BlocBuilder<SettingsCubit, SettingsState>(
               builder: (context, state) => Switch(
                 value: state.themeMode == ThemeMode.dark,
-                activeColor: AppColors.primary,
+                thumbColor: WidgetStateProperty.resolveWith(
+                  (states) => states.contains(WidgetState.selected)
+                      ? AppColors.primary
+                      : null,
+                ),
                 onChanged: (_) => context.read<SettingsCubit>().toggleTheme(),
               ),
             )

@@ -17,9 +17,9 @@ class PharmacyService {
     final response = await _dio.get(
       ApiEndpoints.pharmacies,
       queryParameters: {
-        if (governorate != null) 'governorate': governorate,
-        if (city != null) 'city': city,
-        if (district != null) 'district': district,
+        'governorate': ?governorate,
+        'city': ?city,
+        'district': ?district,
       },
     );
     if (response.statusCode == 200 && response.data['success'] == true) {

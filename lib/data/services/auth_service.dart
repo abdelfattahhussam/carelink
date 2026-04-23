@@ -45,12 +45,12 @@ class AuthService {
         'nationalId': nationalId,
         'password': password,
         'role': role.toJson(),
-        if (pharmacyName != null) 'pharmacyName': pharmacyName,
-        if (governorate != null) 'governorate': governorate,
-        if (city != null) 'city': city,
-        if (village != null) 'village': village,
-        if (street != null) 'street': street,
-        if (licensePath != null) 'licensePath': licensePath,
+        'pharmacyName': ?pharmacyName,
+        'governorate': ?governorate,
+        'city': ?city,
+        'village': ?village,
+        'street': ?street,
+        'licensePath': ?licensePath,
       },
     );
 

@@ -25,7 +25,7 @@ class RequestService {
         'quantity': quantity,
         'isUrgent': isUrgent,
         'reason': reason,
-        if (prescriptionPath != null) 'prescriptionPath': prescriptionPath,
+        'prescriptionPath': ?prescriptionPath,
       },
     );
 
@@ -72,9 +72,9 @@ class RequestService {
       data: {
         'requestId': requestId,
         'action': action,
-        if (approvedBoxes != null) 'approvedBoxes': approvedBoxes,
-        if (approvedStrips != null) 'approvedStrips': approvedStrips,
-        if (reviewReason != null) 'reviewReason': reviewReason,
+        'approvedBoxes': ?approvedBoxes,
+        'approvedStrips': ?approvedStrips,
+        'reviewReason': ?reviewReason,
       },
     );
 

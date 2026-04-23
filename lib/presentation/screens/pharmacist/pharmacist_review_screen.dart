@@ -57,17 +57,23 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                       const Text("Select Rejection Reason:", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                       const SizedBox(height: 8),
                       // Loop through reasons
-                      ...rejectReasons.map((reason) => RadioListTile<String>(
-                        title: Text(reason, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                        value: reason,
+                      RadioGroup<String>(
                         groupValue: selectedReason,
-                        activeColor: AppColors.error,
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
                         onChanged: (val) {
                           setState(() => selectedReason = val);
                         },
-                      )),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: rejectReasons.map((reason) => RadioListTile<String>(
+                            title: Text(reason, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                            value: reason,
+                            toggleable: true,
+                            activeColor: AppColors.error,
+                            contentPadding: EdgeInsets.zero,
+                            dense: true,
+                          )).toList(),
+                        ),
+                      ),
                       if (selectedReason == 'Other reason') ...[
                         const SizedBox(height: 12),
                         TextField(

@@ -62,7 +62,7 @@ class _RequestDecisionBottomSheetState extends State<RequestDecisionBottomSheet>
         borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
             offset: const Offset(0, -5),
           ),
@@ -102,12 +102,12 @@ class _RequestDecisionBottomSheetState extends State<RequestDecisionBottomSheet>
             decoration: BoxDecoration(
               color: theme.cardColor,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: theme.dividerColor.withOpacity(0.3)),
+              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.3)),
             ),
             child: Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: AppColors.secondary.withOpacity(0.1),
+                  backgroundColor: AppColors.secondary.withValues(alpha: 0.1),
                   child: const Icon(Icons.person, color: AppColors.secondary),
                 ),
                 const SizedBox(width: 16),
@@ -132,7 +132,7 @@ class _RequestDecisionBottomSheetState extends State<RequestDecisionBottomSheet>
             decoration: BoxDecoration(
               color: theme.cardColor,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: theme.dividerColor.withOpacity(0.3)),
+              border: Border.all(color: theme.dividerColor.withValues(alpha: 0.3)),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -144,7 +144,7 @@ class _RequestDecisionBottomSheetState extends State<RequestDecisionBottomSheet>
                       width: 50,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: AppColors.primary.withOpacity(0.1),
+                        color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Icon(Icons.medication, color: AppColors.primary),
@@ -196,7 +196,7 @@ class _RequestDecisionBottomSheetState extends State<RequestDecisionBottomSheet>
           Container(
              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
              decoration: BoxDecoration(
-               color: AppColors.info.withOpacity(0.1),
+               color: AppColors.info.withValues(alpha: 0.1),
                borderRadius: BorderRadius.circular(14),
              ),
              child: Row(
@@ -270,7 +270,7 @@ class _RequestDecisionBottomSheetState extends State<RequestDecisionBottomSheet>
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.success,
                     foregroundColor: Colors.white,
-                    disabledBackgroundColor: AppColors.success.withOpacity(0.3),
+                    disabledBackgroundColor: AppColors.success.withValues(alpha: 0.3),
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                   ),
@@ -359,7 +359,7 @@ class _RequestDecisionBottomSheetState extends State<RequestDecisionBottomSheet>
         decoration: BoxDecoration(
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Theme.of(context).dividerColor.withOpacity(0.5)),
+          border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.5)),
         ),
         child: Icon(icon, size: 20),
       ),
@@ -387,7 +387,7 @@ void _showRejectBottomSheet(BuildContext parentContext, String requestId, Reques
       return StatefulBuilder(
         builder: (context, setState) {
           return PopScope(
-            onPopInvokedWithResult: (_, __) => otherCtrl.dispose(),
+            onPopInvokedWithResult: (_, _) => otherCtrl.dispose(),
             child: Padding(
               padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Container(
@@ -402,16 +402,22 @@ void _showRejectBottomSheet(BuildContext parentContext, String requestId, Reques
                    children: [
                       Text(l10n.selectRejectionReason, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
                       const SizedBox(height: 16),
-                      ...reasons.map((reason) => RadioListTile<String>(
-                        title: Text(reason, style: const TextStyle(fontWeight: FontWeight.w600)),
-                        value: reason,
+                      RadioGroup<String>(
                         groupValue: selectedReason,
-                        activeColor: AppColors.error,
                         onChanged: (val) {
                           setState(() => selectedReason = val);
                         },
-                        contentPadding: EdgeInsets.zero,
-                      )),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: reasons.map((reason) => RadioListTile<String>(
+                            title: Text(reason, style: const TextStyle(fontWeight: FontWeight.w600)),
+                            value: reason,
+                            toggleable: true,
+                            activeColor: AppColors.error,
+                            contentPadding: EdgeInsets.zero,
+                          )).toList(),
+                        ),
+                      ),
                       if (selectedReason == l10n.otherReason) ...[
                         const SizedBox(height: 12),
                         AppTextField(
@@ -436,7 +442,7 @@ void _showRejectBottomSheet(BuildContext parentContext, String requestId, Reques
                          style: ElevatedButton.styleFrom(
                            backgroundColor: AppColors.error,
                            foregroundColor: Colors.white,
-                           disabledBackgroundColor: AppColors.error.withOpacity(0.3),
+                           disabledBackgroundColor: AppColors.error.withValues(alpha: 0.3),
                            padding: const EdgeInsets.symmetric(vertical: 16),
                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                          ),
