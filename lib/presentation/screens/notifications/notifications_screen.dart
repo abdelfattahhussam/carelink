@@ -138,7 +138,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                               case NotificationType.newRequest:
                                 context.push('/manage-requests');
                               case NotificationType.newDonation:
-                                context.push('/review-donations');
+                                context.push('/review');
                               case NotificationType.requestApproved:
                               case NotificationType.requestRejected:
                                 context.push('/my-requests');
