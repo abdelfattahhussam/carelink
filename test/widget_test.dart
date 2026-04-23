@@ -78,37 +78,37 @@ void main() {
   // ═══════════════════════════════════════════════════
   group('AppColors', () {
     test('primary palette values are correct', () {
-      expect(AppColors.primary.value, 0xFF0D9488);
-      expect(AppColors.primaryLight.value, 0xFF5EEAD4);
-      expect(AppColors.primaryDark.value, 0xFF065F53);
+      expect(AppColors.primary.toARGB32(), 0xFF0D9488);
+      expect(AppColors.primaryLight.toARGB32(), 0xFF5EEAD4);
+      expect(AppColors.primaryDark.toARGB32(), 0xFF065F53);
     });
 
     test('secondary palette is Sky Blue (not Indigo)', () {
-      expect(AppColors.secondary.value, 0xFF0EA5E9);
-      expect(AppColors.secondaryLight.value, 0xFF7DD3FC);
-      expect(AppColors.secondaryContainer.value, 0xFFE0F2FE);
+      expect(AppColors.secondary.toARGB32(), 0xFF0EA5E9);
+      expect(AppColors.secondaryLight.toARGB32(), 0xFF7DD3FC);
+      expect(AppColors.secondaryContainer.toARGB32(), 0xFFE0F2FE);
     });
 
     test('success and approved are in sync', () {
-      expect(AppColors.success.value, AppColors.approved.value);
+      expect(AppColors.success.toARGB32(), AppColors.approved.toARGB32());
     });
 
     test('accent is distinct from warning', () {
-      expect(AppColors.accent.value != AppColors.warning.value, true,
+      expect(AppColors.accent.toARGB32() != AppColors.warning.toARGB32(), true,
           reason: 'Accent and Warning must be visually distinct');
     });
 
     test('heroGradient uses Teal → Sky Blue', () {
       final colors = AppColors.heroGradient.colors;
       expect(colors.length, 2);
-      expect(colors[0].value, 0xFF0D9488);
-      expect(colors[1].value, 0xFF0EA5E9);
+      expect(colors[0].toARGB32(), 0xFF0D9488);
+      expect(colors[1].toARGB32(), 0xFF0EA5E9);
     });
 
     test('dividerDark is distinct from surfaceVariantDark', () {
-      expect(AppColors.dividerDark.value != AppColors.surfaceVariantDark.value, true,
+      expect(AppColors.dividerDark.toARGB32() != AppColors.surfaceVariantDark.toARGB32(), true,
           reason: 'Divider must be visible against input backgrounds');
-      expect(AppColors.dividerDark.value, 0xFF475569);
+      expect(AppColors.dividerDark.toARGB32(), 0xFF475569);
     });
   });
 
@@ -117,11 +117,11 @@ void main() {
   // ═══════════════════════════════════════════════════
   group('Semantic containers', () {
     test('all semantic colors have matching container variants', () {
-      expect(AppColors.successContainer.value, 0xFFDCFCE7);
-      expect(AppColors.warningContainer.value, 0xFFFEF3C7);
-      expect(AppColors.errorContainer.value, 0xFFFEE2E2);
-      expect(AppColors.infoContainer.value, 0xFFDBEAFE);
-      expect(AppColors.accentContainer.value, 0xFFFFF7ED);
+      expect(AppColors.successContainer.toARGB32(), 0xFFDCFCE7);
+      expect(AppColors.warningContainer.toARGB32(), 0xFFFEF3C7);
+      expect(AppColors.errorContainer.toARGB32(), 0xFFFEE2E2);
+      expect(AppColors.infoContainer.toARGB32(), 0xFFDBEAFE);
+      expect(AppColors.accentContainer.toARGB32(), 0xFFFFF7ED);
     });
   });
 
@@ -130,8 +130,8 @@ void main() {
   // ═══════════════════════════════════════════════════
   group('Disabled colors', () {
     test('textDisabled is lighter than textLight', () {
-      expect(AppColors.textDisabled.value, 0xFFCBD5E1);
-      expect(AppColors.textDisabledDark.value, 0xFF475569);
+      expect(AppColors.textDisabled.toARGB32(), 0xFFCBD5E1);
+      expect(AppColors.textDisabledDark.toARGB32(), 0xFF475569);
     });
   });
 
@@ -142,15 +142,15 @@ void main() {
     test('successGradient uses green tones', () {
       final colors = AppColors.successGradient.colors;
       expect(colors.length, 2);
-      expect(colors[0].value, 0xFF22C55E);
-      expect(colors[1].value, 0xFF16A34A);
+      expect(colors[0].toARGB32(), 0xFF22C55E);
+      expect(colors[1].toARGB32(), 0xFF16A34A);
     });
 
     test('infoGradient uses blue to sky blue', () {
       final colors = AppColors.infoGradient.colors;
       expect(colors.length, 2);
-      expect(colors[0].value, 0xFF3B82F6);
-      expect(colors[1].value, 0xFF0EA5E9);
+      expect(colors[0].toARGB32(), 0xFF3B82F6);
+      expect(colors[1].toARGB32(), 0xFF0EA5E9);
     });
   });
 
