@@ -37,7 +37,6 @@ void main() {
       expect(user.isPatient, false);
       expect(user.isPharmacist, false);
 
-      // Roundtrip: output should recreate the same model
       final roundtrip = UserModel.fromJson(output);
       expect(roundtrip, equals(user));
     });
@@ -46,8 +45,8 @@ void main() {
       final user = UserModel.fromJson({});
 
       expect(user.id, '');
-      expect(user.role, UserRole.patient); // default
-      expect(user.status, 'verified');     // default
+      expect(user.role, UserRole.patient);
+      expect(user.status, 'verified');
       expect(user.token, '');
     });
 
@@ -69,8 +68,8 @@ void main() {
 
       expect(copy.name, 'Modified');
       expect(copy.role, UserRole.pharmacist);
-      expect(copy.id, 'u1'); // unchanged
-      expect(original.name, 'Original'); // original unaffected
+      expect(copy.id, 'u1');
+      expect(original.name, 'Original');
     });
   });
 
@@ -102,8 +101,8 @@ void main() {
     test('heroGradient uses Teal → Sky Blue', () {
       final colors = AppColors.heroGradient.colors;
       expect(colors.length, 2);
-      expect(colors[0].value, 0xFF0D9488); // Teal
-      expect(colors[1].value, 0xFF0EA5E9); // Sky Blue
+      expect(colors[0].value, 0xFF0D9488);
+      expect(colors[1].value, 0xFF0EA5E9);
     });
 
     test('dividerDark is distinct from surfaceVariantDark', () {
@@ -118,7 +117,6 @@ void main() {
   // ═══════════════════════════════════════════════════
   group('Semantic containers', () {
     test('all semantic colors have matching container variants', () {
-      // Container colors should be lighter tints of their base
       expect(AppColors.successContainer.value, 0xFFDCFCE7);
       expect(AppColors.warningContainer.value, 0xFFFEF3C7);
       expect(AppColors.errorContainer.value, 0xFFFEE2E2);
@@ -132,7 +130,6 @@ void main() {
   // ═══════════════════════════════════════════════════
   group('Disabled colors', () {
     test('textDisabled is lighter than textLight', () {
-      // textDisabled should have higher value (lighter) than textLight
       expect(AppColors.textDisabled.value, 0xFFCBD5E1);
       expect(AppColors.textDisabledDark.value, 0xFF475569);
     });
