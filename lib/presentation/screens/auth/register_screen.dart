@@ -36,7 +36,7 @@ class _RegisterScreenState extends State<RegisterScreen>
 
   String? _licensePath;
   bool _obscurePassword = true;
-  UserRole _selectedRole = UserRole.patient;
+  UserRole _selectedRole = UserRole.user;
 
   final ImagePicker _picker = ImagePicker();
 
@@ -129,13 +129,8 @@ class _RegisterScreenState extends State<RegisterScreen>
   Widget build(BuildContext context) {
     final roles = [
       {
-        'value': UserRole.donor,
-        'label': AppLocalizations.of(context)!.donor,
-        'icon': Icons.volunteer_activism,
-      },
-      {
-        'value': UserRole.patient,
-        'label': AppLocalizations.of(context)!.patient,
+        'value': UserRole.user,
+        'label': AppLocalizations.of(context)!.roleUser,
         'icon': Icons.person,
       },
       {

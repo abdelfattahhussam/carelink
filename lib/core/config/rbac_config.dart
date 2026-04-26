@@ -18,23 +18,19 @@ enum AppPermission {
 class RBACConfig {
   /// Map of roles to their allowed permissions
   static const Map<UserRole, Set<AppPermission>> _rolePermissions = {
+    UserRole.user: {
+      AppPermission.donate,
+      AppPermission.viewMyDonations,
+      AppPermission.requestMedicine,
+      AppPermission.viewMyRequests,
+      AppPermission.viewMedicines,
+      AppPermission.viewNotifications,
+    },
     UserRole.pharmacist: {
       AppPermission.viewDashboard,
       AppPermission.reviewDonations,
       AppPermission.manageRequests,
       AppPermission.scanQr,
-      AppPermission.viewMedicines,
-      AppPermission.viewNotifications,
-    },
-    UserRole.donor: {
-      AppPermission.donate,
-      AppPermission.viewMyDonations,
-      AppPermission.viewMedicines,
-      AppPermission.viewNotifications,
-    },
-    UserRole.patient: {
-      AppPermission.requestMedicine,
-      AppPermission.viewMyRequests,
       AppPermission.viewMedicines,
       AppPermission.viewNotifications,
     },
@@ -55,8 +51,7 @@ class RBACConfig {
   static String homeRouteFor(UserRole role) {
     return switch (role) {
       UserRole.pharmacist => '/dashboard',
-      UserRole.donor => '/donor-home',
-      UserRole.patient => '/patient-home',
+      UserRole.user       => '/user-home',
     };
   }
 }

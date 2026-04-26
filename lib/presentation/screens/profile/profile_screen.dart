@@ -218,7 +218,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         const SizedBox(height: 4),
         Text(user?.email ?? '', style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: 12),
-        RoleBadge(role: user?.role ?? UserRole.patient),
+        RoleBadge(role: user?.role ?? UserRole.user),
         const SizedBox(height: 8),
         Text(
           '${l10n.nationalId}: ${user?.nationalId ?? '—'}',

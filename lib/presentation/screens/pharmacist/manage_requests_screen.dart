@@ -82,15 +82,17 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
                 )!.noPatientRequestsAtMoment,
               );
             } else {
+              final sortedRequests = state.requests.toList()
+                ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
               child = ListView.builder(
                 key: const ValueKey('list'),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 16,
                 ),
-                itemCount: state.requests.length,
+                itemCount: sortedRequests.length,
                 itemBuilder: (context, i) {
-                  final r = state.requests[i];
+                  final r = sortedRequests[i];
                   return Container(
                     margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(

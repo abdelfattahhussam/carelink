@@ -19,14 +19,14 @@ void main() {
     email: 'test@test.com',
     phone: '01234567890',
     nationalId: '12345678901234',
-    role: UserRole.donor,
+    role: UserRole.user,
     status: 'verified',
     token: 'mock-token',
     createdAt: DateTime(2026, 1, 1),
   );
 
   setUpAll(() {
-    registerFallbackValue(UserRole.donor);
+    registerFallbackValue(UserRole.user);
   });
 
   setUp(() {
@@ -94,7 +94,7 @@ void main() {
           phone: '01234567890',
           nationalId: '12345678901234',
           password: 'pass',
-          role: UserRole.donor,
+          role: UserRole.user,
         ),
       ),
       expect: () => [isA<AuthLoading>(), isA<AuthAuthenticated>()],
@@ -121,7 +121,7 @@ void main() {
         await fakeStorage.write('auth_token', 'tok');
         await fakeStorage.write(
           'user_data',
-          '{"id":"1","name":"T","email":"t@t.com","phone":"0","nationalId":"0","role":"donor","status":"verified","token":"tok","createdAt":"2026-01-01T00:00:00.000"}',
+          '{"id":"1","name":"T","email":"t@t.com","phone":"0","nationalId":"0","role":"user","status":"verified","token":"tok","createdAt":"2026-01-01T00:00:00.000"}',
         );
       },
       build: () => buildBloc(),

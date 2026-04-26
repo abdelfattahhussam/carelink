@@ -317,5 +317,6 @@
   "all": "All",
   "noRequestsFound": "No Requests Found",
   "noDonationsFound": "No Donations Found",
-  "registrationSuccess": "Account created successfully!"
+  "registrationSuccess": "Account created successfully!",
+  "roleUser": "User"
 }

@@ -1921,6 +1921,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Account created successfully!'**
   String get registrationSuccess;
+
+  /// No description provided for @roleUser.
+  ///
+  /// In en, this message translates to:
+  /// **'User'**
+  String get roleUser;
 }
 
 class _AppLocalizationsDelegate

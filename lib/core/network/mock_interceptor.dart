@@ -9,10 +9,10 @@ class MockInterceptor extends Interceptor {
     {
       'id': 'user-1',
       'name': 'Ahmed Hassan',
-      'email': 'donor@test.com',
+      'email': 'user@test.com',
       'phone': '+201234567890',
       'nationalId': '29001011234567',
-      'role': 'donor',
+      'role': 'user',
       'status': 'verified',
       'token': 'mock-jwt-token-donor',
       'createdAt': DateTime.now()
@@ -22,10 +22,10 @@ class MockInterceptor extends Interceptor {
     {
       'id': 'user-2',
       'name': 'Sara Mohamed',
-      'email': 'patient@test.com',
+      'email': 'user2@test.com',
       'phone': '+201098765432',
       'nationalId': '29505057654321',
-      'role': 'patient',
+      'role': 'user',
       'status': 'verified',
       'token': 'mock-jwt-token-patient',
       'createdAt': DateTime.now()
@@ -332,7 +332,7 @@ class MockInterceptor extends Interceptor {
       'type': 'donationApproved',
       'isRead': false,
       'userId': 'user-1',
-      'targetRole': 'donor',
+      'targetRole': 'user',
       'createdAt': DateTime.now()
           .subtract(const Duration(hours: 2))
           .toIso8601String(),
@@ -357,7 +357,7 @@ class MockInterceptor extends Interceptor {
       'type': 'requestApproved',
       'isRead': true,
       'userId': 'user-2', // Private notification
-      'targetRole': 'patient',
+      'targetRole': 'user',
       'createdAt': DateTime.now()
           .subtract(const Duration(days: 1))
           .toIso8601String(),
@@ -508,6 +508,11 @@ class MockInterceptor extends Interceptor {
 
   Response _handleRegister(RequestOptions options) {
     final data = options.data as Map<String, dynamic>?;
+
+    // Normalize role — treat old 'donor'/'patient' as 'user'
+    final rawRole = data?['role'] ?? 'user';
+    final role = (rawRole == 'donor' || rawRole == 'patient') ? 'user' : rawRole;
+
     final id = 'user-${_uuid.v4().substring(0, 8)}';
     final newUser = {
       'id': id,
@@ -515,7 +520,7 @@ class MockInterceptor extends Interceptor {
       'email': data?['email'] ?? '',
       'phone': data?['phone'] ?? '',
       'nationalId': data?['nationalId'] ?? '',
-      'role': data?['role'] ?? 'patient',
+      'role': role,
       'status': 'verified',
       'token': 'mock-jwt-token-$id',
       'createdAt': DateTime.now().toIso8601String(),
@@ -681,7 +686,7 @@ class MockInterceptor extends Interceptor {
     List<Map<String, dynamic>> result = _donations;
 
     if (user != null) {
-      if (user['role'] == 'donor') {
+      if (user['role'] == 'user') {
         // Donor sees only his own donations
         result = _donations.where((d) => d['donorId'] == user['id']).toList();
       } else if (user['role'] == 'pharmacist') {
@@ -939,7 +944,7 @@ class MockInterceptor extends Interceptor {
 
     List<Map<String, dynamic>> result = _requests;
     if (user != null) {
-      if (user['role'] == 'patient') {
+      if (user['role'] == 'user') {
         result = _requests.where((r) => r['patientId'] == user['id']).toList();
       } else if (user['role'] == 'pharmacist') {
         // Pharmacist sees only requests for his pharmacy

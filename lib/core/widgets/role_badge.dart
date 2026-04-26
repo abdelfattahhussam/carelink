@@ -12,14 +12,12 @@ class RoleBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = switch (role) {
       UserRole.pharmacist => AppColors.primary,
-      UserRole.donor => AppColors.success,
-      UserRole.patient => AppColors.secondary,
+      UserRole.user       => AppColors.secondary,
     };
 
     final label = switch (role) {
       UserRole.pharmacist => AppLocalizations.of(context)!.pharmacist,
-      UserRole.donor => AppLocalizations.of(context)!.donor,
-      UserRole.patient => AppLocalizations.of(context)!.patient,
+      UserRole.user       => AppLocalizations.of(context)!.roleUser,
     };
 
     return Container(

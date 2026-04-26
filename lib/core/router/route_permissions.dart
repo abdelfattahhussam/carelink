@@ -3,6 +3,7 @@ import '../config/rbac_config.dart';
 /// Top-level constant mapping routes to required permissions.
 /// Moved here to avoid rebuilding the map on every router redirect.
 const Map<String, AppPermission> routePermissions = {
+  '/user-home': AppPermission.viewMedicines,
   '/dashboard': AppPermission.viewDashboard,
   '/review': AppPermission.reviewDonations,
   '/manage-requests': AppPermission.manageRequests,

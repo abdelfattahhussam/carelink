@@ -11,10 +11,10 @@ void main() {
       final json = {
         'id': 'user-1',
         'name': 'Ahmed Hassan',
-        'email': 'donor@test.com',
+        'email': 'user@test.com',
         'phone': '+201234567890',
         'nationalId': '29001011234567',
-        'role': 'donor',
+        'role': 'user',
         'status': 'verified',
         'token': 'mock-token',
         'createdAt': '2026-01-01T00:00:00.000',
@@ -30,11 +30,12 @@ void main() {
 
       expect(user.id, 'user-1');
       expect(user.name, 'Ahmed Hassan');
-      expect(user.email, 'donor@test.com');
+      expect(user.email, 'user@test.com');
       expect(user.nationalId, '29001011234567');
-      expect(user.role, UserRole.donor);
-      expect(user.isDonor, true);
-      expect(user.isPatient, false);
+      expect(user.role, UserRole.user);
+      expect(user.isUser, true);
+      expect(user.isDonor, true);   // compat getter delegates to isUser
+      expect(user.isPatient, true); // compat getter delegates to isUser
       expect(user.isPharmacist, false);
 
       final roundtrip = UserModel.fromJson(output);
@@ -45,23 +46,25 @@ void main() {
       final user = UserModel.fromJson({});
 
       expect(user.id, '');
-      expect(user.role, UserRole.patient);
+      expect(user.role, UserRole.user);
       expect(user.status, 'verified');
       expect(user.token, '');
     });
 
-    test('fromJson parses all three roles correctly', () {
-      for (final role in ['donor', 'patient', 'pharmacist']) {
+    test('fromJson maps legacy donor/patient to user, pharmacist stays', () {
+      for (final role in ['donor', 'patient', 'user']) {
         final user = UserModel.fromJson({'role': role});
-        expect(user.role, UserRole.values.byName(role));
+        expect(user.role, UserRole.user);
       }
+      final pharmacist = UserModel.fromJson({'role': 'pharmacist'});
+      expect(pharmacist.role, UserRole.pharmacist);
     });
 
     test('copyWith creates independent copy with overrides', () {
       final original = UserModel.fromJson({
         'id': 'u1',
         'name': 'Original',
-        'role': 'donor',
+        'role': 'user',
       });
 
       final copy = original.copyWith(
@@ -169,23 +172,24 @@ void main() {
   // ═══════════════════════════════════════════════════
   group('UserRole', () {
     test('toJson returns lowercase name', () {
-      expect(UserRole.donor.toJson(), 'donor');
-      expect(UserRole.patient.toJson(), 'patient');
+      expect(UserRole.user.toJson(), 'user');
       expect(UserRole.pharmacist.toJson(), 'pharmacist');
     });
 
-    test('fromJson parses valid strings', () {
-      expect(UserRole.fromJson('donor'), UserRole.donor);
+    test('fromJson maps donor/patient/user → UserRole.user', () {
+      expect(UserRole.fromJson('donor'), UserRole.user);
+      expect(UserRole.fromJson('patient'), UserRole.user);
+      expect(UserRole.fromJson('user'), UserRole.user);
       expect(UserRole.fromJson('pharmacist'), UserRole.pharmacist);
     });
 
-    test('fromJson defaults to patient for unknown role', () {
-      expect(UserRole.fromJson('admin'), UserRole.patient);
-      expect(UserRole.fromJson(''), UserRole.patient);
+    test('fromJson defaults to user for unknown role', () {
+      expect(UserRole.fromJson('admin'), UserRole.user);
+      expect(UserRole.fromJson(''), UserRole.user);
     });
 
-    test('label capitalizes first letter', () {
-      expect(UserRole.donor.label, 'Donor');
+    test('label returns human-readable string', () {
+      expect(UserRole.user.label, 'User');
       expect(UserRole.pharmacist.label, 'Pharmacist');
     });
   });

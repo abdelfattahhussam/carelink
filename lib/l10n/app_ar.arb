@@ -303,5 +303,6 @@
   "all": "الكل",
   "noRequestsFound": "لا توجد طلبات هنا",
   "noDonationsFound": "لا توجد تبرعات هنا",
-  "registrationSuccess": "تم إنشاء الحساب بنجاح!"
+  "registrationSuccess": "تم إنشاء الحساب بنجاح!",
+  "roleUser": "مستخدم"
 }

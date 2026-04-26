@@ -964,4 +964,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get registrationSuccess => 'تم إنشاء الحساب بنجاح!';
+
+  @override
+  String get roleUser => 'مستخدم';
 }

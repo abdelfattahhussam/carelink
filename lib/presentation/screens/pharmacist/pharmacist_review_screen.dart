@@ -101,7 +101,7 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                         TextField(
                           controller: notesCtrl,
                           decoration: InputDecoration(
-                            hintText: "Enter custom reason...",
+                            hintText: AppLocalizations.of(context)!.enterCustomReason,
                             filled: true,
                             fillColor: Theme.of(
                               context,
@@ -272,15 +272,17 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                 subtitle: AppLocalizations.of(context)!.noPendingDonations,
               );
             } else {
+              final sortedDonations = state.donations.toList()
+                ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
               child = ListView.builder(
                 key: const ValueKey('list'),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 20,
                   vertical: 16,
                 ),
-                itemCount: state.donations.length,
+                itemCount: sortedDonations.length,
                 itemBuilder: (context, i) {
-                  final d = state.donations[i];
+                  final d = sortedDonations[i];
                   return Container(
                     margin: const EdgeInsets.only(bottom: 16),
                     padding: const EdgeInsets.all(20),

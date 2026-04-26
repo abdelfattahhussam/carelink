@@ -974,4 +974,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get registrationSuccess => 'Account created successfully!';
+
+  @override
+  String get roleUser => 'User';
 }

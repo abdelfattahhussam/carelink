@@ -116,7 +116,8 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       // Secondary safety filtering
       final filtered = notifications.where((n) {
         return n.userId == userId || n.targetRole == userRole;
-      }).toList();
+      }).toList()
+        ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       emit(NotificationsLoaded(notifications: filtered));
     } catch (e) {

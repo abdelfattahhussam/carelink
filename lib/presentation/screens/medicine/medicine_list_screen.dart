@@ -31,7 +31,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
   bool get _isPatient {
     final authState = context.read<AuthBloc>().state;
     return authState is AuthAuthenticated &&
-        authState.user.role == UserRole.patient;
+        authState.user.role == UserRole.user;
   }
 
   @override

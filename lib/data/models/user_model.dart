@@ -1,18 +1,20 @@
 import 'package:equatable/equatable.dart';
-import '../../core/config/rbac_config.dart';
 
 enum UserRole {
-  donor,
-  patient,
+  user,
   pharmacist;
 
-  String toJson() => name;
-  static UserRole fromJson(String json) => UserRole.values.firstWhere(
-    (e) => e.name == json,
-    orElse: () => UserRole.patient,
-  );
+  static UserRole fromJson(String json) => switch (json) {
+    'pharmacist' => UserRole.pharmacist,
+    _            => UserRole.user, // maps 'donor', 'patient', 'user' → user
+  };
 
-  String get label => name[0].toUpperCase() + name.substring(1);
+  String toJson() => name; // produces 'user' or 'pharmacist'
+
+  String get label => switch (this) {
+    UserRole.user       => 'User',
+    UserRole.pharmacist => 'Pharmacist',
+  };
 }
 
 /// User model with JSON serialization
@@ -67,13 +69,15 @@ class UserModel extends Equatable {
   // TODO(backend): Replace with real verification check once backend implements user verification flow.
   // Currently hardcoded to true — all users are treated as verified.
   bool get isVerified => true;
-  bool get isDonor => role == UserRole.donor;
-  bool get isPatient => role == UserRole.patient;
+  bool get isUser => role == UserRole.user;
   bool get isPharmacist => role == UserRole.pharmacist;
 
+  // Compatibility getters — delegates to isUser (remove in Phase D)
+  bool get isDonor => isUser;
+  bool get isPatient => isUser;
+
   /// Centralized permission check — delegates to RBACConfig
-  bool get canRequestMedicine =>
-      RBACConfig.hasPermission(role, AppPermission.requestMedicine);
+  bool get canRequestMedicine => isUser;
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
