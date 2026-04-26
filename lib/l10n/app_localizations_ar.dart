@@ -464,6 +464,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'اعثر على الأدوية التي تحتاجها. نحن هنا للمساعدة.';
 
   @override
+  String get userWelcome =>
+      'تبرع بالأدوية أو اطلب ما تحتاجه. نحن هنا للمساعدة!';
+
+  @override
   String get pharmacistWelcome => 'قم بمراجعة التبرعات وإدارة الطلبات بفعالية.';
 
   @override

@@ -125,20 +125,10 @@ class AppRouter {
           path: '/dashboard',
           builder: (context, state) => const PharmacistDashboardScreen(),
         ),
-        // Unified user home (Phase B)
+        // Unified user home
         GoRoute(
           path: '/user-home',
           builder: (context, state) => const UserHomeScreen(),
-        ),
-
-        // Legacy role-specific homes — redirect to /user-home
-        GoRoute(
-          path: '/donor-home',
-          redirect: (context, state) => '/user-home',
-        ),
-        GoRoute(
-          path: '/patient-home',
-          redirect: (context, state) => '/user-home',
         ),
         GoRoute(
           path: '/profile',

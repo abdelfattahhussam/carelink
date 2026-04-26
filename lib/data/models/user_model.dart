@@ -72,10 +72,6 @@ class UserModel extends Equatable {
   bool get isUser => role == UserRole.user;
   bool get isPharmacist => role == UserRole.pharmacist;
 
-  // Compatibility getters — delegates to isUser (remove in Phase D)
-  bool get isDonor => isUser;
-  bool get isPatient => isUser;
-
   /// Centralized permission check — delegates to RBACConfig
   bool get canRequestMedicine => isUser;
 

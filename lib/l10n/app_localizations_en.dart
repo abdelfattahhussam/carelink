@@ -468,6 +468,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Find the medicines you need. We\'re here to help.';
 
   @override
+  String get userWelcome =>
+      'Donate medicines or request what you need. We\'re here to help!';
+
+  @override
   String get pharmacistWelcome =>
       'Review donations and manage requests efficiently.';
 

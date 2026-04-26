@@ -349,17 +349,12 @@ class _LoginScreenState extends State<LoginScreen>
                                   runSpacing: 8,
                                   children: [
                                     _demoChip(
-                                      'Donor',
-                                      'donor@test.com',
-                                      Icons.volunteer_activism,
-                                    ),
-                                    _demoChip(
-                                      'Patient',
-                                      'patient@test.com',
+                                      AppLocalizations.of(context)!.roleUser,
+                                      'user@test.com',
                                       Icons.person,
                                     ),
                                     _demoChip(
-                                      'Pharmacist',
+                                      AppLocalizations.of(context)!.pharmacist,
                                       'pharmacist@test.com',
                                       Icons.medical_services,
                                     ),

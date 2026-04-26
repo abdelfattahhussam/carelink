@@ -145,6 +145,7 @@
   "signInToContinue": "Sign in to continue to {appName}",
   "donorWelcome": "Your generosity helps those in need. Donate medicines today!",
   "patientWelcome": "Find the medicines you need. We're here to help.",
+  "userWelcome": "Donate medicines or request what you need. We're here to help!",
   "pharmacistWelcome": "Review donations and manage requests efficiently.",
   "verifiedRole": "Verified {role}",
   "scan": "Scan",

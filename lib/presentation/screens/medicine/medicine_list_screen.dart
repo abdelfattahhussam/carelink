@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/config/rbac_config.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/shared_widgets.dart';
-import '../../../data/models/user_model.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/medicine/medicine_bloc.dart';
 import '../../blocs/pharmacy/pharmacy_bloc.dart';
@@ -28,10 +28,12 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
   bool _filterExpired = false;
   bool _filterOutOfStock = false;
 
-  bool get _isPatient {
+  /// Whether the current user has the `requestMedicine` permission.
+  /// Uses the centralised RBAC permission model.
+  bool get _canRequestMedicine {
     final authState = context.read<AuthBloc>().state;
-    return authState is AuthAuthenticated &&
-        authState.user.role == UserRole.user;
+    if (authState is! AuthAuthenticated) return false;
+    return RBACConfig.can(authState.user, AppPermission.requestMedicine);
   }
 
   @override
@@ -157,7 +159,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
               spacing: 12,
               runSpacing: 12,
               children: [
-                if (!_isPatient)
+                if (!_canRequestMedicine)
                   _detailChip(
                     Icons.inventory_2_rounded,
                     "${medicine.quantity} ${medicine.unit.localizedName(context)}",
@@ -182,7 +184,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
               ],
             ),
             const SizedBox(height: 32),
-            if (_isPatient) ...[
+            if (_canRequestMedicine) ...[
               Row(
                 children: [
                   Expanded(
@@ -308,7 +310,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
   Widget _buildFilterBar() {
     final l10n = AppLocalizations.of(context)!;
 
-    if (!_isPatient) {
+    if (!_canRequestMedicine) {
       final hasFilter =
           _filterExpiringSoon ||
           _filterLowStock ||
@@ -740,7 +742,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
 
                   // Get pharmacy IDs that match location filter
                   Set<String>? allowedPharmacyIds;
-                  if (_isPatient &&
+                  if (_canRequestMedicine &&
                       pharmacyState is PharmaciesLoaded &&
                       (_filterGovernorate != null || _filterCity != null)) {
                     allowedPharmacyIds = pharmacyState.pharmacies
@@ -761,7 +763,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                   // Apply filter to medicines
                   var medicines = state.medicines;
 
-                  if (_isPatient) {
+                  if (_canRequestMedicine) {
                     if (allowedPharmacyIds != null) {
                       medicines = medicines
                           .where(
@@ -925,7 +927,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                                                 )!.outOfStock,
                                                 AppColors.error,
                                               )
-                                            else if (!_isPatient)
+                                            else if (!_canRequestMedicine)
                                               _tag(
                                                 "${m.quantity} ${m.unit.localizedName(context)}",
                                                 AppColors.success,

@@ -968,6 +968,12 @@ abstract class AppLocalizations {
   /// **'Find the medicines you need. We\'re here to help.'**
   String get patientWelcome;
 
+  /// No description provided for @userWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Donate medicines or request what you need. We\'re here to help!'**
+  String get userWelcome;
+
   /// No description provided for @pharmacistWelcome.
   ///
   /// In en, this message translates to:

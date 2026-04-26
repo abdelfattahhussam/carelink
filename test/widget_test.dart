@@ -34,8 +34,6 @@ void main() {
       expect(user.nationalId, '29001011234567');
       expect(user.role, UserRole.user);
       expect(user.isUser, true);
-      expect(user.isDonor, true);   // compat getter delegates to isUser
-      expect(user.isPatient, true); // compat getter delegates to isUser
       expect(user.isPharmacist, false);
 
       final roundtrip = UserModel.fromJson(output);

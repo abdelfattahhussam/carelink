@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 /// Minimal loading shell for the /home route.
-/// The actual redirection to role-specific homes (Dashboard, DonorHome, etc.)
-/// is now handled centrally by the AppRouter's redirect logic.
+/// The actual redirection to role-specific homes (UserHome, Dashboard)
+/// is handled centrally by the AppRouter's redirect logic.
 class HomeRouterScreen extends StatelessWidget {
   const HomeRouterScreen({super.key});
 
