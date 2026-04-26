@@ -1933,6 +1933,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User'**
   String get roleUser;
+
+  /// No description provided for @recentActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Activity'**
+  String get recentActivity;
+
+  /// No description provided for @seeAll.
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAll;
 }
 
 class _AppLocalizationsDelegate

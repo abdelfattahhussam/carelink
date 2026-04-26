@@ -3,13 +3,35 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/shared_widgets.dart';
+import '../../../data/models/donation_model.dart';
+import '../../../data/models/request_model.dart';
 import '../../../data/models/user_model.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/donation/donation_bloc.dart';
 import '../../blocs/request/request_bloc.dart';
 import '../../blocs/notification/notification_bloc.dart';
 import 'dart:math' as math;
+
+/// Typed QR item used by the unified QR selection sheet.
+class _QrItem {
+  final String type; // 'donation' or 'request'
+  final String id;
+  final String? qrCode;
+  final String medicineName;
+  final int quantity;
+  final dynamic unit; // MedicineUnit
+
+  const _QrItem({
+    required this.type,
+    required this.id,
+    required this.qrCode,
+    required this.medicineName,
+    required this.quantity,
+    required this.unit,
+  });
+}
 
 /// Unified home screen for the `User` role.
 ///
@@ -86,6 +108,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     _buildDonationsStats(context),
+                    const SizedBox(height: 16),
+                    _buildRecentDonations(context),
                     const SizedBox(height: 32),
                     // Requests section
                     Text(
@@ -96,6 +120,8 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     _buildRequestsStats(context),
+                    const SizedBox(height: 16),
+                    _buildRecentRequests(context),
                   ],
                 ),
               ),
@@ -120,7 +146,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           listener: (context, state) {
             if (state is DonationsLoaded) {
               final pendingConfirm = state.donations
-                  .where((d) => d.status == 'delivering')
+                  .where((d) => d.isDelivering)
                   .firstOrNull;
               if (pendingConfirm != null && !_isConfirmDialogShowing) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -143,7 +169,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           listener: (context, state) {
             if (state is RequestsLoaded) {
               final pendingConfirm = state.requests
-                  .where((r) => r.status == 'delivering')
+                  .where((r) => r.isDelivering)
                   .firstOrNull;
               if (pendingConfirm != null && !_isConfirmDialogShowing) {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -533,6 +559,149 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 
   // ---------------------------------------------------------------------------
+  // Recent Donations List
+  // ---------------------------------------------------------------------------
+
+  Widget _buildRecentDonations(BuildContext context) {
+    return BlocBuilder<DonationBloc, DonationState>(
+      builder: (context, state) {
+        if (state is! DonationsLoaded || state.donations.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        final sorted = List<DonationModel>.from(state.donations)
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        final recent = sorted.take(3).toList();
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.recentActivity,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.push('/my-donations'),
+                  child: Text(AppLocalizations.of(context)!.seeAll),
+                ),
+              ],
+            ),
+            ...recent.map((d) => _recentItemTile(
+              medicineName: d.medicineName,
+              status: d.status,
+              date: d.createdAt,
+              icon: Icons.volunteer_activism,
+              color: AppColors.primary,
+            )),
+          ],
+        );
+      },
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Recent Requests List
+  // ---------------------------------------------------------------------------
+
+  Widget _buildRecentRequests(BuildContext context) {
+    return BlocBuilder<RequestBloc, RequestState>(
+      builder: (context, state) {
+        if (state is! RequestsLoaded || state.requests.isEmpty) {
+          return const SizedBox.shrink();
+        }
+        final sorted = List<RequestModel>.from(state.requests)
+          ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        final recent = sorted.take(3).toList();
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.recentActivity,
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => context.push('/my-requests'),
+                  child: Text(AppLocalizations.of(context)!.seeAll),
+                ),
+              ],
+            ),
+            ...recent.map((r) => _recentItemTile(
+              medicineName: r.medicineName,
+              status: r.status,
+              date: r.createdAt,
+              icon: Icons.inbox_rounded,
+              color: AppColors.secondary,
+            )),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _recentItemTile({
+    required String medicineName,
+    required String status,
+    required DateTime date,
+    required IconData icon,
+    required Color color,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: AppColors.divider.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, size: 18, color: color),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  medicineName,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  DateFormatters.timeAgo(date),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          StatusBadge(status: status),
+        ],
+      ),
+    );
+  }
+
+  //---------------------------------------------------------------------------
   // Stat Card
   // ---------------------------------------------------------------------------
 
@@ -649,23 +818,36 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
   }
 
   void _handleQrTap() {
-    // Check donations first, then requests for QR codes
     final donationState = context.read<DonationBloc>().state;
     final requestState = context.read<RequestBloc>().state;
 
-    final List<dynamic> qrItems = [];
+    final List<_QrItem> qrItems = [];
 
     if (donationState is DonationsLoaded) {
       qrItems.addAll(
         donationState.donations.where((d) => d.canShowQr).map(
-          (d) => {'item': d, 'type': 'donation'},
+          (d) => _QrItem(
+            type: 'donation',
+            id: d.id,
+            qrCode: d.qrCode,
+            medicineName: d.medicineName,
+            quantity: d.quantity,
+            unit: d.unit,
+          ),
         ),
       );
     }
     if (requestState is RequestsLoaded) {
       qrItems.addAll(
         requestState.requests.where((r) => r.canShowQr).map(
-          (r) => {'item': r, 'type': 'request'},
+          (r) => _QrItem(
+            type: 'request',
+            id: r.id,
+            qrCode: r.qrCode,
+            medicineName: r.medicineName,
+            quantity: r.quantity,
+            unit: r.unit,
+          ),
         ),
       );
     }
@@ -678,13 +860,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         ),
       );
     } else if (qrItems.length == 1) {
-      final entry = qrItems.first;
-      final item = entry['item'];
+      final item = qrItems.first;
       context.push(
         '/qr-display',
         extra: {
           'id': item.id,
-          'type': entry['type'],
+          'type': item.type,
           'qrCode': item.qrCode,
         },
       );
@@ -695,7 +876,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
 
   void _showQRSelectionSheet(
     BuildContext context,
-    List<dynamic> qrItems,
+    List<_QrItem> qrItems,
   ) {
     showModalBottomSheet(
       context: context,
@@ -742,9 +923,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 shrinkWrap: true,
                 itemCount: qrItems.length,
                 itemBuilder: (context, index) {
-                  final entry = qrItems[index];
-                  final item = entry['item'];
-                  final type = entry['type'] as String;
+                  final item = qrItems[index];
                   return Container(
                     margin: const EdgeInsets.only(bottom: 12),
                     decoration: BoxDecoration(
@@ -787,7 +966,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                           '/qr-display',
                           extra: {
                             'id': item.id,
-                            'type': type,
+                            'type': item.type,
                             'qrCode': item.qrCode,
                           },
                         );

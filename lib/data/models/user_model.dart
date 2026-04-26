@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:carelink_app/core/config/rbac_config.dart';
 
 enum UserRole {
   user,
@@ -72,8 +73,9 @@ class UserModel extends Equatable {
   bool get isUser => role == UserRole.user;
   bool get isPharmacist => role == UserRole.pharmacist;
 
-  /// Centralized permission check — delegates to RBACConfig
-  bool get canRequestMedicine => isUser;
+  /// Centralized permission check — delegates to RBAC single source of truth
+  bool get canRequestMedicine =>
+      RBACConfig.hasPermission(role, AppPermission.requestMedicine);
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(

@@ -971,4 +971,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get roleUser => 'مستخدم';
+
+  @override
+  String get recentActivity => 'النشاط الأخير';
+
+  @override
+  String get seeAll => 'عرض الكل';
 }

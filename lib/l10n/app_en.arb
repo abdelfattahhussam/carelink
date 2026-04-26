@@ -319,5 +319,7 @@
   "noRequestsFound": "No Requests Found",
   "noDonationsFound": "No Donations Found",
   "registrationSuccess": "Account created successfully!",
-  "roleUser": "User"
+  "roleUser": "User",
+  "recentActivity": "Recent Activity",
+  "seeAll": "See All"
 }

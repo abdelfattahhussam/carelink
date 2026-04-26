@@ -981,4 +981,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get roleUser => 'User';
+
+  @override
+  String get recentActivity => 'Recent Activity';
+
+  @override
+  String get seeAll => 'See All';
 }

@@ -305,5 +305,7 @@
   "noRequestsFound": "لا توجد طلبات هنا",
   "noDonationsFound": "لا توجد تبرعات هنا",
   "registrationSuccess": "تم إنشاء الحساب بنجاح!",
-  "roleUser": "مستخدم"
+  "roleUser": "مستخدم",
+  "recentActivity": "النشاط الأخير",
+  "seeAll": "عرض الكل"
 }
