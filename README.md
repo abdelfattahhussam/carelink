@@ -1,185 +1,240 @@
-<div align="center">
+# CareLink 💊
 
-# 🏥 CareLink | Smart Healthcare Mobile Platform
-
-[![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
-[![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-brightgreen?style=for-the-badge)](https://flutter.dev)
-[![State Management](https://img.shields.io/badge/State%20Management-BLoC-blueviolet?style=for-the-badge)](https://pub.dev/packages/flutter_bloc)
-[![Routing](https://img.shields.io/badge/Routing-Go_Router-FF4500?style=for-the-badge)](https://pub.dev/packages/go_router)
-
-> **Improving access to medicines through smart mobile technology.**
-
-*CareLink connects Patients, Pharmacists, and Donors in one seamless ecosystem. Whether you are searching for rare medicines, managing a pharmacy's digital inventory, or donating unused medicines to your community, CareLink bridges the gap.*
-
-[English](#-english) • [العربية](#-arabic)
-
-</div>
+![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter)
+![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?logo=dart)
+![Architecture](https://img.shields.io/badge/Architecture-Clean%20Architecture-success)
+![State](https://img.shields.io/badge/State-BLoC-purple)
+![Router](https://img.shields.io/badge/Router-GoRouter-orange)
+![CI](https://img.shields.io/github/actions/workflow/status/abdelfattahhussam/carelink/ci.yml?label=CI)
+![Tests](https://img.shields.io/badge/Tests-78%20passing-brightgreen)
+![License](https://img.shields.io/badge/License-MIT-blue)
 
 ---
 
-## 🌟 Why CareLink?
+## English Section
 
-Accessing critical medications can be frustrating due to localized stock shortages, poor visibility of available inventory, or communication gaps. CareLink solves this by digitizing the process:
+### About
+CareLink is a Flutter mobile application that bridges medicine donors, patients, and pharmacists. Donors contribute unexpired medicines, patients request what they need, and pharmacists act as trusted intermediaries — verifying donations, approving requests, and confirming handovers via a secure QR workflow.
 
-- **For Patients:** Easily search for medicines across pharmacies, upload prescriptions, and request urgent medications.
-- **For Donors:** Safely donate unused, unexpired medicines to verified pharmacies to help those in need.
-- **For Pharmacists:** Manage incoming medicine requests, review donations, monitor inventory expiry, and oversee secure medicine handovers.
+### Features
 
----
+| Feature | Description |
+|---|---|
+| Role-based access | User (donate + request) and Pharmacist roles with granular permissions |
+| Medicine donation | Donors submit medicines with expiry dates, photos, and pharmacy selection |
+| Medicine requests | Users browse available medicines and submit requests with prescriptions |
+| QR handover | Pharmacist scans QR to confirm physical pickup — mutual verification |
+| Pharmacy location | Filter donations and medicines by governorate, city, and district |
+| Notifications | Real-time status updates for approvals, rejections, and expiry warnings |
+| Bilingual | Full Arabic (RTL) and English (LTR) support |
+| Dark mode | Complete light and dark theme with Material 3 |
 
-## 🚀 Core Features
+### Architecture
 
-### 👥 Comprehensive Multi-Role System
-CareLink provides tailored experiences and dedicated dashboards based on the user's role:
+```text
+┌─────────────────────────────────────┐
+│         Presentation Layer          │
+│  Screens · BLoCs · Widgets · RBAC  │
+├─────────────────────────────────────┤
+│           Domain Layer              │
+│   Repository Interfaces (7 files)  │
+├─────────────────────────────────────┤
+│            Data Layer               │
+│  Services · Models · MockInterceptor│
+├─────────────────────────────────────┤
+│             Core Layer              │
+│  Router · Theme · DI · Auth Storage│
+└─────────────────────────────────────┘
+```
 
-| Feature | Patient 🤒 | Pharmacist 👨‍⚕️ | Donor 🤝 |
-|---|:---:|:---:|:---:|
-| **Search & Filter Medicines** | ✅ | ✅ | ✅ |
-| **Request Medicines & Upload Prescriptions** | ✅ | — | — |
-| **Track Request Status** | ✅ | — | — |
-| **Donate Medicines** | — | — | ✅ |
-| **Review & Manage Requests/Donations** | — | ✅ | — |
-| **Mutual QR Code Secure Handover** | ✅ | ✅ | ✅ |
-| **Expiry Warnings & Inventory Analytics** | — | ✅ | — |
-
-### ✨ Highlighted Technical Features
-- **🌍 Dynamic Pharmacy Location System:** Filter medicines and pharmacies by Governorate, City, and District.
-- **🔐 Secure QR Handover:** A robust mutual QR confirmation workflow ensuring medicines are delivered to the right person securely.
-- **🔔 Real-time Notifications:** In-app notification system covering donation approvals, new requests, expiry warnings, and status changes.
-- **🌗 Theming & Localization:** Native Light/Dark modes seamlessly integrated with full English (en) and Arabic (ar) localization.
-- **🧪 Advanced Mock API:** A custom-built Dio Interceptor that simulates a complete backend (authentication, CRUD operations, relationships) allowing for offline development and rapid prototyping.
-
----
-
-## 🛠 Tech Stack & Architecture
-
-CareLink is built with scalability, maintainability, and modern Flutter best practices in mind.
+### Tech Stack
 
 | Category | Technology |
 |---|---|
-| **Framework** | Flutter |
-| **Language** | Dart |
-| **Architecture** | Clean Architecture (Presentation, Domain, Data) |
-| **State Management** | BLoC / Cubit |
-| **Routing & Navigation** | GoRouter (with Role-Based Access Control) |
-| **Networking** | Dio (with custom Mock Interceptors) |
-| **Storage** | `flutter_secure_storage` (Auth) & `SharedPreferences` (Settings) |
-| **Testing** | 78+ Passing Tests (BLoC, Models, Validators) |
-| **CI/CD** | GitHub Actions Pipeline (Analyze, Test, Build) |
+| Framework | Flutter (Stable channel) |
+| Language | Dart 3.x |
+| State Management | flutter_bloc — BLoC pattern |
+| Navigation | go_router with RBAC guards |
+| Networking | dio with MockInterceptor |
+| Auth Storage | flutter_secure_storage |
+| UI | Material 3 + Google Fonts (Inter) |
+| Localization | flutter_intl — ARB files |
+| Testing | bloc_test + mocktail (78 tests) |
+| CI/CD | GitHub Actions |
 
-### 🧱 Clean Architecture Layers
-1. **Presentation Layer:** Screens, Widgets, and BLoC state holders.
-2. **Domain Layer:** Entities, Repository interfaces / abstractions, and pure Business Logic.
-3. **Data Layer:** Models, API Services, Mock Interceptors, and Repository implementations.
-4. **Storage Layer:** `flutter_secure_storage` for auth data + `SharedPreferences` for app settings.
-5. **Testing Layer:** Comprehensive suite of 78 passing tests covering BLoC, Models, and Validators.
-6. **CI/CD Layer:** Automated GitHub Actions pipeline for linting, testing, and building.
+### Roles & Permissions
 
-*Note: Dependency Injection (e.g., GetIt) is planned as a future enhancement.*
+| Permission | User | Pharmacist |
+|---|---|---|
+| Donate medicine | ✅ | ❌ |
+| Request medicine | ✅ | ❌ |
+| View own donations | ✅ | ❌ |
+| View own requests | ✅ | ❌ |
+| Review donations | ❌ | ✅ |
+| Manage requests | ❌ | ✅ |
+| Scan QR | ❌ | ✅ |
+| View dashboard | ❌ | ✅ |
 
----
-
-## 📸 Screenshots *(Placeholders)*
-
-<div align="center">
-  <img src="https://via.placeholder.com/200x400.png?text=Login" width="200"/>
-  <img src="https://via.placeholder.com/200x400.png?text=Patient+Home" width="200"/>
-  <img src="https://via.placeholder.com/200x400.png?text=Pharmacy+Dashboard" width="200"/>
-  <img src="https://via.placeholder.com/200x400.png?text=QR+Handover" width="200"/>
-</div>
-
----
-
-## ⚙️ Installation & Running
-
-### Prerequisites
-- Flutter SDK `^3.11.1`
-- Dart `^3.11.1`
-
-### Quick Start (Mock Mode)
-CareLink ships with a built-in mock API for offline development. **Mock mode must be explicitly enabled:**
+### Getting Started
 
 ```bash
-# 1. Clone the repository
-git clone https://github.com/To7a-2003/carelink.git
+# Clone
+git clone https://github.com/abdelfattahhussam/carelink.git
 cd carelink
 
-# 2. Get dependencies
+# Install dependencies
 flutter pub get
 
-# 3. Run with mock backend (required until real backend is connected)
+# Run with mock backend (no real API needed)
 flutter run --dart-define=USE_MOCK=true
+
+# Run tests
+flutter test
+
+# Analyze
+flutter analyze
 ```
 
-### Production / Real Backend
-When a real backend is available, run without the flag:
+### Project Structure
+
+Please refer to the [tree.txt](tree.txt) file in the root of the repository for the full project structure.
+
+### Test Accounts
+
+| Role | Email | Password |
+|---|---|---|
+| User | user@test.com | any value |
+| Pharmacist | pharmacist@test.com | any value |
+
+### Screenshots
+
+> Screenshots coming soon — the app runs on Android and iOS.
+> To capture: `flutter run --dart-define=USE_MOCK=true` on a device or emulator.
+
+### Roadmap
+
+#### Backend Integration (next)
+- [ ] Connect REST API (replace MockInterceptor)
+- [ ] JWT authentication with refresh tokens
+- [ ] Real pagination
+
+#### Future Features
+- [ ] Push notifications (FCM)
+- [ ] Image upload to cloud storage
+- [ ] Pharmacist multi-branch support
+- [ ] Audit log screen
+
+---
+
+## Arabic Section (العربية)
+
+### نبذة عن المشروع
+تطبيق CareLink هو تطبيق للهواتف المحمولة مبني باستخدام Flutter، ويهدف إلى الربط بين المتبرعين بالأدوية، والمرضى، والصيادلة. يساهم المتبرعون بالأدوية غير المنتهية الصلاحية، ويقوم المرضى بطلب ما يحتاجونه، بينما يعمل الصيادلة كوسطاء موثوقين — حيث يقومون بالتحقق من التبرعات، والموافقة على الطلبات، وتأكيد عمليات التسليم من خلال سير عمل آمن يعتمد على رمز الاستجابة السريعة (QR).
+
+### المميزات
+
+| الميزة | الوصف |
+|---|---|
+| التحكم في الصلاحيات | أدوار للمستخدم (تبرع + طلب) والصيدلي مع صلاحيات دقيقة |
+| التبرع بالدواء | تقديم الأدوية مع تواريخ الصلاحية، والصور، واختيار الصيدلية |
+| طلب الدواء | تصفح الأدوية المتاحة وتقديم الطلبات مع الوصفات الطبية |
+| التسليم عبر QR | يقوم الصيدلي بمسح رمز QR لتأكيد الاستلام الفعلي — تحقق متبادل |
+| موقع الصيدلية | تصفية التبرعات والأدوية حسب المحافظة، والمدينة، والحي |
+| الإشعارات | تحديثات حالة فورية للموافقات، والرفض، وتحذيرات انتهاء الصلاحية |
+| ثنائي اللغة | دعم كامل للغتين العربية (من اليمين لليسار) والإنجليزية (من اليسار لليمين) |
+| الوضع الداكن | مظهر فاتح وداكن متكامل باستخدام Material 3 |
+
+### المعمارية (المعمارية النظيفة)
+
+```text
+┌─────────────────────────────────────┐
+│         Presentation Layer          │
+│  Screens · BLoCs · Widgets · RBAC  │
+├─────────────────────────────────────┤
+│           Domain Layer              │
+│   Repository Interfaces (7 files)  │
+├─────────────────────────────────────┤
+│            Data Layer               │
+│  Services · Models · MockInterceptor│
+├─────────────────────────────────────┤
+│             Core Layer              │
+│  Router · Theme · DI · Auth Storage│
+└─────────────────────────────────────┘
+```
+
+### التقنيات المستخدمة
+
+| الفئة | التقنية |
+|---|---|
+| إطار العمل | Flutter (Stable channel) |
+| لغة البرمجة | Dart 3.x |
+| إدارة الحالة | flutter_bloc — نمط BLoC |
+| التنقل | go_router مع حراس RBAC |
+| الشبكات | dio مع واجهة خلفية محاكاة (MockInterceptor) |
+| تخزين المصادقة | flutter_secure_storage |
+| واجهة المستخدم | Material 3 + خطوط جوجل (Inter) |
+| الترجمة | flutter_intl — ملفات ARB |
+| الاختبار | bloc_test + mocktail (78 اختباراً) |
+| التكامل المستمر | GitHub Actions |
+
+### الأدوار والصلاحيات
+
+| الصلاحية | مستخدم | صيدلي |
+|---|---|---|
+| التبرع بالدواء | ✅ | ❌ |
+| طلب الدواء | ✅ | ❌ |
+| عرض تبرعاتي | ✅ | ❌ |
+| عرض طلباتي | ✅ | ❌ |
+| مراجعة التبرعات | ❌ | ✅ |
+| إدارة الطلبات | ❌ | ✅ |
+| مسح رمز QR | ❌ | ✅ |
+| عرض لوحة التحكم | ❌ | ✅ |
+
+### البدء السريع
+
 ```bash
-flutter run
+# استنساخ المستودع
+git clone https://github.com/abdelfattahhussam/carelink.git
+cd carelink
+
+# تثبيت الحزم
+flutter pub get
+
+# التشغيل باستخدام واجهة خلفية محاكاة (لا حاجة لواجهة برمجة تطبيقات حقيقية)
+flutter run --dart-define=USE_MOCK=true
+
+# تشغيل الاختبارات
+flutter test
+
+# تحليل الكود
+flutter analyze
 ```
 
-> ⚠️ **Note:** Running without `--dart-define=USE_MOCK=true` will produce network errors until a real backend is configured at `ApiEndpoints.baseUrl`.
+### هيكل المشروع
 
-### 🔑 Test Accounts (Mock Mode Only)
-You can log in using the following mock credentials (password can be anything):
-- **Donor:** `donor@test.com`
-- **Patient:** `patient@test.com`
-- **Pharmacist:** `pharmacist@test.com`
+يرجى الرجوع إلى ملف [tree.txt](tree.txt) في جذر المستودع لمعرفة الهيكل الكامل للمشروع.
 
----
+### حسابات تجريبية (في وضع المحاكاة فقط)
 
-## 🎯 Future Roadmap
+| الدور | البريد الإلكتروني | كلمة المرور |
+|---|---|---|
+| مستخدم | user@test.com | أي قيمة |
+| صيدلي | pharmacist@test.com | أي قيمة |
 
-- [ ] **Real Backend Integration:** Swap out the mock interceptor for a live Node.js/NestJS REST API.
-- [ ] **Push Notifications:** Integrate Firebase Cloud Messaging (FCM) for background alerts.
-- [ ] **Live Chat:** Real-time messaging between users and pharmacists.
-- [ ] **Google Maps Integration:** Visual map view for nearby pharmacies.
-- [ ] **AI Prescription Parsing:** OCR scanning for automated prescription reading.
+### لقطات الشاشة
 
----
+> سيتم إضافة لقطات الشاشة قريباً — التطبيق يعمل على نظامي Android و iOS.
+> لالتقاط الصور: `flutter run --dart-define=USE_MOCK=true` على جهاز فعلي أو محاكي.
 
-## 📫 Contact & Author
+### خطة التطوير
 
-**Abdelfattah Hussam** - *Frontend Lead / Mobile Engineer*
+#### التكامل مع الواجهة الخلفية (الخطوة القادمة)
+- [ ] ربط REST API (استبدال MockInterceptor)
+- [ ] مصادقة JWT مع رموز التحديث (refresh tokens)
+- [ ] ترقيم الصفحات (Pagination) الحقيقي
 
-- 🌐 **Portfolio:** [abdelfattahhussam.github.io](https://abdelfattahhussam.github.io)
-- 💼 **LinkedIn:** [in/abdelfattahhussam](https://linkedin.com/in/abdelfattahhussam)
-- 💻 **GitHub:** [@abdelfattahhussam](https://github.com/abdelfattahhussam)
-- 📧 **Email:** abdelfattahhussam9@gmail.com
-
----
-
-<br>
-
-<div align="center" id="-arabic" dir="rtl">
-
-# 🏥 CareLink | منصة الرعاية الصحية الذكية
-
-> **تحسين الوصول إلى الأدوية من خلال التكنولوجيا الذكية.**
-
-*تربط CareLink بين المرضى والصيادلة والمتبرعين في بيئة واحدة متكاملة. سواء كنت تبحث عن أدوية نادرة، أو تدير مخزون صيدليتك رقمياً، أو ترغب في التبرع بالأدوية غير المستخدمة لمجتمعك، فإن CareLink هي الحلقة المفقودة.*
-
-</div>
-
-<div dir="rtl">
-
-## 🌟 لماذا CareLink؟
-يواجه الكثيرون صعوبة في الوصول إلى الأدوية الهامة بسبب نقص المخزون المحلي أو ضعف التواصل. تحل CareLink هذه المشكلة عن طريق رقمنة العملية:
-- **للمرضى:** البحث بسهولة عن الأدوية في الصيدليات، ورفع الروشتات الطبية، وطلب الأدوية العاجلة.
-- **للمتبرعين:** التبرع الآمن بالأدوية غير المستخدمة (وغير المنتهية الصلاحية) للصيدليات المعتمدة لمساعدة المحتاجين.
-- **للصيادلة:** إدارة طلبات الأدوية، مراجعة التبرعات، مراقبة تواريخ الصلاحية، والإشراف على التسليم الآمن للأدوية.
-
-## 🚀 أبرز المميزات
-- **نظام أدوار متعدد (مرضى، صيادلة، متبرعين)**
-- **نظام تحديد مواقع الصيدليات:** (محافظة، مدينة، حي)
-- **تسليم آمن عبر رمز الاستجابة السريعة (QR Code):** لضمان وصول الدواء للشخص الصحيح.
-- **إشعارات لحظية وتنبيهات بانتهاء الصلاحية.**
-- **دعم كامل للغتين العربية والإنجليزية مع الوضع الليلي/النهاري.**
-- **بيئة Mock متكاملة للتطوير بدون إنترنت.**
-
-</div>
-
-<div align="center">
-  <b>Built with passion for healthcare innovation 💙</b><br>
-  CareLink — Connecting People to Care.
-</div>
+#### ميزات مستقبلية
+- [ ] إشعارات الدفع (FCM)
+- [ ] رفع الصور إلى التخزين السحابي
+- [ ] دعم فروع متعددة للصيدلي
+- [ ] شاشة سجل التدقيق (Audit log)

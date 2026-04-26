@@ -94,67 +94,63 @@ carelink/
 │   │   │   └── settings
 │   │   │       ├── settings_cubit.dart
 │   │   │       └── settings_state.dart
-│   │   ├── screens
-│   │   │   ├── auth
-│   │   │   │   ├── login_screen.dart
-│   │   │   │   └── register_screen.dart
-│   │   │   ├── dashboard
-│   │   │   │   └── pharmacist_dashboard_screen.dart
-│   │   │   ├── donation
-│   │   │   │   ├── donation_screen.dart
-│   │   │   │   ├── my_donations_screen.dart
-│   │   │   │   └── pharmacy_picker_screen.dart
-│   │   │   ├── home
-│   │   │   │   ├── donor_home_screen.dart
-│   │   │   │   ├── home_router_screen.dart
-│   │   │   │   └── patient_home_screen.dart
-│   │   │   ├── medicine
-│   │   │   │   └── medicine_list_screen.dart
-│   │   │   ├── notifications
-│   │   │   │   └── notifications_screen.dart
-│   │   │   ├── onboarding
-│   │   │   │   ├── language_selection_screen.dart
-│   │   │   │   └── onboarding_screen.dart
-│   │   │   ├── pharmacist
-│   │   │   │   ├── widgets
-│   │   │   │   │   └── request_decision_bottom_sheet.dart
-│   │   │   │   ├── manage_requests_screen.dart
-│   │   │   │   └── pharmacist_review_screen.dart
-│   │   │   ├── profile
-│   │   │   │   └── profile_screen.dart
-│   │   │   ├── qr
-│   │   │   │   ├── qr_display_screen.dart
-│   │   │   │   └── qr_scan_screen.dart
-│   │   │   ├── request
-│   │   │   │   ├── my_requests_screen.dart
-│   │   │   │   └── request_screen.dart
-│   │   │   └── splash
-│   │   │       ├── carelink_logo.dart
-│   │   │       └── splash_screen.dart
-│   │   └── shared
-│   │       └── widgets
-│   │           └── permission_guard.dart
-│   ├── app.dart
-│   └── main.dart
-├── test
-│   ├── blocs
-│   │   ├── auth_bloc_test.dart
-│   │   └── donation_bloc_test.dart
-│   ├── core
-│   │   └── validators_test.dart
-│   ├── helpers
-│   │   └── fake_auth_storage.dart
-│   ├── models
-│   │   └── donation_model_test.dart
-│   └── widget_test.dart
-├── .gitignore
-├── .metadata
-├── README.md
-├── analysis_options.yaml
-├── carelink_app.iml
-├── flutter_native_splash.yaml
-├── generate_tree.dart
-├── l10n.yaml
-├── pubspec.lock
-├── pubspec.yaml
-└── tree.txt
+│   │   │   ├── screens
+│   │   │   │   ├── auth
+│   │   │   │   │   ├── login_screen.dart
+│   │   │   │   │   └── register_screen.dart
+│   │   │   │   ├── dashboard
+│   │   │   │   │   └── pharmacist_dashboard_screen.dart
+│   │   │   │   ├── donation
+│   │   │   │   │   ├── donation_screen.dart
+│   │   │   │   │   ├── my_donations_screen.dart
+│   │   │   │   │   └── pharmacy_picker_screen.dart
+│   │   │   │   ├── home
+│   │   │   │   │   ├── home_router_screen.dart
+│   │   │   │   │   └── user_home_screen.dart
+│   │   │   │   ├── medicine
+│   │   │   │   │   └── medicine_list_screen.dart
+│   │   │   │   ├── notifications
+│   │   │   │   │   └── notifications_screen.dart
+│   │   │   │   ├── onboarding
+│   │   │   │   │   ├── language_selection_screen.dart
+│   │   │   │   │   └── onboarding_screen.dart
+│   │   │   │   ├── pharmacist
+│   │   │   │   │   ├── manage_requests_screen.dart
+│   │   │   │   │   ├── pharmacist_review_screen.dart
+│   │   │   │   │   └── widgets
+│   │   │   │   │       └── request_decision_bottom_sheet.dart
+│   │   │   │   ├── profile
+│   │   │   │   │   └── profile_screen.dart
+│   │   │   │   ├── qr
+│   │   │   │   │   ├── qr_display_screen.dart
+│   │   │   │   │   └── qr_scan_screen.dart
+│   │   │   │   ├── request
+│   │   │   │   │   ├── my_requests_screen.dart
+│   │   │   │   │   └── request_screen.dart
+│   │   │   │   └── splash
+│   │   │   │       ├── carelink_logo.dart
+│   │   │   │       └── splash_screen.dart
+│   │   │   └── shared
+│   │   │       └── widgets
+│   │   │           └── permission_guard.dart
+│   │   ├── app.dart
+│   │   └── main.dart
+│   ├── test
+│   │   ├── blocs
+│   │   │   ├── auth_bloc_test.dart
+│   │   │   └── donation_bloc_test.dart
+│   │   ├── core
+│   │   │   └── validators_test.dart
+│   │   ├── helpers
+│   │   │   └── fake_auth_storage.dart
+│   │   ├── models
+│   │   │   └── donation_model_test.dart
+│   │   └── widget_test.dart
+│   ├── .gitignore
+│   ├── .metadata
+│   ├── README.md
+│   ├── analysis_options.yaml
+│   ├── l10n.yaml
+│   ├── pubspec.lock
+│   ├── pubspec.yaml
+│   └── tree.txt
