@@ -25,7 +25,10 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.selectPharmacy, style: const TextStyle(fontWeight: FontWeight.w700)),
+        title: Text(
+          l10n.selectPharmacy,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -57,7 +60,11 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
     );
   }
 
-  Widget _buildFilters(BuildContext context, AppLocalizations l10n, PharmaciesLoaded state) {
+  Widget _buildFilters(
+    BuildContext context,
+    AppLocalizations l10n,
+    PharmaciesLoaded state,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       decoration: BoxDecoration(
@@ -76,11 +83,19 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
           // Location icon + title
           Row(
             children: [
-              Icon(Icons.location_on_outlined, size: 18, color: AppColors.primary),
+              const Icon(
+                Icons.location_on_outlined,
+                size: 18,
+                color: AppColors.primary,
+              ),
               const SizedBox(width: 8),
               Text(
                 l10n.pharmacyLocation,
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14, color: AppColors.primaryDark),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 14,
+                  color: AppColors.primaryDark,
+                ),
               ),
             ],
           ),
@@ -93,7 +108,9 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
             items: state.governorates,
             onChanged: (v) {
               if (v != null) {
-                context.read<PharmacyBloc>().add(PharmacyFilterChanged(governorate: v));
+                context.read<PharmacyBloc>().add(
+                  PharmacyFilterChanged(governorate: v),
+                );
               }
             },
             icon: Icons.map_outlined,
@@ -108,7 +125,9 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
             onChanged: state.filterGovernorate != null
                 ? (v) {
                     if (v != null) {
-                      context.read<PharmacyBloc>().add(PharmacyFilterChanged(city: v));
+                      context.read<PharmacyBloc>().add(
+                        PharmacyFilterChanged(city: v),
+                      );
                     }
                   }
                 : null,
@@ -124,7 +143,9 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
             onChanged: state.filterCity != null
                 ? (v) {
                     if (v != null) {
-                      context.read<PharmacyBloc>().add(PharmacyFilterChanged(district: v));
+                      context.read<PharmacyBloc>().add(
+                        PharmacyFilterChanged(district: v),
+                      );
                     }
                   }
                 : null,
@@ -163,22 +184,42 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
             children: [
               Icon(icon, size: 18, color: AppColors.textLight),
               const SizedBox(width: 8),
-              Text(hint, style: TextStyle(color: AppColors.textLight, fontSize: 14)),
+              Text(
+                hint,
+                style: const TextStyle(
+                  color: AppColors.textLight,
+                  fontSize: 14,
+                ),
+              ),
             ],
           ),
           isExpanded: true,
-          icon: Icon(Icons.keyboard_arrow_down_rounded, color: isEnabled ? AppColors.primary : AppColors.textLight),
-          items: items.map((item) => DropdownMenuItem<T>(
-            value: item,
-            child: Text(item.toString(), style: const TextStyle(fontWeight: FontWeight.w600)),
-          )).toList(),
+          icon: Icon(
+            Icons.keyboard_arrow_down_rounded,
+            color: isEnabled ? AppColors.primary : AppColors.textLight,
+          ),
+          items: items
+              .map(
+                (item) => DropdownMenuItem<T>(
+                  value: item,
+                  child: Text(
+                    item.toString(),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              )
+              .toList(),
           onChanged: onChanged,
         ),
       ),
     );
   }
 
-  Widget _buildList(BuildContext context, AppLocalizations l10n, PharmaciesLoaded state) {
+  Widget _buildList(
+    BuildContext context,
+    AppLocalizations l10n,
+    PharmaciesLoaded state,
+  ) {
     final pharmacies = state.filtered;
 
     if (pharmacies.isEmpty) {
@@ -235,7 +276,11 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Icon(Icons.local_pharmacy_rounded, color: AppColors.primary, size: 26),
+                  child: const Icon(
+                    Icons.local_pharmacy_rounded,
+                    color: AppColors.primary,
+                    size: 26,
+                  ),
                 ),
                 const SizedBox(width: 14),
                 Expanded(
@@ -244,17 +289,26 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
                     children: [
                       Text(
                         p.name,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(fontWeight: FontWeight.w700),
                       ),
                       const SizedBox(height: 4),
                       Row(
                         children: [
-                          Icon(Icons.location_on_outlined, size: 14, color: AppColors.textLight),
+                          const Icon(
+                            Icons.location_on_outlined,
+                            size: 14,
+                            color: AppColors.textLight,
+                          ),
                           const SizedBox(width: 4),
                           Expanded(
                             child: Text(
                               p.fullLocation,
-                              style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.w500),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                                fontWeight: FontWeight.w500,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
@@ -264,7 +318,10 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
                       const SizedBox(height: 2),
                       Text(
                         p.address,
-                        style: TextStyle(fontSize: 11, color: AppColors.textLight),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textLight,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -278,7 +335,11 @@ class _PharmacyPickerScreenState extends State<PharmacyPickerScreen> {
                       color: AppColors.success,
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(Icons.check, color: Colors.white, size: 16),
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 16,
+                    ),
                   ),
               ],
             ),

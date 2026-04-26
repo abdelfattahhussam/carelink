@@ -94,6 +94,7 @@ class AppStrings {
   // Errors
   static const String genericError = 'Something went wrong. Please try again.';
   static const String networkError = 'No internet connection.';
-  static const String unauthorizedError = 'Session expired. Please login again.';
+  static const String unauthorizedError =
+      'Session expired. Please login again.';
   static const String validationError = 'Please fill in all required fields.';
 }

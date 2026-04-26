@@ -21,6 +21,7 @@ dependencies:
 
   # Local Storage
   shared_preferences: ^2.3.0
+  flutter_secure_storage: ^9.2.4
 
   # Navigation
   go_router: ^14.8.1
@@ -45,6 +46,8 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^6.0.0
   flutter_native_splash: ^2.4.7
+  bloc_test: ^10.0.0
+  mocktail: ^1.0.4
 
 flutter:
   uses-material-design: true

@@ -26,11 +26,12 @@ class _DonationScreenState extends State<DonationScreen> {
   final _nameCtrl = TextEditingController();
   final _notesCtrl = TextEditingController();
   final _qtyCtrl = TextEditingController();
-  final _expiryCtrl = TextEditingController(); // Added controller for expiry date
+  final _expiryCtrl =
+      TextEditingController(); // Added controller for expiry date
   DateTime? _expiryDate;
   String _category = 'General';
   MedicineUnit _unit = MedicineUnit.box;
-  
+
   String? _boxImagePath;
   final ImagePicker _picker = ImagePicker();
 
@@ -38,19 +39,21 @@ class _DonationScreenState extends State<DonationScreen> {
   bool _pharmacyError = false;
 
   @override
-  void dispose() { 
-    _nameCtrl.dispose(); 
-    _notesCtrl.dispose(); 
-    _qtyCtrl.dispose(); 
+  void dispose() {
+    _nameCtrl.dispose();
+    _notesCtrl.dispose();
+    _qtyCtrl.dispose();
     _expiryCtrl.dispose();
-    super.dispose(); 
+    super.dispose();
   }
 
   Future<void> _pickImage() async {
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (_) => SafeArea(
         child: Wrap(
           children: [
@@ -60,7 +63,7 @@ class _DonationScreenState extends State<DonationScreen> {
               onTap: () async {
                 Navigator.pop(context);
                 final XFile? image = await _picker.pickImage(
-                  source: ImageSource.camera, 
+                  source: ImageSource.camera,
                   imageQuality: 50,
                   maxWidth: 1024,
                   maxHeight: 1024,
@@ -74,7 +77,7 @@ class _DonationScreenState extends State<DonationScreen> {
               onTap: () async {
                 Navigator.pop(context);
                 final XFile? image = await _picker.pickImage(
-                  source: ImageSource.gallery, 
+                  source: ImageSource.gallery,
                   imageQuality: 50,
                   maxWidth: 1024,
                   maxHeight: 1024,
@@ -90,9 +93,9 @@ class _DonationScreenState extends State<DonationScreen> {
 
   void _pickDate() async {
     final date = await showDatePicker(
-      context: context, 
+      context: context,
       initialDate: DateTime.now().add(const Duration(days: 90)),
-      firstDate: DateTime.now(), 
+      firstDate: DateTime.now(),
       lastDate: DateTime.now().add(const Duration(days: 1825)),
     );
     if (date != null) {
@@ -123,19 +126,25 @@ class _DonationScreenState extends State<DonationScreen> {
 
   void _submit() {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    
+
     final l10n = AppLocalizations.of(context)!;
-    
+
     if (_boxImagePath == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.boxImageRequired), backgroundColor: AppColors.error)
+        SnackBar(
+          content: Text(l10n.boxImageRequired),
+          backgroundColor: AppColors.error,
+        ),
       );
       return;
     }
-    
+
     if (_expiryDate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.pleaseSelectExpiryDate), backgroundColor: AppColors.error)
+        SnackBar(
+          content: Text(l10n.pleaseSelectExpiryDate),
+          backgroundColor: AppColors.error,
+        ),
       );
       return;
     }
@@ -143,22 +152,27 @@ class _DonationScreenState extends State<DonationScreen> {
     if (_selectedPharmacy == null) {
       setState(() => _pharmacyError = true);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.pharmacyRequired), backgroundColor: AppColors.error)
+        SnackBar(
+          content: Text(l10n.pharmacyRequired),
+          backgroundColor: AppColors.error,
+        ),
       );
       return;
     }
 
-    context.read<DonationBloc>().add(DonationCreateRequested(
-      name: _nameCtrl.text.trim(), 
-      notes: _notesCtrl.text.trim(),
-      expiryDate: _expiryDate!.toIso8601String(), 
-      quantity: int.parse(_qtyCtrl.text), 
-      category: _category,
-      unit: _unit.value,
-      boxImagePath: _boxImagePath,
-      pharmacyId: _selectedPharmacy!.id,
-      pharmacyName: _selectedPharmacy!.name,
-    ));
+    context.read<DonationBloc>().add(
+      DonationCreateRequested(
+        name: _nameCtrl.text.trim(),
+        notes: _notesCtrl.text.trim(),
+        expiryDate: _expiryDate!.toIso8601String(),
+        quantity: int.parse(_qtyCtrl.text),
+        category: _category,
+        unit: _unit.value,
+        boxImagePath: _boxImagePath,
+        pharmacyId: _selectedPharmacy!.id,
+        pharmacyName: _selectedPharmacy!.name,
+      ),
+    );
   }
 
   @override
@@ -169,12 +183,18 @@ class _DonationScreenState extends State<DonationScreen> {
       listener: (context, state) {
         if (state is DonationCreated) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(l10n.donationSubmittedSuccessfully), backgroundColor: AppColors.success)
+            SnackBar(
+              content: Text(l10n.donationSubmittedSuccessfully),
+              backgroundColor: AppColors.success,
+            ),
           );
           context.pop();
         } else if (state is DonationError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: AppColors.error)
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
           );
         }
       },
@@ -196,128 +216,163 @@ class _DonationScreenState extends State<DonationScreen> {
           padding: const EdgeInsets.all(24),
           child: Form(
             key: _formKey,
-            child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-              // Info banner
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryContainer.withValues(alpha: 0.5), 
-                  borderRadius: BorderRadius.circular(14)
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Info banner
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryContainer.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.volunteer_activism,
+                        color: AppColors.primary,
+                        size: 24,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          l10n.yourDonationWillBe,
+                          style: Theme.of(context).textTheme.bodySmall,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Row(children: [
-                  const Icon(Icons.volunteer_activism, color: AppColors.primary, size: 24),
-                  const SizedBox(width: 12),
-                  Expanded(child: Text(l10n.yourDonationWillBe, style: Theme.of(context).textTheme.bodySmall)),
-                ]),
-              ),
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              // Pharmacy Picker
-              _buildPharmacyPicker(l10n),
-              const SizedBox(height: 24),
+                // Pharmacy Picker
+                _buildPharmacyPicker(l10n),
+                const SizedBox(height: 24),
 
-              // Medicine Name
-              AppTextField(
-                controller: _nameCtrl, 
-                label: l10n.medicineName, 
-                hint: l10n.medicineNameHint, 
-                prefixIcon: Icons.medication, 
-                validator: (v) => Validators.required(v, l10n.medicineNameRequired)
-              ),
-              const SizedBox(height: 24),
-
-              // Box Image Upload (Replaces Description)
-              _buildImagePicker(l10n),
-              const SizedBox(height: 24),
-
-              // Category dropdown
-              DropdownButtonFormField<String>(
-                initialValue: _category, 
-                decoration: InputDecoration(
-                  labelText: l10n.category, 
-                  prefixIcon: const Icon(Icons.category_outlined, color: AppColors.textLight, size: 22)
+                // Medicine Name
+                AppTextField(
+                  controller: _nameCtrl,
+                  label: l10n.medicineName,
+                  hint: l10n.medicineNameHint,
+                  prefixIcon: Icons.medication,
+                  validator: (v) =>
+                      Validators.required(v, l10n.medicineNameRequired),
                 ),
-                items: [
-                  ('General', l10n.catGeneral),
-                  ('Antibiotics', l10n.catAntibiotics),
-                  ('Pain Relief', l10n.catPainRelief),
-                  ('Digestive', l10n.catDigestive),
-                  ('Diabetes', l10n.catDiabetes),
-                  ('Cardiovascular', l10n.catCardiovascular),
-                  ('Vitamins', l10n.catVitamins),
-                  ('Other', l10n.catOther),
-                ].map((c) => DropdownMenuItem(value: c.$1, child: Text(c.$2))).toList(),
-                onChanged: (v) => setState(() => _category = v ?? 'General'),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 24),
 
-              // Quantity & Unit Row
-              Row(
-                children: [
-                  Expanded(
-                    flex: 3,
+                // Box Image Upload (Replaces Description)
+                _buildImagePicker(l10n),
+                const SizedBox(height: 24),
+
+                // Category dropdown
+                DropdownButtonFormField<String>(
+                  initialValue: _category,
+                  decoration: InputDecoration(
+                    labelText: l10n.category,
+                    prefixIcon: const Icon(
+                      Icons.category_outlined,
+                      color: AppColors.textLight,
+                      size: 22,
+                    ),
+                  ),
+                  items:
+                      [
+                            ('General', l10n.catGeneral),
+                            ('Antibiotics', l10n.catAntibiotics),
+                            ('Pain Relief', l10n.catPainRelief),
+                            ('Digestive', l10n.catDigestive),
+                            ('Diabetes', l10n.catDiabetes),
+                            ('Cardiovascular', l10n.catCardiovascular),
+                            ('Vitamins', l10n.catVitamins),
+                            ('Other', l10n.catOther),
+                          ]
+                          .map(
+                            (c) => DropdownMenuItem(
+                              value: c.$1,
+                              child: Text(c.$2),
+                            ),
+                          )
+                          .toList(),
+                  onChanged: (v) => setState(() => _category = v ?? 'General'),
+                ),
+                const SizedBox(height: 16),
+
+                // Quantity & Unit Row
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 3,
+                      child: AppTextField(
+                        controller: _qtyCtrl,
+                        label: l10n.quantity,
+                        hint: l10n.quantityHint,
+                        prefixIcon: Icons.numbers,
+                        keyboardType: TextInputType.number,
+                        validator: Validators.quantity,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: DropdownButtonFormField<MedicineUnit>(
+                        initialValue: _unit,
+                        isExpanded: true,
+                        decoration: InputDecoration(labelText: l10n.unit),
+                        items: [
+                          DropdownMenuItem(
+                            value: MedicineUnit.box,
+                            child: Text(l10n.box),
+                          ),
+                          DropdownMenuItem(
+                            value: MedicineUnit.strip,
+                            child: Text(l10n.strip),
+                          ),
+                        ],
+                        onChanged: (v) =>
+                            setState(() => _unit = v ?? MedicineUnit.box),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+
+                // Expiry date picker
+                GestureDetector(
+                  onTap: _pickDate,
+                  child: AbsorbPointer(
                     child: AppTextField(
-                      controller: _qtyCtrl, 
-                      label: l10n.quantity, 
-                      hint: l10n.quantityHint, 
-                      prefixIcon: Icons.numbers, 
-                      keyboardType: TextInputType.number, 
-                      validator: Validators.quantity
+                      controller: _expiryCtrl,
+                      label: l10n.expiryDate,
+                      hint: l10n.selectExpiryDate,
+                      prefixIcon: Icons.calendar_today_outlined,
+                      validator: (_) =>
+                          _expiryDate == null ? l10n.expiryDateRequired : null,
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    flex: 2,
-                    child: DropdownButtonFormField<MedicineUnit>(
-                      initialValue: _unit,
-                      isExpanded: true,
-                      decoration: InputDecoration(labelText: l10n.unit),
-                      items: [
-                        DropdownMenuItem(value: MedicineUnit.box, child: Text(l10n.box)),
-                        DropdownMenuItem(value: MedicineUnit.strip, child: Text(l10n.strip)),
-                      ],
-                      onChanged: (v) => setState(() => _unit = v ?? MedicineUnit.box),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
+                ),
+                const SizedBox(height: 24),
 
-              // Expiry date picker
-              GestureDetector(
-                onTap: _pickDate,
-                child: AbsorbPointer(
-                  child: AppTextField(
-                    controller: _expiryCtrl,
-                    label: l10n.expiryDate,
-                    hint: l10n.selectExpiryDate,
-                    prefixIcon: Icons.calendar_today_outlined,
-                    validator: (_) => _expiryDate == null ? l10n.expiryDateRequired : null,
+                // Notes for Pharmacist (New optional field)
+                AppTextField(
+                  controller: _notesCtrl,
+                  label: l10n.notesForPharmacist,
+                  hint: l10n.addReviewNotesOptional,
+                  prefixIcon: Icons.note_alt_outlined,
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 32),
+
+                BlocBuilder<DonationBloc, DonationState>(
+                  builder: (context, state) => AppButton(
+                    text: l10n.submitDonation,
+                    icon: Icons.send,
+                    isLoading: state is DonationLoading,
+                    onPressed: _submit,
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
-
-              // Notes for Pharmacist (New optional field)
-              AppTextField(
-                controller: _notesCtrl, 
-                label: l10n.notesForPharmacist, 
-                hint: l10n.addReviewNotesOptional, 
-                prefixIcon: Icons.note_alt_outlined, 
-                maxLines: 3
-              ),
-              const SizedBox(height: 32),
-
-              BlocBuilder<DonationBloc, DonationState>(
-                builder: (context, state) => AppButton(
-                  text: l10n.submitDonation, 
-                  icon: Icons.send, 
-                  isLoading: state is DonationLoading, 
-                  onPressed: _submit
-                ),
-              ),
-              const SizedBox(height: 32),
-            ]),
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ),
       ),
@@ -339,8 +394,8 @@ class _DonationScreenState extends State<DonationScreen> {
             color: _pharmacyError
                 ? AppColors.error
                 : _selectedPharmacy != null
-                    ? AppColors.primary
-                    : AppColors.divider.withValues(alpha: 0.5),
+                ? AppColors.primary
+                : AppColors.divider.withValues(alpha: 0.5),
             width: _selectedPharmacy != null || _pharmacyError ? 2 : 1,
           ),
           boxShadow: [
@@ -366,7 +421,9 @@ class _DonationScreenState extends State<DonationScreen> {
                 _selectedPharmacy != null
                     ? Icons.check_circle_rounded
                     : Icons.local_pharmacy_outlined,
-                color: _selectedPharmacy != null ? AppColors.success : AppColors.primary,
+                color: _selectedPharmacy != null
+                    ? AppColors.success
+                    : AppColors.primary,
                 size: 24,
               ),
             ),
@@ -389,19 +446,29 @@ class _DonationScreenState extends State<DonationScreen> {
                     const SizedBox(height: 4),
                     Text(
                       _selectedPharmacy!.fullLocation,
-                      style: TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ] else if (_pharmacyError) ...[
                     const SizedBox(height: 4),
                     Text(
                       l10n.pharmacyRequired,
-                      style: const TextStyle(fontSize: 12, color: AppColors.error),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.error,
+                      ),
                     ),
                   ],
                 ],
               ),
             ),
-            Icon(Icons.chevron_right_rounded, color: AppColors.textLight, size: 22),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.textLight,
+              size: 22,
+            ),
           ],
         ),
       ),
@@ -417,9 +484,9 @@ class _DonationScreenState extends State<DonationScreen> {
           color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: _boxImagePath == null 
-              ? AppColors.divider.withValues(alpha: 0.3) 
-              : AppColors.success.withValues(alpha: 0.5),
+            color: _boxImagePath == null
+                ? AppColors.divider.withValues(alpha: 0.3)
+                : AppColors.success.withValues(alpha: 0.5),
             width: 2,
           ),
           boxShadow: [
@@ -443,9 +510,19 @@ class _DonationScreenState extends State<DonationScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.check_circle, color: Colors.white, size: 48),
+                            const Icon(
+                              Icons.check_circle,
+                              color: Colors.white,
+                              size: 48,
+                            ),
                             const SizedBox(height: 8),
-                            Text(l10n.boxImageAttached, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                            Text(
+                              l10n.boxImageAttached,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -456,11 +533,27 @@ class _DonationScreenState extends State<DonationScreen> {
             : Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.add_a_photo_outlined, size: 48, color: AppColors.primary),
+                  const Icon(
+                    Icons.add_a_photo_outlined,
+                    size: 48,
+                    color: AppColors.primary,
+                  ),
                   const SizedBox(height: 12),
-                  Text(l10n.attachBoxImage, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600)),
+                  Text(
+                    l10n.attachBoxImage,
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(l10n.jpgPngOrPdf, style: const TextStyle(fontSize: 12, color: AppColors.textLight)),
+                  Text(
+                    l10n.jpgPngOrPdf,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textLight,
+                    ),
+                  ),
                 ],
               ),
       ),

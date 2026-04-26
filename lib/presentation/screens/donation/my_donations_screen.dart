@@ -21,11 +21,26 @@ class MyDonationsScreen extends StatefulWidget {
 
 class _MyDonationsScreenState extends State<MyDonationsScreen> {
   String _selectedFilter = 'all';
+  final _scrollCtrl = ScrollController();
 
   @override
   void initState() {
     super.initState();
     context.read<DonationBloc>().add(DonationsFetchRequested());
+    _scrollCtrl.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollCtrl.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollCtrl.position.pixels >=
+        _scrollCtrl.position.maxScrollExtent * 0.8) {
+      context.read<DonationBloc>().add(LoadMoreDonationsRequested());
+    }
   }
 
   void _resubmit(BuildContext context, DonationModel donation) async {
@@ -39,15 +54,17 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
       ),
     );
     if (pharmacy != null && context.mounted) {
-      context.read<DonationBloc>().add(DonationCreateRequested(
-        name: donation.medicineName,
-        notes: donation.notes,
-        expiryDate: donation.createdAt.toIso8601String(),
-        quantity: donation.quantity,
-        unit: donation.unit.toJson(),
-        pharmacyId: pharmacy.id,
-        pharmacyName: pharmacy.name,
-      ));
+      context.read<DonationBloc>().add(
+        DonationCreateRequested(
+          name: donation.medicineName,
+          notes: donation.notes,
+          expiryDate: donation.createdAt.toIso8601String(),
+          quantity: donation.quantity,
+          unit: donation.unit.toJson(),
+          pharmacyId: pharmacy.id,
+          pharmacyName: pharmacy.name,
+        ),
+      );
     }
   }
 
@@ -73,9 +90,15 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
         builder: (context, state) {
           Widget child;
           if (state is DonationLoading) {
-            child = const ShimmerCardList(key: ValueKey('loading'), isListTileStyle: true);
+            child = const ShimmerCardList(
+              key: ValueKey('loading'),
+              isListTileStyle: true,
+            );
           } else if (state is DonationError) {
-            child = Center(key: const ValueKey('error'), child: Text(state.message));
+            child = Center(
+              key: const ValueKey('error'),
+              child: Text(state.message),
+            );
           } else if (state is DonationsLoaded) {
             if (state.donations.isEmpty) {
               child = EmptyStateWidget(
@@ -87,10 +110,14 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
             } else {
               var filteredDonations = state.donations.toList();
               // Sort newest first
-              filteredDonations.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-              
+              filteredDonations.sort(
+                (a, b) => b.createdAt.compareTo(a.createdAt),
+              );
+
               if (_selectedFilter != 'all') {
-                filteredDonations = filteredDonations.where((d) => d.status == _selectedFilter).toList();
+                filteredDonations = filteredDonations
+                    .where((d) => d.status == _selectedFilter)
+                    .toList();
               }
 
               child = Column(
@@ -104,183 +131,297 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                             subtitle: l10n.tryDifferentSearch,
                           )
                         : ListView.builder(
-                key: const ValueKey('list'),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                itemCount: filteredDonations.length,
-                itemBuilder: (context, i) {
-                  final d = filteredDonations[i];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 16),
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: AppColors.divider.withValues(alpha: 0.3)),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.04),
-                          blurRadius: 15,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: AppColors.primary.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: const Icon(Icons.medication_rounded, color: AppColors.primary, size: 28),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                d.medicineName,
-                                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                    fontWeight: FontWeight.w700,
+                            controller: _scrollCtrl,
+                            key: const ValueKey('list'),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                              vertical: 16,
+                            ),
+                            itemCount: filteredDonations.length,
+                            itemBuilder: (context, i) {
+                              final d = filteredDonations[i];
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 16),
+                                padding: const EdgeInsets.all(20),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).cardColor,
+                                  borderRadius: BorderRadius.circular(24),
+                                  border: Border.all(
+                                    color: AppColors.divider.withValues(
+                                      alpha: 0.3,
+                                    ),
                                   ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                "${d.quantity} ${d.unit.localizedName(context)} • ${DateFormatters.timeAgo(d.createdAt)}",
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: AppColors.textSecondary,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              // Pharmacy name
-                              if (d.pharmacyName != null && d.pharmacyName!.isNotEmpty) ...[
-                                const SizedBox(height: 6),
-                                Row(
-                                  children: [
-                                    Icon(Icons.local_pharmacy_outlined, size: 14, color: AppColors.textLight),
-                                    const SizedBox(width: 4),
-                                    Expanded(
-                                      child: Text(
-                                        '${l10n.donatedTo} ${d.pharmacyName}',
-                                        style: TextStyle(fontSize: 12, color: AppColors.textLight, fontWeight: FontWeight.w500),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: AppColors.primary.withValues(
+                                        alpha: 0.04,
                                       ),
+                                      blurRadius: 15,
+                                      offset: const Offset(0, 8),
                                     ),
                                   ],
                                 ),
-                              ],
-                              const SizedBox(height: 14),
-                              Row(
-                                children: [
-                                  StatusBadge(status: d.status),
-                                  if (d.canShowQr) ...[
-                                    const SizedBox(width: 8),
-                                    GestureDetector(
-                                      onTap: () => context.push('/qr-display', extra: {
-                                        'id': d.id,
-                                        'type': 'donation',
-                                        'qrCode': d.qrCode,
-                                      }),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                        decoration: BoxDecoration(
-                                          color: AppColors.info.withValues(alpha: 0.1),
-                                          borderRadius: BorderRadius.circular(8),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.1,
                                         ),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Icon(Icons.qr_code_2_rounded, size: 16, color: AppColors.info),
-                                            const SizedBox(width: 6),
-                                            Text(
-                                              l10n.qr,
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w700,
-                                                color: AppColors.info,
+                                        borderRadius: BorderRadius.circular(16),
+                                      ),
+                                      child: const Icon(
+                                        Icons.medication_rounded,
+                                        color: AppColors.primary,
+                                        size: 28,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            d.medicineName,
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleLarge
+                                                ?.copyWith(
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                          ),
+                                          const SizedBox(height: 6),
+                                          Text(
+                                            "${d.quantity} ${d.unit.localizedName(context)} • ${DateFormatters.timeAgo(d.createdAt)}",
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              color: AppColors.textSecondary,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                          // Pharmacy name
+                                          if (d.pharmacyName != null &&
+                                              d.pharmacyName!.isNotEmpty) ...[
+                                            const SizedBox(height: 6),
+                                            Row(
+                                              children: [
+                                                const Icon(
+                                                  Icons.local_pharmacy_outlined,
+                                                  size: 14,
+                                                  color: AppColors.textLight,
+                                                ),
+                                                const SizedBox(width: 4),
+                                                Expanded(
+                                                  child: Text(
+                                                    '${l10n.donatedTo} ${d.pharmacyName}',
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color:
+                                                          AppColors.textLight,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                          const SizedBox(height: 14),
+                                          Row(
+                                            children: [
+                                              StatusBadge(status: d.status),
+                                              if (d.canShowQr) ...[
+                                                const SizedBox(width: 8),
+                                                GestureDetector(
+                                                  onTap: () => context.push(
+                                                    '/qr-display',
+                                                    extra: {
+                                                      'id': d.id,
+                                                      'type': 'donation',
+                                                      'qrCode': d.qrCode,
+                                                    },
+                                                  ),
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 6,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColors.info
+                                                          .withValues(
+                                                            alpha: 0.1,
+                                                          ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            8,
+                                                          ),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        const Icon(
+                                                          Icons
+                                                              .qr_code_2_rounded,
+                                                          size: 16,
+                                                          color: AppColors.info,
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 6,
+                                                        ),
+                                                        Text(
+                                                          l10n.qr,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: AppColors
+                                                                    .info,
+                                                              ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                          if (d.isRejected &&
+                                              (d.reviewReason ?? d.notes)
+                                                  .isNotEmpty) ...[
+                                            const SizedBox(height: 14),
+                                            Container(
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: AppColors.error
+                                                    .withValues(alpha: 0.1),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                border: Border.all(
+                                                  color: AppColors.error
+                                                      .withValues(alpha: 0.2),
+                                                ),
+                                              ),
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  const Icon(
+                                                    Icons.info_outline_rounded,
+                                                    size: 18,
+                                                    color: AppColors.error,
+                                                  ),
+                                                  const SizedBox(width: 8),
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          l10n.reasonForRejection,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: AppColors
+                                                                    .error,
+                                                              ),
+                                                        ),
+                                                        const SizedBox(
+                                                          height: 2,
+                                                        ),
+                                                        Text(
+                                                          d.reviewReason ??
+                                                              d.notes,
+                                                          style:
+                                                              const TextStyle(
+                                                                fontSize: 12,
+                                                                color: AppColors
+                                                                    .error,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ],
-                                        ),
+                                          // Resubmit button for rejected (non-permanent) donations
+                                          if (d.canResubmit) ...[
+                                            const SizedBox(height: 12),
+                                            SizedBox(
+                                              width: double.infinity,
+                                              child: OutlinedButton.icon(
+                                                icon: const Icon(
+                                                  Icons.refresh,
+                                                  size: 16,
+                                                ),
+                                                label: Text(
+                                                  l10n.resubmitToAnotherPharmacy,
+                                                ),
+                                                onPressed: () =>
+                                                    _resubmit(context, d),
+                                                style: OutlinedButton.styleFrom(
+                                                  foregroundColor:
+                                                      AppColors.primary,
+                                                  side: BorderSide(
+                                                    color: AppColors.primary
+                                                        .withValues(alpha: 0.4),
+                                                  ),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          12,
+                                                        ),
+                                                  ),
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                        vertical: 10,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
                                       ),
                                     ),
                                   ],
-                                ],
-                              ),
-                              if (d.isRejected && (d.reviewReason ?? d.notes).isNotEmpty) ...[
-                               const SizedBox(height: 14),
-                               Container(
-                                 padding: const EdgeInsets.all(12),
-                                 decoration: BoxDecoration(
-                                   color: AppColors.error.withValues(alpha: 0.1),
-                                   borderRadius: BorderRadius.circular(12),
-                                   border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
-                                 ),
-                                 child: Row(
-                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                   children: [
-                                     const Icon(Icons.info_outline_rounded, size: 18, color: AppColors.error),
-                                     const SizedBox(width: 8),
-                                     Expanded(
-                                       child: Column(
-                                         crossAxisAlignment: CrossAxisAlignment.start,
-                                         children: [
-                                           Text(l10n.reasonForRejection, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.error)),
-                                           const SizedBox(height: 2),
-                                           Text(d.reviewReason ?? d.notes, style: const TextStyle(fontSize: 12, color: AppColors.error, fontWeight: FontWeight.w500)),
-                                         ],
-                                       ),
-                                     ),
-                                   ],
-                                 ),
-                               ),
-                             ],
-                             // Resubmit button for rejected (non-permanent) donations
-                             if (d.canResubmit) ...[
-                               const SizedBox(height: 12),
-                               SizedBox(
-                                 width: double.infinity,
-                                 child: OutlinedButton.icon(
-                                   icon: const Icon(Icons.refresh, size: 16),
-                                   label: Text(l10n.resubmitToAnotherPharmacy),
-                                   onPressed: () => _resubmit(context, d),
-                                   style: OutlinedButton.styleFrom(
-                                     foregroundColor: AppColors.primary,
-                                     side: BorderSide(color: AppColors.primary.withValues(alpha: 0.4)),
-                                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                                     padding: const EdgeInsets.symmetric(vertical: 10),
-                                   ),
-                                 ),
-                               ),
-                             ],
-                            ],
+                                ),
+                              );
+                            },
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        );
-      }
-    } else {
-      child = const SizedBox.shrink(key: ValueKey('none'));
-    }
+                  ),
+                ],
+              );
+            }
+          } else {
+            child = const SizedBox.shrink(key: ValueKey('none'));
+          }
 
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 400),
-      child: child,
+          return AnimatedSwitcher(
+            duration: const Duration(milliseconds: 400),
+            child: child,
+          );
+        },
+      ),
     );
-  },
-),
-);
-}
+  }
 
   Widget _buildFilterRow(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -320,7 +461,9 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
                 side: BorderSide(
-                  color: isActive ? AppColors.primary : AppColors.divider.withValues(alpha: 0.5),
+                  color: isActive
+                      ? AppColors.primary
+                      : AppColors.divider.withValues(alpha: 0.5),
                 ),
               ),
               onSelected: (selected) {

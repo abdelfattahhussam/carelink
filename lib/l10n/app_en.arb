@@ -316,5 +316,6 @@
   "allCategories": "All Categories",
   "all": "All",
   "noRequestsFound": "No Requests Found",
-  "noDonationsFound": "No Donations Found"
+  "noDonationsFound": "No Donations Found",
+  "registrationSuccess": "Account created successfully!"
 }

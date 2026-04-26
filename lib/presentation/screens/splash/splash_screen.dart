@@ -52,56 +52,68 @@ class _SplashScreenState extends State<SplashScreen>
     );
 
     // 1. Logo soft scale-up
-    _logoScale = Tween<double>(begin: 0.6, end: 1.0).animate(CurvedAnimation(
-      parent: _entranceController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOutQuint),
-    ));
+    _logoScale = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOutQuint),
+      ),
+    );
 
     // 2. Blur-to-sharp reveal (Reduced to 6.0 for 60fps optimization)
-    _logoBlur = Tween<double>(begin: 6.0, end: 0.0).animate(CurvedAnimation(
-      parent: _entranceController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOutQuart),
-    ));
+    _logoBlur = Tween<double>(begin: 6.0, end: 0.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOutQuart),
+      ),
+    );
 
     // Logo Fade
-    _logoFade = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: _entranceController,
-      curve: const Interval(0.0, 0.4, curve: Curves.easeOutCubic),
-    ));
+    _logoFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.0, 0.4, curve: Curves.easeOutCubic),
+      ),
+    );
 
     // 4. Gentle expansion motion
-    _logoSlide = Tween<Offset>(
-      begin: const Offset(0.0, 0.05),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOutQuint),
-    ));
+    _logoSlide = Tween<Offset>(begin: const Offset(0.0, 0.05), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0.0, 0.6, curve: Curves.easeOutQuint),
+          ),
+        );
 
     // 7. Title fades in after logo
-    _nameFade = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: _entranceController,
-      curve: const Interval(0.3, 0.7, curve: Curves.easeOutCubic),
-    ));
-    _nameSlide = Tween<Offset>(
-      begin: const Offset(0.0, 0.1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _entranceController,
-      curve: const Interval(0.3, 0.7, curve: Curves.easeOutQuint),
-    ));
+    _nameFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.3, 0.7, curve: Curves.easeOutCubic),
+      ),
+    );
+    _nameSlide = Tween<Offset>(begin: const Offset(0.0, 0.1), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0.3, 0.7, curve: Curves.easeOutQuint),
+          ),
+        );
 
     // 8. Subtitle fades in after title
-    _subtitleFade = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: _entranceController,
-      curve: const Interval(0.5, 0.9, curve: Curves.easeOutCubic),
-    ));
+    _subtitleFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.5, 0.9, curve: Curves.easeOutCubic),
+      ),
+    );
 
     // 9. Loading shimmer appears last
-    _loaderFade = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(
-      parent: _entranceController,
-      curve: const Interval(0.7, 1.0, curve: Curves.easeOutCubic),
-    ));
+    _loaderFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _entranceController,
+        curve: const Interval(0.7, 1.0, curve: Curves.easeOutCubic),
+      ),
+    );
 
     // ── 6. Pulsing glow & breathing: repeating ──
     _breatheController = AnimationController(
@@ -128,10 +140,9 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
       duration: const Duration(milliseconds: 500),
     );
-    _exitFade = Tween<double>(begin: 1.0, end: 0.0).animate(CurvedAnimation(
-      parent: _exitController,
-      curve: Curves.easeOutCubic,
-    ));
+    _exitFade = Tween<double>(begin: 1.0, end: 0.0).animate(
+      CurvedAnimation(parent: _exitController, curve: Curves.easeOutCubic),
+    );
 
     // ── Start entrance ──
     _entranceController.forward();
@@ -254,8 +265,10 @@ class _SplashScreenState extends State<SplashScreen>
                                       shape: BoxShape.circle,
                                       boxShadow: [
                                         BoxShadow(
-                                          color: const Color(0xFF5EEAD4).withValues(
-                                              alpha: _glowOpacity.value * 0.4),
+                                          color: const Color(0xFF5EEAD4)
+                                              .withValues(
+                                                alpha: _glowOpacity.value * 0.4,
+                                              ),
                                           blurRadius: 60,
                                           spreadRadius: 10,
                                         ),
@@ -268,9 +281,13 @@ class _SplashScreenState extends State<SplashScreen>
                                     height: logoSize * 1.3,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
-                                      color: Colors.white.withValues(alpha: 0.08),
+                                      color: Colors.white.withValues(
+                                        alpha: 0.08,
+                                      ),
                                       border: Border.all(
-                                        color: Colors.white.withValues(alpha: 0.12),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.12,
+                                        ),
                                         width: 1.5,
                                       ),
                                     ),
@@ -331,9 +348,7 @@ class _SplashScreenState extends State<SplashScreen>
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            _PulsingProgressBar(
-                              animation: _shimmerController,
-                            ),
+                            _PulsingProgressBar(animation: _shimmerController),
                             const SizedBox(height: 16),
                             Text(
                               'Powered by Community',
@@ -401,10 +416,7 @@ class _ShimmerBarPainter extends CustomPainter {
     // Background
     final bgPaint = Paint()..color = Colors.white.withValues(alpha: 0.1);
     canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Offset.zero & size,
-        const Radius.circular(4),
-      ),
+      RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(4)),
       bgPaint,
     );
 

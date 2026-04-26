@@ -41,15 +41,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
         curve: const Interval(0, 0.35, curve: Curves.easeOut),
       ),
     );
-    _logoSlide = Tween<Offset>(
-      begin: const Offset(0, -0.2),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: const Interval(0, 0.35, curve: Curves.easeOutCubic),
-      ),
-    );
+    _logoSlide = Tween<Offset>(begin: const Offset(0, -0.2), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0, 0.35, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _titleFade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
@@ -64,15 +62,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
         curve: const Interval(0.4, 0.7, curve: Curves.easeOut),
       ),
     );
-    _card1Slide = Tween<Offset>(
-      begin: const Offset(0, 0.12),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: const Interval(0.4, 0.7, curve: Curves.easeOutCubic),
-      ),
-    );
+    _card1Slide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0.4, 0.7, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _card2Fade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
@@ -80,15 +76,13 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
         curve: const Interval(0.55, 0.85, curve: Curves.easeOut),
       ),
     );
-    _card2Slide = Tween<Offset>(
-      begin: const Offset(0, 0.12),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(
-        parent: _entranceController,
-        curve: const Interval(0.55, 0.85, curve: Curves.easeOutCubic),
-      ),
-    );
+    _card2Slide = Tween<Offset>(begin: const Offset(0, 0.12), end: Offset.zero)
+        .animate(
+          CurvedAnimation(
+            parent: _entranceController,
+            curve: const Interval(0.55, 0.85, curve: Curves.easeOutCubic),
+          ),
+        );
 
     _entranceController.forward();
   }
@@ -116,11 +110,7 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF0D9488),
-              Color(0xFF065F53),
-              Color(0xFF043D36),
-            ],
+            colors: [Color(0xFF0D9488), Color(0xFF065F53), Color(0xFF043D36)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             stops: [0.0, 0.55, 1.0],
@@ -134,7 +124,8 @@ class _LanguageSelectionScreenState extends State<LanguageSelectionScreen>
                 padding: const EdgeInsets.symmetric(horizontal: 32),
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
-                    minHeight: screenHeight -
+                    minHeight:
+                        screenHeight -
                         MediaQuery.paddingOf(context).top -
                         MediaQuery.paddingOf(context).bottom,
                   ),

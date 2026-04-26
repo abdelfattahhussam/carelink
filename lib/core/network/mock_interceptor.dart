@@ -15,7 +15,9 @@ class MockInterceptor extends Interceptor {
       'role': 'donor',
       'status': 'verified',
       'token': 'mock-jwt-token-donor',
-      'createdAt': DateTime.now().subtract(const Duration(days: 30)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 30))
+          .toIso8601String(),
     },
     {
       'id': 'user-2',
@@ -26,7 +28,9 @@ class MockInterceptor extends Interceptor {
       'role': 'patient',
       'status': 'verified',
       'token': 'mock-jwt-token-patient',
-      'createdAt': DateTime.now().subtract(const Duration(days: 20)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 20))
+          .toIso8601String(),
     },
     {
       'id': 'user-3',
@@ -37,7 +41,9 @@ class MockInterceptor extends Interceptor {
       'role': 'pharmacist',
       'status': 'verified',
       'token': 'mock-jwt-token-pharmacist',
-      'createdAt': DateTime.now().subtract(const Duration(days: 60)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 60))
+          .toIso8601String(),
     },
   ];
 
@@ -99,7 +105,9 @@ class MockInterceptor extends Interceptor {
       'id': 'med-1',
       'name': 'Amoxicillin 500mg',
       'description': 'Antibiotic capsules for bacterial infections',
-      'expiryDate': DateTime.now().add(const Duration(days: 180)).toIso8601String(),
+      'expiryDate': DateTime.now()
+          .add(const Duration(days: 180))
+          .toIso8601String(),
       'quantity': 24,
       'unit': 'strip',
       'donorId': 'user-1',
@@ -109,13 +117,17 @@ class MockInterceptor extends Interceptor {
       'category': 'Antibiotics',
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 5))
+          .toIso8601String(),
     },
     {
       'id': 'med-2',
       'name': 'Paracetamol 500mg',
       'description': 'Pain reliever and fever reducer tablets',
-      'expiryDate': DateTime.now().add(const Duration(days: 365)).toIso8601String(),
+      'expiryDate': DateTime.now()
+          .add(const Duration(days: 365))
+          .toIso8601String(),
       'quantity': 50,
       'unit': 'box',
       'donorId': 'user-1',
@@ -125,13 +137,17 @@ class MockInterceptor extends Interceptor {
       'category': 'Pain Relief',
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(days: 3)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 3))
+          .toIso8601String(),
     },
     {
       'id': 'med-3',
       'name': 'Omeprazole 20mg',
       'description': 'Proton pump inhibitor for acid reflux',
-      'expiryDate': DateTime.now().add(const Duration(days: 90)).toIso8601String(),
+      'expiryDate': DateTime.now()
+          .add(const Duration(days: 90))
+          .toIso8601String(),
       'quantity': 14,
       'unit': 'strip',
       'donorId': 'user-1',
@@ -141,13 +157,17 @@ class MockInterceptor extends Interceptor {
       'category': 'Digestive',
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 2))
+          .toIso8601String(),
     },
     {
       'id': 'med-4',
       'name': 'Metformin 850mg',
       'description': 'Oral diabetes medicine to control blood sugar',
-      'expiryDate': DateTime.now().add(const Duration(days: 240)).toIso8601String(),
+      'expiryDate': DateTime.now()
+          .add(const Duration(days: 240))
+          .toIso8601String(),
       'quantity': 30,
       'unit': 'box',
       'donorId': 'user-1',
@@ -157,13 +177,17 @@ class MockInterceptor extends Interceptor {
       'category': 'Diabetes',
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 1))
+          .toIso8601String(),
     },
     {
       'id': 'med-5',
       'name': 'Losartan 50mg',
       'description': 'Angiotensin receptor blocker for hypertension',
-      'expiryDate': DateTime.now().subtract(const Duration(days: 10)).toIso8601String(),
+      'expiryDate': DateTime.now()
+          .subtract(const Duration(days: 10))
+          .toIso8601String(),
       'quantity': 0,
       'unit': 'box',
       'donorId': 'user-1',
@@ -173,13 +197,17 @@ class MockInterceptor extends Interceptor {
       'category': 'Cardiovascular',
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(days: 200)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 200))
+          .toIso8601String(),
     },
     {
       'id': 'med-6',
       'name': 'Ibuprofen 400mg',
       'description': 'Non-steroidal anti-inflammatory drug',
-      'expiryDate': DateTime.now().add(const Duration(days: 270)).toIso8601String(),
+      'expiryDate': DateTime.now()
+          .add(const Duration(days: 270))
+          .toIso8601String(),
       'quantity': 36,
       'unit': 'strip',
       'donorId': 'user-1',
@@ -189,13 +217,17 @@ class MockInterceptor extends Interceptor {
       'category': 'Pain Relief',
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(hours: 12)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 12))
+          .toIso8601String(),
     },
     {
       'id': 'med-7',
       'name': 'Aspirin 100mg',
       'description': 'Blood thinner — low dose',
-      'expiryDate': DateTime.now().add(const Duration(days: 20)).toIso8601String(),
+      'expiryDate': DateTime.now()
+          .add(const Duration(days: 20))
+          .toIso8601String(),
       'quantity': 10,
       'unit': 'strip',
       'donorId': 'user-1',
@@ -205,7 +237,9 @@ class MockInterceptor extends Interceptor {
       'category': 'Cardiovascular',
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(days: 25)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 25))
+          .toIso8601String(),
     },
   ];
 
@@ -224,7 +258,9 @@ class MockInterceptor extends Interceptor {
       'reviewedBy': 'user-3',
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(days: 5)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 5))
+          .toIso8601String(),
     },
     {
       'id': 'don-2',
@@ -240,7 +276,9 @@ class MockInterceptor extends Interceptor {
       'reviewedBy': null,
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 1))
+          .toIso8601String(),
     },
   ];
 
@@ -259,7 +297,9 @@ class MockInterceptor extends Interceptor {
       'qrCode': 'QR-REQ-001',
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 2))
+          .toIso8601String(),
     },
     {
       'id': 'req-2',
@@ -275,7 +315,9 @@ class MockInterceptor extends Interceptor {
       'qrCode': null,
       'pharmacyId': 'pharm-1',
       'pharmacyName': 'صيدلية النور',
-      'createdAt': DateTime.now().subtract(const Duration(hours: 6)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 6))
+          .toIso8601String(),
     },
   ];
 
@@ -285,12 +327,15 @@ class MockInterceptor extends Interceptor {
     {
       'id': 'notif-1',
       'title': 'Donation Approved',
-      'body': 'Your donation of Amoxicillin 500mg has been approved by the pharmacist.',
+      'body':
+          'Your donation of Amoxicillin 500mg has been approved by the pharmacist.',
       'type': 'donationApproved',
       'isRead': false,
       'userId': 'user-1',
       'targetRole': 'donor',
-      'createdAt': DateTime.now().subtract(const Duration(hours: 2)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 2))
+          .toIso8601String(),
     },
     {
       'id': 'notif-2',
@@ -300,17 +345,22 @@ class MockInterceptor extends Interceptor {
       'isRead': false,
       'userId': 'user-3', // Scoped to seed pharmacist only
       'targetRole': 'pharmacist',
-      'createdAt': DateTime.now().subtract(const Duration(hours: 3)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(hours: 3))
+          .toIso8601String(),
     },
     {
       'id': 'notif-3',
       'title': 'Request Approved',
-      'body': 'Your request for Paracetamol 500mg has been approved. Show QR code for pickup.',
+      'body':
+          'Your request for Paracetamol 500mg has been approved. Show QR code for pickup.',
       'type': 'requestApproved',
       'isRead': true,
       'userId': 'user-2', // Private notification
       'targetRole': 'patient',
-      'createdAt': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+      'createdAt': DateTime.now()
+          .subtract(const Duration(days: 1))
+          .toIso8601String(),
     },
   ];
 
@@ -340,16 +390,18 @@ class MockInterceptor extends Interceptor {
       } else if (path.contains('/auth/profile') && method == 'POST') {
         response = _handleUpdateProfile(options);
 
-      // ─── PHARMACIES ─── (must be before /pharmacist routes)
+        // ─── PHARMACIES ─── (must be before /pharmacist routes)
       } else if (path.contains('/pharmacies/pharmacist/') && method == 'GET') {
         response = _handleGetPharmacyByPharmacist(options);
       } else if (path.contains('/pharmacies') && method == 'GET') {
         response = _handleGetPharmacies(options);
 
-      // ─── DONATIONS ───
+        // ─── DONATIONS ───
       } else if (path.contains('/donations/pending') && method == 'GET') {
         response = _handleGetPendingDonations(options);
-      } else if (path.contains('/donations') && method == 'GET' && !path.contains('/donations/')) {
+      } else if (path.contains('/donations') &&
+          method == 'GET' &&
+          !path.contains('/donations/')) {
         response = _handleGetDonations(options);
       } else if (path.contains('/donations') && method == 'POST') {
         if (path.endsWith('/status')) {
@@ -358,13 +410,13 @@ class MockInterceptor extends Interceptor {
           response = _handleCreateDonation(options);
         }
 
-      // ─── MEDICINES ───
+        // ─── MEDICINES ───
       } else if (path.contains('/medicines/search') && method == 'GET') {
         response = _handleSearchMedicines(options);
       } else if (path.contains('/medicines') && method == 'GET') {
         response = _handleGetMedicines(options);
 
-      // ─── REQUESTS ───
+        // ─── REQUESTS ───
       } else if (path.contains('/requests') && method == 'GET') {
         response = _handleGetRequests(options);
       } else if (path.contains('/requests') && method == 'POST') {
@@ -374,17 +426,18 @@ class MockInterceptor extends Interceptor {
           response = _handleCreateRequest(options);
         }
 
-      // ─── PHARMACIST ───
+        // ─── PHARMACIST ───
       } else if (path.contains('/pharmacist/review') && method == 'POST') {
         response = _handleReviewDonation(options);
-      } else if (path.contains('/pharmacist/approve-request') && method == 'POST') {
+      } else if (path.contains('/pharmacist/approve-request') &&
+          method == 'POST') {
         response = _handleApproveRequest(options);
 
-      // ─── QR ───
+        // ─── QR ───
       } else if (path.contains('/qr/verify') && method == 'POST') {
         response = _handleVerifyQr(options);
 
-      // ─── NOTIFICATIONS ───
+        // ─── NOTIFICATIONS ───
       } else if (path.contains('/notifications/read/') && method == 'POST') {
         response = _handleMarkRead(options);
       } else if (path.contains('/notifications/') && method == 'DELETE') {
@@ -401,11 +454,13 @@ class MockInterceptor extends Interceptor {
 
       handler.resolve(response);
     } catch (e) {
-      handler.resolve(Response(
-        requestOptions: options,
-        statusCode: 500,
-        data: {'error': e.toString()},
-      ));
+      handler.resolve(
+        Response(
+          requestOptions: options,
+          statusCode: 500,
+          data: {'error': e.toString()},
+        ),
+      );
     }
   }
 
@@ -484,19 +539,25 @@ class MockInterceptor extends Interceptor {
     return Response(
       requestOptions: options,
       statusCode: 201,
-      data: {
-        'success': true,
-        'data': Map<String, dynamic>.from(newUser),
-      },
+      data: {'success': true, 'data': Map<String, dynamic>.from(newUser)},
     );
   }
 
   Response _handleGetProfile(RequestOptions options) {
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     if (user == null) {
-      return Response(requestOptions: options, statusCode: 401, data: {'error': 'Unauthorized'});
+      return Response(
+        requestOptions: options,
+        statusCode: 401,
+        data: {'error': 'Unauthorized'},
+      );
     }
 
     return Response(
@@ -508,14 +569,19 @@ class MockInterceptor extends Interceptor {
 
   Response _handleUpdateProfile(RequestOptions options) {
     final data = options.data as Map<String, dynamic>?;
-    final userId = data?['userId'] ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
 
-    final index = _users.indexWhere((u) => u['id'] == userId);
+    final index = _users.indexWhere((u) => u['token'] == token);
     if (index < 0) {
       return Response(
         requestOptions: options,
-        statusCode: 404,
-        data: {'error': 'User not found'},
+        statusCode: 401,
+        data: {'error': 'Unauthorized'},
       );
     }
 
@@ -523,20 +589,29 @@ class MockInterceptor extends Interceptor {
     if (data?['name'] != null) _users[index]['name'] = data!['name'];
     if (data?['email'] != null) _users[index]['email'] = data!['email'];
     if (data?['phone'] != null) _users[index]['phone'] = data!['phone'];
-    if (data?['pharmacyName'] != null) _users[index]['pharmacyName'] = data!['pharmacyName'];
-    if (data?['governorate'] != null) _users[index]['governorate'] = data!['governorate'];
-    if (data?['city'] != null) _users[index]['city'] = data!['city'];
-    if (data?['village'] != null) _users[index]['village'] = data!['village'];
-    if (data?['street'] != null) _users[index]['street'] = data!['street'];
-    if (data?['profilePicturePath'] != null) _users[index]['profilePicturePath'] = data!['profilePicturePath'];
+    if (data?['pharmacyName'] != null) {
+      _users[index]['pharmacyName'] = data!['pharmacyName'];
+    }
+    if (data?['governorate'] != null) {
+      _users[index]['governorate'] = data!['governorate'];
+    }
+    if (data?['city'] != null) {
+      _users[index]['city'] = data!['city'];
+    }
+    if (data?['village'] != null) {
+      _users[index]['village'] = data!['village'];
+    }
+    if (data?['street'] != null) {
+      _users[index]['street'] = data!['street'];
+    }
+    if (data?['profilePicturePath'] != null) {
+      _users[index]['profilePicturePath'] = data!['profilePicturePath'];
+    }
 
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {
-        'success': true,
-        'data': Map<String, dynamic>.from(_users[index]),
-      },
+      data: {'success': true, 'data': Map<String, dynamic>.from(_users[index])},
     );
   }
 
@@ -547,18 +622,27 @@ class MockInterceptor extends Interceptor {
     final city = options.queryParameters['city'];
     final district = options.queryParameters['district'];
 
-    var result = List<Map<String, dynamic>>.from(_pharmacies)
-        .where((p) => p['isActive'] == true)
-        .toList();
+    var result = List<Map<String, dynamic>>.from(
+      _pharmacies,
+    ).where((p) => p['isActive'] == true).toList();
 
-    if (gov != null) result = result.where((p) => p['governorate'] == gov).toList();
-    if (city != null) result = result.where((p) => p['city'] == city).toList();
-    if (district != null) result = result.where((p) => p['district'] == district).toList();
+    if (gov != null) {
+      result = result.where((p) => p['governorate'] == gov).toList();
+    }
+    if (city != null) {
+      result = result.where((p) => p['city'] == city).toList();
+    }
+    if (district != null) {
+      result = result.where((p) => p['district'] == district).toList();
+    }
 
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': result.map((p) => Map<String, dynamic>.from(p)).toList()},
+      data: {
+        'success': true,
+        'data': result.map((p) => Map<String, dynamic>.from(p)).toList(),
+      },
     );
   }
 
@@ -569,8 +653,11 @@ class MockInterceptor extends Interceptor {
         .firstOrNull;
 
     if (pharmacy == null) {
-      return Response(requestOptions: options, statusCode: 404,
-          data: {'error': 'No pharmacy found for this pharmacist'});
+      return Response(
+        requestOptions: options,
+        statusCode: 404,
+        data: {'error': 'No pharmacy found for this pharmacist'},
+      );
     }
 
     return Response(
@@ -583,7 +670,12 @@ class MockInterceptor extends Interceptor {
   // ─── DONATION HANDLERS ───
 
   Response _handleGetDonations(RequestOptions options) {
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     List<Map<String, dynamic>> result = _donations;
@@ -598,7 +690,9 @@ class MockInterceptor extends Interceptor {
             .where((p) => p['pharmacistId'] == user['id'])
             .firstOrNull;
         if (pharmacy != null) {
-          result = _donations.where((d) => d['pharmacyId'] == pharmacy['id']).toList();
+          result = _donations
+              .where((d) => d['pharmacyId'] == pharmacy['id'])
+              .toList();
         }
       }
     }
@@ -606,7 +700,10 @@ class MockInterceptor extends Interceptor {
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': result.map((d) => Map<String, dynamic>.from(d)).toList()},
+      data: {
+        'success': true,
+        'data': result.map((d) => Map<String, dynamic>.from(d)).toList(),
+      },
     );
   }
 
@@ -618,7 +715,8 @@ class MockInterceptor extends Interceptor {
 
     final index = _donations.indexWhere((d) => d['id'] == id);
     if (index >= 0) {
-      _donations[index] = Map<String, dynamic>.from(_donations[index])..['status'] = status;
+      _donations[index] = Map<String, dynamic>.from(_donations[index])
+        ..['status'] = status;
       // Issue #2: Mark medicine as approved only upon delivery
       if (status == 'delivered') {
         final medId = _donations[index]['medicineId'];
@@ -633,11 +731,20 @@ class MockInterceptor extends Interceptor {
         data: {'success': true, 'data': _donations[index]},
       );
     }
-    return Response(requestOptions: options, statusCode: 404, data: {'error': 'Donation not found'});
+    return Response(
+      requestOptions: options,
+      statusCode: 404,
+      data: {'error': 'Donation not found'},
+    );
   }
 
   Response _handleGetPendingDonations(RequestOptions options) {
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     var pending = _donations.where((d) => d['status'] == 'pending').toList();
@@ -648,14 +755,19 @@ class MockInterceptor extends Interceptor {
           .where((p) => p['pharmacistId'] == user['id'])
           .firstOrNull;
       if (pharmacy != null) {
-        pending = pending.where((d) => d['pharmacyId'] == pharmacy['id']).toList();
+        pending = pending
+            .where((d) => d['pharmacyId'] == pharmacy['id'])
+            .toList();
       }
     }
 
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': pending.map((d) => Map<String, dynamic>.from(d)).toList()},
+      data: {
+        'success': true,
+        'data': pending.map((d) => Map<String, dynamic>.from(d)).toList(),
+      },
     );
   }
 
@@ -664,7 +776,12 @@ class MockInterceptor extends Interceptor {
     final medId = 'med-${_uuid.v4().substring(0, 8)}';
     final donId = 'don-${_uuid.v4().substring(0, 8)}';
 
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     // Create the medicine entry
@@ -672,7 +789,9 @@ class MockInterceptor extends Interceptor {
       'id': medId,
       'name': data?['name'] ?? '',
       'description': data?['description'] ?? '',
-      'expiryDate': data?['expiryDate'] ?? DateTime.now().add(const Duration(days: 180)).toIso8601String(),
+      'expiryDate':
+          data?['expiryDate'] ??
+          DateTime.now().add(const Duration(days: 180)).toIso8601String(),
       'quantity': data?['quantity'] ?? 1,
       'unit': data?['unit'] ?? 'box', // Handle unit
       'donorId': user?['id'] ?? 'unknown',
@@ -709,13 +828,16 @@ class MockInterceptor extends Interceptor {
     // Notify the pharmacist of the target pharmacy about the new donation
     final pharmacyId = data?['pharmacyId'] as String?;
     if (pharmacyId != null) {
-      final pharmacy = _pharmacies.where((p) => p['id'] == pharmacyId).firstOrNull;
+      final pharmacy = _pharmacies
+          .where((p) => p['id'] == pharmacyId)
+          .firstOrNull;
       if (pharmacy != null) {
         final pharmacistId = pharmacy['pharmacistId'] as String?;
         _addNotification(
           userId: pharmacistId,
           title: 'New Donation Received',
-          body: 'A new donation of ${data?['name'] ?? 'medicine'} has been submitted for review.',
+          body:
+              'A new donation of ${data?['name'] ?? 'medicine'} has been submitted for review.',
           type: 'newDonation',
         );
       }
@@ -731,7 +853,12 @@ class MockInterceptor extends Interceptor {
   // ─── MEDICINE HANDLERS ───
 
   Response _handleGetMedicines(RequestOptions options) {
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     var result = _medicines.where((m) => m['status'] == 'approved').toList();
@@ -742,27 +869,39 @@ class MockInterceptor extends Interceptor {
           .where((p) => p['pharmacistId'] == user['id'])
           .firstOrNull;
       if (pharmacy != null) {
-        result = result.where((m) => m['pharmacyId'] == pharmacy['id']).toList();
+        result = result
+            .where((m) => m['pharmacyId'] == pharmacy['id'])
+            .toList();
       }
     }
 
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': result.map((m) => Map<String, dynamic>.from(m)).toList()},
+      data: {
+        'success': true,
+        'data': result.map((m) => Map<String, dynamic>.from(m)).toList(),
+      },
     );
   }
 
   Response _handleSearchMedicines(RequestOptions options) {
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
     final query = (options.queryParameters['q'] ?? '').toString().toLowerCase();
-    
+
     var results = _medicines
-        .where((m) =>
-            m['status'] == 'approved' &&
-            (m['name'].toString().toLowerCase().contains(query) ||
-             m['category'].toString().toLowerCase().contains(query)))
+        .where(
+          (m) =>
+              m['status'] == 'approved' &&
+              (m['name'].toString().toLowerCase().contains(query) ||
+                  m['category'].toString().toLowerCase().contains(query)),
+        )
         .toList();
 
     // Issue #1: Pharmacist sees ONLY his pharmacy's medicines
@@ -771,21 +910,31 @@ class MockInterceptor extends Interceptor {
           .where((p) => p['pharmacistId'] == user['id'])
           .firstOrNull;
       if (pharmacy != null) {
-        results = results.where((m) => m['pharmacyId'] == pharmacy['id']).toList();
+        results = results
+            .where((m) => m['pharmacyId'] == pharmacy['id'])
+            .toList();
       }
     }
 
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': results.map((m) => Map<String, dynamic>.from(m)).toList()},
+      data: {
+        'success': true,
+        'data': results.map((m) => Map<String, dynamic>.from(m)).toList(),
+      },
     );
   }
 
   // ─── REQUEST HANDLERS ───
 
   Response _handleGetRequests(RequestOptions options) {
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     List<Map<String, dynamic>> result = _requests;
@@ -798,7 +947,9 @@ class MockInterceptor extends Interceptor {
             .where((p) => p['pharmacistId'] == user['id'])
             .firstOrNull;
         if (pharmacy != null) {
-          result = _requests.where((r) => r['pharmacyId'] == pharmacy['id']).toList();
+          result = _requests
+              .where((r) => r['pharmacyId'] == pharmacy['id'])
+              .toList();
         }
       }
     }
@@ -807,13 +958,18 @@ class MockInterceptor extends Interceptor {
     result.sort((a, b) {
       if (a['isUrgent'] == true && b['isUrgent'] != true) return -1;
       if (b['isUrgent'] == true && a['isUrgent'] != true) return 1;
-      return DateTime.parse(b['createdAt']).compareTo(DateTime.parse(a['createdAt']));
+      return DateTime.parse(
+        b['createdAt'],
+      ).compareTo(DateTime.parse(a['createdAt']));
     });
 
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': result.map((r) => Map<String, dynamic>.from(r)).toList()},
+      data: {
+        'success': true,
+        'data': result.map((r) => Map<String, dynamic>.from(r)).toList(),
+      },
     );
   }
 
@@ -825,18 +981,24 @@ class MockInterceptor extends Interceptor {
 
     final index = _requests.indexWhere((r) => r['id'] == id);
     if (index >= 0) {
-      _requests[index] = Map<String, dynamic>.from(_requests[index])..['status'] = status;
+      _requests[index] = Map<String, dynamic>.from(_requests[index])
+        ..['status'] = status;
       // Issue #3: Stock decreases only after patient receives it
       if (status == 'delivered') {
         final medId = _requests[index]['medicineId'];
         final medIndex = _medicines.indexWhere((m) => m['id'] == medId);
         if (medIndex >= 0) {
           final currentQty = _medicines[medIndex]['quantity'] as int;
-          final unit = _medicines[medIndex]['unit']?.toString().toLowerCase() ?? 'box';
+          final unit =
+              _medicines[medIndex]['unit']?.toString().toLowerCase() ?? 'box';
           final approvedBoxes = _requests[index]['approvedBoxes'] as int? ?? 0;
-          final approvedStrips = _requests[index]['approvedStrips'] as int? ?? 0;
+          final approvedStrips =
+              _requests[index]['approvedStrips'] as int? ?? 0;
           final deducted = unit == 'strip' ? approvedStrips : approvedBoxes;
-          _medicines[medIndex]['quantity'] = (currentQty - deducted).clamp(0, currentQty);
+          _medicines[medIndex]['quantity'] = (currentQty - deducted).clamp(
+            0,
+            currentQty,
+          );
         }
       }
       return Response(
@@ -845,16 +1007,27 @@ class MockInterceptor extends Interceptor {
         data: {'success': true, 'data': _requests[index]},
       );
     }
-    return Response(requestOptions: options, statusCode: 404, data: {'error': 'Request not found'});
+    return Response(
+      requestOptions: options,
+      statusCode: 404,
+      data: {'error': 'Request not found'},
+    );
   }
 
   Response _handleCreateRequest(RequestOptions options) {
     final data = options.data as Map<String, dynamic>?;
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     // Check stock
-    final med = _medicines.where((m) => m['id'] == data?['medicineId']).firstOrNull;
+    final med = _medicines
+        .where((m) => m['id'] == data?['medicineId'])
+        .firstOrNull;
     if (med == null || (med['quantity'] as int) <= 0) {
       return Response(
         requestOptions: options,
@@ -887,13 +1060,16 @@ class MockInterceptor extends Interceptor {
     // Notify the pharmacist of the target pharmacy about the new request
     final pharmacyId = med['pharmacyId'] as String?;
     if (pharmacyId != null) {
-      final pharmacy = _pharmacies.where((p) => p['id'] == pharmacyId).firstOrNull;
+      final pharmacy = _pharmacies
+          .where((p) => p['id'] == pharmacyId)
+          .firstOrNull;
       if (pharmacy != null) {
         final pharmacistId = pharmacy['pharmacistId'] as String?;
         _addNotification(
           userId: pharmacistId,
           title: 'New Medicine Request',
-          body: '${user?['name'] ?? 'A patient'} has requested ${med['name'] ?? 'medicine'}.',
+          body:
+              '${user?['name'] ?? 'A patient'} has requested ${med['name'] ?? 'medicine'}.',
           type: 'newRequest',
         );
       }
@@ -915,12 +1091,17 @@ class MockInterceptor extends Interceptor {
 
     final donIndex = _donations.indexWhere((d) => d['id'] == donationId);
     if (donIndex < 0) {
-      return Response(requestOptions: options, statusCode: 404, data: {'error': 'Donation not found'});
+      return Response(
+        requestOptions: options,
+        statusCode: 404,
+        data: {'error': 'Donation not found'},
+      );
     }
 
     if (action == 'approve') {
       _donations[donIndex]['status'] = 'approved';
-      _donations[donIndex]['qrCode'] = 'QR-DON-${_uuid.v4().substring(0, 6).toUpperCase()}';
+      _donations[donIndex]['qrCode'] =
+          'QR-DON-${_uuid.v4().substring(0, 6).toUpperCase()}';
 
       // Issue #2: DO NOT set medicine status to approved yet
       // final medId = _donations[donIndex]['medicineId'];
@@ -946,7 +1127,8 @@ class MockInterceptor extends Interceptor {
       _addNotification(
         userId: donorId,
         title: 'Donation Rejected',
-        body: 'Your donation of $medicineName was rejected. You may re-donate to another pharmacy.',
+        body:
+            'Your donation of $medicineName was rejected. You may re-donate to another pharmacy.',
         type: 'donationRejected',
       );
     }
@@ -954,7 +1136,10 @@ class MockInterceptor extends Interceptor {
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': Map<String, dynamic>.from(_donations[donIndex])},
+      data: {
+        'success': true,
+        'data': Map<String, dynamic>.from(_donations[donIndex]),
+      },
     );
   }
 
@@ -965,15 +1150,25 @@ class MockInterceptor extends Interceptor {
 
     final reqIndex = _requests.indexWhere((r) => r['id'] == requestId);
     if (reqIndex < 0) {
-      return Response(requestOptions: options, statusCode: 404, data: {'error': 'Request not found'});
+      return Response(
+        requestOptions: options,
+        statusCode: 404,
+        data: {'error': 'Request not found'},
+      );
     }
 
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     if (action == 'approve') {
       _requests[reqIndex]['status'] = 'approved';
-      _requests[reqIndex]['qrCode'] = 'QR-REQ-${_uuid.v4().substring(0, 6).toUpperCase()}';
+      _requests[reqIndex]['qrCode'] =
+          'QR-REQ-${_uuid.v4().substring(0, 6).toUpperCase()}';
       _requests[reqIndex]['approvedBoxes'] = data?['approvedBoxes'] ?? 0;
       _requests[reqIndex]['approvedStrips'] = data?['approvedStrips'] ?? 0;
       _requests[reqIndex]['reviewedBy'] = user?['id'];
@@ -998,14 +1193,16 @@ class MockInterceptor extends Interceptor {
       _addNotification(
         userId: patientId,
         title: 'Request Approved',
-        body: 'Your request for $reqMedicineName has been approved. Visit the pharmacy for pickup.',
+        body:
+            'Your request for $reqMedicineName has been approved. Visit the pharmacy for pickup.',
         type: 'requestApproved',
       );
     } else {
       _addNotification(
         userId: patientId,
         title: 'Request Rejected',
-        body: 'Your request for $reqMedicineName was rejected. You may submit a new request.',
+        body:
+            'Your request for $reqMedicineName was rejected. You may submit a new request.',
         type: 'requestRejected',
       );
     }
@@ -1013,7 +1210,10 @@ class MockInterceptor extends Interceptor {
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': Map<String, dynamic>.from(_requests[reqIndex])},
+      data: {
+        'success': true,
+        'data': Map<String, dynamic>.from(_requests[reqIndex]),
+      },
     );
   }
 
@@ -1056,14 +1256,18 @@ class MockInterceptor extends Interceptor {
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'verified': false, 'message': 'QR code not recognized'},
+      data: {
+        'success': true,
+        'verified': false,
+        'message': 'QR code not recognized',
+      },
     );
   }
 
   /// Helper to add a notification to the in-memory store
   void _addNotification({
-    required String? userId,      // null = role-wide
-    String? targetRole,           // used when userId is null
+    required String? userId, // null = role-wide
+    String? targetRole, // used when userId is null
     required String title,
     required String body,
     required String type,
@@ -1083,11 +1287,20 @@ class MockInterceptor extends Interceptor {
   // ─── NOTIFICATION HANDLERS ───
 
   Response _handleGetNotifications(RequestOptions options) {
-    final token = options.headers['Authorization']?.toString().replaceFirst('Bearer ', '') ?? '';
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
     final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     if (user == null) {
-      return Response(requestOptions: options, statusCode: 401, data: {'error': 'Unauthorized'});
+      return Response(
+        requestOptions: options,
+        statusCode: 401,
+        data: {'error': 'Unauthorized'},
+      );
     }
 
     // Filter by userId OR targetRole matching user's role
@@ -1120,9 +1333,10 @@ class MockInterceptor extends Interceptor {
           final medName = med['name'] ?? 'دواء';
 
           // Avoid duplicate expiry warnings for same medicine
-          final alreadyExists = result.any((n) =>
-            n['type'] == 'expiryWarning' &&
-            n['body']?.toString().contains(medName) == true,
+          final alreadyExists = result.any(
+            (n) =>
+                n['type'] == 'expiryWarning' &&
+                n['body']?.toString().contains(medName) == true,
           );
 
           if (!_dismissedExpiryIds.contains('expiry-${med['id']}') &&
@@ -1135,7 +1349,9 @@ class MockInterceptor extends Interceptor {
               'isRead': false,
               'userId': user['id'],
               'targetRole': 'pharmacist',
-              'createdAt': expiryDate.subtract(const Duration(days: 30)).toIso8601String(),
+              'createdAt': expiryDate
+                  .subtract(const Duration(days: 30))
+                  .toIso8601String(),
             });
           }
         }
@@ -1145,7 +1361,10 @@ class MockInterceptor extends Interceptor {
     return Response(
       requestOptions: options,
       statusCode: 200,
-      data: {'success': true, 'data': result.map((n) => Map<String, dynamic>.from(n)).toList()},
+      data: {
+        'success': true,
+        'data': result.map((n) => Map<String, dynamic>.from(n)).toList(),
+      },
     );
   }
 

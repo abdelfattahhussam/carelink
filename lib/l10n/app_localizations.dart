@@ -1915,6 +1915,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No Donations Found'**
   String get noDonationsFound;
+
+  /// No description provided for @registrationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Account created successfully!'**
+  String get registrationSuccess;
 }
 
 class _AppLocalizationsDelegate

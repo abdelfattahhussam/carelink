@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../core/errors/failures.dart';
 import '../../../data/models/donation_model.dart';
-import '../../../data/services/donation_service.dart';
+import '../../../domain/repositories/donation_repository.dart';
 
 // ─── EVENTS ───
 
@@ -42,7 +42,16 @@ class DonationCreateRequested extends DonationEvent {
   });
 
   @override
-  List<Object?> get props => [name, notes, expiryDate, quantity, unit, boxImagePath, pharmacyId, pharmacyName];
+  List<Object?> get props => [
+    name,
+    notes,
+    expiryDate,
+    quantity,
+    unit,
+    boxImagePath,
+    pharmacyId,
+    pharmacyName,
+  ];
 }
 
 class DonationReviewRequested extends DonationEvent {
@@ -67,6 +76,9 @@ class DonationFinalizeRequested extends DonationEvent {
   List<Object?> get props => [id];
 }
 
+/// Pagination scaffolding — dispatched when the user scrolls near the bottom.
+class LoadMoreDonationsRequested extends DonationEvent {}
+
 // ─── STATES ───
 
 abstract class DonationState extends Equatable {
@@ -75,6 +87,7 @@ abstract class DonationState extends Equatable {
 }
 
 class DonationInitial extends DonationState {}
+
 class DonationLoading extends DonationState {}
 
 class DonationsLoaded extends DonationState {
@@ -109,16 +122,17 @@ class DonationError extends DonationState {
 // ─── BLOC ───
 
 class DonationBloc extends Bloc<DonationEvent, DonationState> {
-  final DonationService _service;
+  final DonationRepository _service;
 
-  DonationBloc({required DonationService service})
-      : _service = service,
-        super(DonationInitial()) {
+  DonationBloc({required DonationRepository service})
+    : _service = service,
+      super(DonationInitial()) {
     on<DonationsFetchRequested>(_onFetchDonations);
     on<PendingDonationsFetchRequested>(_onFetchPendingDonations);
     on<DonationCreateRequested>(_onCreateDonation);
     on<DonationReviewRequested>(_onReviewDonation);
     on<DonationFinalizeRequested>(_onFinalizeDonation);
+    on<LoadMoreDonationsRequested>(_onLoadMore);
   }
 
   Future<void> _onFetchDonations(
@@ -227,5 +241,13 @@ class DonationBloc extends Bloc<DonationEvent, DonationState> {
       default:
         return ServerFailure(message: e.message ?? 'Unexpected error').message;
     }
+  }
+
+  // TODO(pagination): Replace with cursor/offset logic when backend is ready.
+  Future<void> _onLoadMore(
+    LoadMoreDonationsRequested event,
+    Emitter<DonationState> emit,
+  ) async {
+    if (state is DonationsLoaded) return;
   }
 }

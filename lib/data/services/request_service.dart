@@ -1,14 +1,16 @@
 import 'package:dio/dio.dart';
 import '../../core/constants/api_endpoints.dart';
 import '../../core/errors/failures.dart';
+import '../../domain/repositories/request_repository.dart';
 import '../models/request_model.dart';
 
 /// Patient request API service
-class RequestService {
+class RequestService implements RequestRepository {
   final Dio _dio;
   RequestService({required Dio dio}) : _dio = dio;
 
   /// Create a new medicine request
+  @override
   Future<RequestModel> createRequest({
     required String medicineId,
     required String patientNationalId, // Added patient National ID
@@ -32,10 +34,13 @@ class RequestService {
     if (response.statusCode == 201 && response.data['success'] == true) {
       return RequestModel.fromJson(response.data['data']);
     }
-    throw ServerFailure(message: response.data['error'] ?? 'Failed to create request');
+    throw ServerFailure(
+      message: response.data['error'] ?? 'Failed to create request',
+    );
   }
 
   /// Update request status (for QR confirmation flow)
+  @override
   Future<RequestModel> updateRequestStatus(String id, String status) async {
     final response = await _dio.post(
       '${ApiEndpoints.requests}/$id/status',
@@ -45,10 +50,13 @@ class RequestService {
     if (response.statusCode == 200 && response.data['success'] == true) {
       return RequestModel.fromJson(response.data['data']);
     }
-    throw ServerFailure(message: response.data['error'] ?? 'Status update failed');
+    throw ServerFailure(
+      message: response.data['error'] ?? 'Status update failed',
+    );
   }
 
   /// Get all requests (filtered by role on server side)
+  @override
   Future<List<RequestModel>> getRequests() async {
     final response = await _dio.get(ApiEndpoints.requests);
 
@@ -56,10 +64,11 @@ class RequestService {
       final list = response.data['data'] as List;
       return list.map((e) => RequestModel.fromJson(e)).toList();
     }
-    throw ServerFailure(message: 'Failed to fetch requests');
+    throw const ServerFailure(message: 'Failed to fetch requests');
   }
 
   /// Approve or reject a patient request — pharmacist only
+  @override
   Future<RequestModel> approveRequest({
     required String requestId,
     required String action, // 'approve' or 'reject'

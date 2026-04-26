@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../data/models/notification_model.dart';
-import '../../../data/services/notification_service.dart';
+import '../../../domain/repositories/notification_repository.dart';
 import '../auth/auth_bloc.dart';
 
 // ─── EVENTS ───
@@ -34,6 +34,9 @@ class NotificationDismissRequested extends NotificationEvent {
   List<Object?> get props => [notificationId];
 }
 
+/// Pagination scaffolding — dispatched when the user scrolls near the bottom.
+class LoadMoreNotificationsRequested extends NotificationEvent {}
+
 // ─── STATES ───
 
 abstract class NotificationState extends Equatable {
@@ -42,6 +45,7 @@ abstract class NotificationState extends Equatable {
 }
 
 class NotificationInitial extends NotificationState {}
+
 class NotificationLoading extends NotificationState {}
 
 class NotificationsLoaded extends NotificationState {
@@ -62,19 +66,20 @@ class NotificationError extends NotificationState {
 // ─── BLOC ───
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
-  final NotificationService _service;
+  final NotificationRepository _service;
   final AuthBloc _authBloc;
   late final StreamSubscription<AuthState> _authSubscription;
 
   NotificationBloc({
     required AuthBloc authBloc,
-    required NotificationService service,
-  })  : _authBloc = authBloc,
-        _service = service,
-        super(NotificationInitial()) {
+    required NotificationRepository service,
+  }) : _authBloc = authBloc,
+       _service = service,
+       super(NotificationInitial()) {
     on<NotificationsFetchRequested>(_onFetch);
     on<NotificationMarkReadRequested>(_onMarkRead);
     on<NotificationDismissRequested>(_onDismiss);
+    on<LoadMoreNotificationsRequested>(_onLoadMore);
 
     // Reset state on logout
     _authSubscription = _authBloc.stream.listen((state) {
@@ -107,12 +112,12 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     emit(NotificationLoading());
     try {
       final notifications = await _service.getNotifications();
-      
+
       // Secondary safety filtering
       final filtered = notifications.where((n) {
         return n.userId == userId || n.targetRole == userRole;
       }).toList();
-      
+
       emit(NotificationsLoaded(notifications: filtered));
     } catch (e) {
       emit(NotificationError(message: e.toString()));
@@ -125,7 +130,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   ) async {
     // Optimistic update to avoid full screen flicker
     if (state is NotificationsLoaded) {
-      final currentList = List<NotificationModel>.from((state as NotificationsLoaded).notifications);
+      final currentList = List<NotificationModel>.from(
+        (state as NotificationsLoaded).notifications,
+      );
       final index = currentList.indexWhere((n) => n.id == event.notificationId);
       if (index != -1 && !currentList[index].isRead) {
         currentList[index] = currentList[index].copyWith(isRead: true);
@@ -149,15 +156,19 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     int removedIndex = -1;
 
     if (state is NotificationsLoaded) {
-      final currentList = List<NotificationModel>.from((state as NotificationsLoaded).notifications);
-      removedIndex = currentList.indexWhere((n) => n.id == event.notificationId);
+      final currentList = List<NotificationModel>.from(
+        (state as NotificationsLoaded).notifications,
+      );
+      removedIndex = currentList.indexWhere(
+        (n) => n.id == event.notificationId,
+      );
       if (removedIndex >= 0) {
         removedNotification = currentList[removedIndex];
         currentList.removeAt(removedIndex);
       }
       emit(NotificationsLoaded(notifications: currentList));
     }
-    
+
     // Permanently delete from backend
     try {
       await _service.dismissNotification(event.notificationId);
@@ -165,11 +176,23 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       debugPrint('NotificationBloc: Failed to dismiss notification: $e');
       // Rollback: re-insert the notification on failure
       if (removedNotification != null && state is NotificationsLoaded) {
-        final rollbackList = List<NotificationModel>.from((state as NotificationsLoaded).notifications);
-        rollbackList.insert(removedIndex.clamp(0, rollbackList.length), removedNotification);
+        final rollbackList = List<NotificationModel>.from(
+          (state as NotificationsLoaded).notifications,
+        );
+        rollbackList.insert(
+          removedIndex.clamp(0, rollbackList.length),
+          removedNotification,
+        );
         emit(NotificationsLoaded(notifications: rollbackList));
       }
     }
   }
-}
 
+  // TODO(pagination): Replace with cursor/offset logic when backend is ready.
+  Future<void> _onLoadMore(
+    LoadMoreNotificationsRequested event,
+    Emitter<NotificationState> emit,
+  ) async {
+    if (state is NotificationsLoaded) return;
+  }
+}

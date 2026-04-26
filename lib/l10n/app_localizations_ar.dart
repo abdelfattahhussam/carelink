@@ -961,4 +961,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noDonationsFound => 'لا توجد تبرعات هنا';
+
+  @override
+  String get registrationSuccess => 'تم إنشاء الحساب بنجاح!';
 }

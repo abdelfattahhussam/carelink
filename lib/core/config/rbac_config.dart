@@ -11,7 +11,7 @@ enum AppPermission {
   requestMedicine,
   viewMyRequests,
   viewMedicines,
-  viewNotifications;
+  viewNotifications,
 }
 
 /// Central configuration for Role-Based Access Control

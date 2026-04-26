@@ -7,6 +7,7 @@ import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'core/network/dio_client.dart';
 import 'package:go_router/go_router.dart';
+// Concrete services — needed for instantiation only
 import 'data/services/auth_service.dart';
 import 'data/services/donation_service.dart';
 import 'data/services/medicine_service.dart';
@@ -14,6 +15,14 @@ import 'data/services/request_service.dart';
 import 'data/services/qr_service.dart';
 import 'data/services/notification_service.dart';
 import 'data/services/pharmacy_service.dart';
+// Repository interfaces — used as field types
+import 'domain/repositories/auth_repository.dart';
+import 'domain/repositories/donation_repository.dart';
+import 'domain/repositories/medicine_repository.dart';
+import 'domain/repositories/request_repository.dart';
+import 'domain/repositories/qr_repository.dart';
+import 'domain/repositories/notification_repository.dart';
+import 'domain/repositories/pharmacy_repository.dart';
 import 'presentation/blocs/auth/auth_bloc.dart';
 import 'presentation/blocs/donation/donation_bloc.dart';
 import 'presentation/blocs/medicine/medicine_bloc.dart';
@@ -36,13 +45,13 @@ class _CareLinkAppState extends State<CareLinkApp> {
   // ─── Services & BLoCs created once during initState ───
   late final AuthBloc _authBloc;
   late final GoRouter _router;
-  late final AuthService _authService;
-  late final DonationService _donationService;
-  late final MedicineService _medicineService;
-  late final RequestService _requestService;
-  late final QrService _qrService;
-  late final NotificationService _notificationService;
-  late final PharmacyService _pharmacyService;
+  late final AuthRepository _authService;
+  late final DonationRepository _donationService;
+  late final MedicineRepository _medicineService;
+  late final RequestRepository _requestService;
+  late final QrRepository _qrService;
+  late final NotificationRepository _notificationService;
+  late final PharmacyRepository _pharmacyService;
 
   @override
   void initState() {
@@ -78,7 +87,10 @@ class _CareLinkAppState extends State<CareLinkApp> {
         BlocProvider.value(value: _authBloc),
         BlocProvider(create: (_) => DonationBloc(service: _donationService)),
         BlocProvider(create: (_) => MedicineBloc(service: _medicineService)),
-        BlocProvider(create: (_) => RequestBloc(service: _requestService, authBloc: _authBloc)),
+        BlocProvider(
+          create: (_) =>
+              RequestBloc(service: _requestService, authBloc: _authBloc),
+        ),
         BlocProvider(
           create: (context) => NotificationBloc(
             authBloc: _authBloc,
@@ -93,12 +105,12 @@ class _CareLinkAppState extends State<CareLinkApp> {
           return MaterialApp.router(
             title: 'CareLink',
             debugShowCheckedModeBanner: false,
-            
+
             // Theme settings
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: settingsState.themeMode,
-            
+
             // Localization settings
             locale: settingsState.locale,
             localizationsDelegates: [
@@ -107,11 +119,8 @@ class _CareLinkAppState extends State<CareLinkApp> {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            supportedLocales: const [
-              Locale('en', ''), 
-              Locale('ar', ''), 
-            ],
-            
+            supportedLocales: const [Locale('en', ''), Locale('ar', '')],
+
             routerConfig: _router,
           );
         },

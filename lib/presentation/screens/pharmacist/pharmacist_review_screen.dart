@@ -40,7 +40,9 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
         ];
 
         return AlertDialog(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           title: Text(
             '${action[0].toUpperCase()}${action.substring(1)} Donation',
             style: const TextStyle(fontWeight: FontWeight.w700),
@@ -52,10 +54,19 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Are you sure you want to $action this donation?', style: const TextStyle(fontSize: 15)),
+                    Text(
+                      'Are you sure you want to $action this donation?',
+                      style: const TextStyle(fontSize: 15),
+                    ),
                     const SizedBox(height: 20),
                     if (action == 'reject') ...[
-                      const Text("Select Rejection Reason:", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                      const Text(
+                        "Select Rejection Reason:",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
                       const SizedBox(height: 8),
                       // Loop through reasons
                       RadioGroup<String>(
@@ -65,14 +76,24 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                         },
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
-                          children: rejectReasons.map((reason) => RadioListTile<String>(
-                            title: Text(reason, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                            value: reason,
-                            toggleable: true,
-                            activeColor: AppColors.error,
-                            contentPadding: EdgeInsets.zero,
-                            dense: true,
-                          )).toList(),
+                          children: rejectReasons
+                              .map(
+                                (reason) => RadioListTile<String>(
+                                  title: Text(
+                                    reason,
+                                    style: const TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  value: reason,
+                                  toggleable: true,
+                                  activeColor: AppColors.error,
+                                  contentPadding: EdgeInsets.zero,
+                                  dense: true,
+                                ),
+                              )
+                              .toList(),
                         ),
                       ),
                       if (selectedReason == 'Other reason') ...[
@@ -82,8 +103,13 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                           decoration: InputDecoration(
                             hintText: "Enter custom reason...",
                             filled: true,
-                            fillColor: Theme.of(context).dividerColor.withValues(alpha: 0.1),
-                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                            fillColor: Theme.of(
+                              context,
+                            ).dividerColor.withValues(alpha: 0.1),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
                             contentPadding: const EdgeInsets.all(16),
                           ),
                           maxLines: 3,
@@ -93,10 +119,17 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                       TextField(
                         controller: notesCtrl,
                         decoration: InputDecoration(
-                          hintText: AppLocalizations.of(sbCtx)!.addReviewNotesOptional,
+                          hintText: AppLocalizations.of(
+                            sbCtx,
+                          )!.addReviewNotesOptional,
                           filled: true,
-                          fillColor: Theme.of(context).dividerColor.withValues(alpha: 0.1),
-                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                          fillColor: Theme.of(
+                            context,
+                          ).dividerColor.withValues(alpha: 0.1),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
                           contentPadding: const EdgeInsets.all(16),
                         ),
                         maxLines: 3,
@@ -113,26 +146,45 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
               onPressed: () => Navigator.pop(dialogCtx),
               child: Text(
                 AppLocalizations.of(dialogCtx)!.cancel,
-                style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: action == 'approve' ? AppColors.success : AppColors.error,
+                backgroundColor: action == 'approve'
+                    ? AppColors.success
+                    : AppColors.error,
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 elevation: 0,
               ),
               onPressed: () {
                 String notes = '';
                 if (action == 'reject') {
                   if (selectedReason == null) {
-                    ScaffoldMessenger.of(dialogCtx).showSnackBar(const SnackBar(content: Text("Rejection reason is required"), backgroundColor: AppColors.error));
+                    ScaffoldMessenger.of(dialogCtx).showSnackBar(
+                      const SnackBar(
+                        content: Text("Rejection reason is required"),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
                     return;
                   }
-                  notes = selectedReason == 'Other reason' ? notesCtrl.text.trim() : selectedReason!;
+                  notes = selectedReason == 'Other reason'
+                      ? notesCtrl.text.trim()
+                      : selectedReason!;
                   if (selectedReason == 'Other reason' && notes.isEmpty) {
-                    ScaffoldMessenger.of(dialogCtx).showSnackBar(const SnackBar(content: Text("Custom reason is required"), backgroundColor: AppColors.error));
+                    ScaffoldMessenger.of(dialogCtx).showSnackBar(
+                      const SnackBar(
+                        content: Text("Custom reason is required"),
+                        backgroundColor: AppColors.error,
+                      ),
+                    );
                     return;
                   }
                 } else {
@@ -140,11 +192,17 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                 }
 
                 Navigator.pop(dialogCtx);
-                final reviewAction = action == 'approve' ? DonationReviewAction.approve : DonationReviewAction.reject;
+                final reviewAction = action == 'approve'
+                    ? DonationReviewAction.approve
+                    : DonationReviewAction.reject;
                 // Use rootContext.read to avoid issues if dialogCtx is invalid
                 rootContext.read<DonationBloc>().add(
-                      DonationReviewRequested(donationId: donationId, action: reviewAction, notes: notes),
-                    );
+                  DonationReviewRequested(
+                    donationId: donationId,
+                    action: reviewAction,
+                    notes: notes,
+                  ),
+                );
               },
               child: Text(
                 action[0].toUpperCase() + action.substring(1),
@@ -176,18 +234,35 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
       body: BlocConsumer<DonationBloc, DonationState>(
         listener: (context, state) {
           if (state is DonationReviewed) {
-            final msg = state.action == DonationReviewAction.approve ? 'Donation approved! QR code generated.' : 'Donation rejected.';
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg), backgroundColor: state.action == DonationReviewAction.approve ? AppColors.success : AppColors.error));
+            final msg = state.action == DonationReviewAction.approve
+                ? 'Donation approved! QR code generated.'
+                : 'Donation rejected.';
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(msg),
+                backgroundColor: state.action == DonationReviewAction.approve
+                    ? AppColors.success
+                    : AppColors.error,
+              ),
+            );
             context.read<DonationBloc>().add(PendingDonationsFetchRequested());
-            context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
+            context.read<NotificationBloc>().add(
+              NotificationsFetchRequested(forceRefresh: true),
+            );
           }
         },
         builder: (context, state) {
           Widget child;
           if (state is DonationLoading) {
-            child = const ShimmerCardList(key: ValueKey('loading'), isListTileStyle: false);
+            child = const ShimmerCardList(
+              key: ValueKey('loading'),
+              isListTileStyle: false,
+            );
           } else if (state is DonationError) {
-            child = Center(key: const ValueKey('error'), child: Text(state.message));
+            child = Center(
+              key: const ValueKey('error'),
+              child: Text(state.message),
+            );
           } else if (state is DonationsLoaded) {
             if (state.donations.isEmpty) {
               child = EmptyStateWidget(
@@ -199,7 +274,10 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
             } else {
               child = ListView.builder(
                 key: const ValueKey('list'),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 itemCount: state.donations.length,
                 itemBuilder: (context, i) {
                   final d = state.donations[i];
@@ -209,7 +287,11 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.5)),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).dividerColor.withValues(alpha: 0.5),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.04),
@@ -230,7 +312,11 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                                 color: AppColors.warning.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(16),
                               ),
-                              child: const Icon(Icons.medication_rounded, color: AppColors.warning, size: 28),
+                              child: const Icon(
+                                Icons.medication_rounded,
+                                color: AppColors.warning,
+                                size: 28,
+                              ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
@@ -242,7 +328,12 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                                       Expanded(
                                         child: Text(
                                           d.medicineName,
-                                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                         ),
                                       ),
                                     ],
@@ -250,12 +341,17 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                                   const SizedBox(height: 6),
                                   Text(
                                     "${AppLocalizations.of(context)!.byNameQty(d.donorName, d.quantity.toString())} ${d.unit.localizedName(context)}",
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(fontWeight: FontWeight.w600),
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
                                     DateFormatters.timeAgo(d.createdAt),
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12, fontWeight: FontWeight.w600),
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                   ),
                                 ],
                               ),
@@ -265,10 +361,17 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                         ),
                         if (d.boxImagePath != null) ...[
                           const SizedBox(height: 16),
-                          const Text("Box Image", style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                          const Text(
+                            "Box Image",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
                           const SizedBox(height: 8),
                           GestureDetector(
-                            onTap: () => _showFullScreenImage(context, d.boxImagePath!),
+                            onTap: () =>
+                                _showFullScreenImage(context, d.boxImagePath!),
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(12),
                               child: Image.file(
@@ -276,12 +379,21 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                                 height: 120,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) => Container(
-                                  height: 120,
-                                  width: double.infinity,
-                                  color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
-                                  child: const Center(child: Icon(Icons.broken_image, size: 40, color: AppColors.textLight)),
-                                ),
+                                errorBuilder: (context, error, stackTrace) =>
+                                    Container(
+                                      height: 120,
+                                      width: double.infinity,
+                                      color: Theme.of(
+                                        context,
+                                      ).dividerColor.withValues(alpha: 0.1),
+                                      child: const Center(
+                                        child: Icon(
+                                          Icons.broken_image,
+                                          size: 40,
+                                          color: AppColors.textLight,
+                                        ),
+                                      ),
+                                    ),
                               ),
                             ),
                           ),
@@ -292,29 +404,51 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                             Expanded(
                               child: OutlinedButton.icon(
                                 style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
                                   foregroundColor: AppColors.error,
-                                  side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  side: BorderSide(
+                                    color: AppColors.error.withValues(
+                                      alpha: 0.3,
+                                    ),
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
                                 onPressed: () => _review(d.id, 'reject'),
                                 icon: const Icon(Icons.close_rounded, size: 18),
-                                label: Text(AppLocalizations.of(context)!.reject, style: const TextStyle(fontWeight: FontWeight.w700)),
+                                label: Text(
+                                  AppLocalizations.of(context)!.reject,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: ElevatedButton.icon(
                                 style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                  ),
                                   backgroundColor: AppColors.success,
                                   foregroundColor: Colors.white,
                                   elevation: 0,
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
                                 onPressed: () => _review(d.id, 'approve'),
                                 icon: const Icon(Icons.check_rounded, size: 18),
-                                label: Text(AppLocalizations.of(context)!.approve, style: const TextStyle(fontWeight: FontWeight.w700)),
+                                label: Text(
+                                  AppLocalizations.of(context)!.approve,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
                               ),
                             ),
                           ],
@@ -348,10 +482,7 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
           alignment: Alignment.center,
           children: [
             InteractiveViewer(
-               child: Image.file(
-                 File(path),
-                 fit: BoxFit.contain,
-               ),
+              child: Image.file(File(path), fit: BoxFit.contain),
             ),
             Positioned(
               top: 40,

@@ -64,13 +64,19 @@ CareLink is built with scalability, maintainability, and modern Flutter best pra
 | **State Management** | BLoC / Cubit |
 | **Routing & Navigation** | GoRouter (with Role-Based Access Control) |
 | **Networking** | Dio (with custom Mock Interceptors) |
-| **Dependency Injection** | GetIt |
-| **Storage** | SharedPreferences / Secure Storage |
+| **Storage** | `flutter_secure_storage` (Auth) & `SharedPreferences` (Settings) |
+| **Testing** | 78+ Passing Tests (BLoC, Models, Validators) |
+| **CI/CD** | GitHub Actions Pipeline (Analyze, Test, Build) |
 
 ### 🧱 Clean Architecture Layers
-1. **Presentation Layer:** Widgets, Screens, and BLoC state holders.
-2. **Domain Layer:** Entities, Repositories Interfaces, and pure Business Logic / Use Cases.
-3. **Data Layer:** Models, API Services, Mock Interceptors, and Repository Implementations.
+1. **Presentation Layer:** Screens, Widgets, and BLoC state holders.
+2. **Domain Layer:** Entities, Repository interfaces / abstractions, and pure Business Logic.
+3. **Data Layer:** Models, API Services, Mock Interceptors, and Repository implementations.
+4. **Storage Layer:** `flutter_secure_storage` for auth data + `SharedPreferences` for app settings.
+5. **Testing Layer:** Comprehensive suite of 78 passing tests covering BLoC, Models, and Validators.
+6. **CI/CD Layer:** Automated GitHub Actions pipeline for linting, testing, and building.
+
+*Note: Dependency Injection (e.g., GetIt) is planned as a future enhancement.*
 
 ---
 
@@ -87,7 +93,12 @@ CareLink is built with scalability, maintainability, and modern Flutter best pra
 
 ## ⚙️ Installation & Running
 
-Since CareLink is currently powered by a robust Mock API layer, you can run it entirely offline without setting up a backend!
+### Prerequisites
+- Flutter SDK `^3.11.1`
+- Dart `^3.11.1`
+
+### Quick Start (Mock Mode)
+CareLink ships with a built-in mock API for offline development. **Mock mode must be explicitly enabled:**
 
 ```bash
 # 1. Clone the repository
@@ -97,11 +108,19 @@ cd carelink
 # 2. Get dependencies
 flutter pub get
 
-# 3. Run the app
+# 3. Run with mock backend (required until real backend is connected)
+flutter run --dart-define=USE_MOCK=true
+```
+
+### Production / Real Backend
+When a real backend is available, run without the flag:
+```bash
 flutter run
 ```
 
-### 🔑 Test Accounts
+> ⚠️ **Note:** Running without `--dart-define=USE_MOCK=true` will produce network errors until a real backend is configured at `ApiEndpoints.baseUrl`.
+
+### 🔑 Test Accounts (Mock Mode Only)
 You can log in using the following mock credentials (password can be anything):
 - **Donor:** `donor@test.com`
 - **Patient:** `patient@test.com`

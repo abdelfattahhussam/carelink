@@ -53,29 +53,41 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(msg),
-                backgroundColor: state.action == 'approve' ? AppColors.success : AppColors.error,
+                backgroundColor: state.action == 'approve'
+                    ? AppColors.success
+                    : AppColors.error,
               ),
             );
             context.read<RequestBloc>().add(RequestsFetchRequested());
-            context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
+            context.read<NotificationBloc>().add(
+              NotificationsFetchRequested(forceRefresh: true),
+            );
           }
         },
         builder: (context, state) {
           Widget child;
           if (state is RequestLoading) {
-            child = const ShimmerCardList(key: ValueKey('loading'), isListTileStyle: false);
+            child = const ShimmerCardList(
+              key: ValueKey('loading'),
+              isListTileStyle: false,
+            );
           } else if (state is RequestsLoaded) {
             if (state.requests.isEmpty) {
               child = EmptyStateWidget(
                 key: const ValueKey('empty'),
                 icon: Icons.inbox,
                 title: AppLocalizations.of(context)!.noRequests,
-                subtitle: AppLocalizations.of(context)!.noPatientRequestsAtMoment,
+                subtitle: AppLocalizations.of(
+                  context,
+                )!.noPatientRequestsAtMoment,
               );
             } else {
               child = ListView.builder(
                 key: const ValueKey('list'),
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 16,
+                ),
                 itemCount: state.requests.length,
                 itemBuilder: (context, i) {
                   final r = state.requests[i];
@@ -84,7 +96,11 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(24),
-                      border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.5)),
+                      border: Border.all(
+                        color: Theme.of(
+                          context,
+                        ).dividerColor.withValues(alpha: 0.5),
+                      ),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withValues(alpha: 0.04),
@@ -94,127 +110,187 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
                       ],
                     ),
                     child: Material(
-                       color: Colors.transparent,
-                       child: InkWell(
-                          borderRadius: BorderRadius.circular(24),
-                          onTap: r.isPending ? () => RequestDecisionBottomSheet.show(context, r) : null,
-                          child: Padding(
-                            padding: const EdgeInsets.all(20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: (r.isUrgent ? AppColors.error : AppColors.secondary).withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Icon(
-                                r.isUrgent ? Icons.priority_high_rounded : Icons.person_rounded,
-                                color: r.isUrgent ? AppColors.error : AppColors.secondary,
-                                size: 28,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(24),
+                        onTap: r.isPending
+                            ? () => RequestDecisionBottomSheet.show(context, r)
+                            : null,
+                        child: Padding(
+                          padding: const EdgeInsets.all(20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          r.medicineName,
-                                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                  Container(
+                                    padding: const EdgeInsets.all(14),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          (r.isUrgent
+                                                  ? AppColors.error
+                                                  : AppColors.secondary)
+                                              .withValues(alpha: 0.1),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Icon(
+                                      r.isUrgent
+                                          ? Icons.priority_high_rounded
+                                          : Icons.person_rounded,
+                                      color: r.isUrgent
+                                          ? AppColors.error
+                                          : AppColors.secondary,
+                                      size: 28,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 16),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: Text(
+                                                r.medicineName,
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium
+                                                    ?.copyWith(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                              ),
+                                            ),
+                                            if (r.isUrgent)
+                                              Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 4,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.error
+                                                      .withValues(alpha: 0.1),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Text(
+                                                  l10n.urgent,
+                                                  style: const TextStyle(
+                                                    fontSize: 11,
+                                                    fontWeight: FontWeight.w800,
+                                                    color: AppColors.error,
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
                                         ),
-                                      ),
-                                      if (r.isUrgent)
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          r.isPending
+                                              ? "By ${r.patientName} • ${l10n.pendingReview}"
+                                              : "By ${r.patientName} • ${_formatQuantity(r, context)}",
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                        ),
+                                        const SizedBox(height: 10),
                                         Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.error.withValues(alpha: 0.1),
-                                            borderRadius: BorderRadius.circular(8),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 6,
                                           ),
-                                          child: Text(
-                                            l10n.urgent,
-                                            style: const TextStyle(
-                                              fontSize: 11,
-                                              fontWeight: FontWeight.w800,
-                                              color: AppColors.error,
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary.withValues(
+                                              alpha: 0.05,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
+                                            border: Border.all(
+                                              color: AppColors.primary
+                                                  .withValues(alpha: 0.15),
+                                            ),
+                                          ),
+                                          child: FittedBox(
+                                            fit: BoxFit.scaleDown,
+                                            alignment: Alignment.centerLeft,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Icon(
+                                                  Icons.badge_outlined,
+                                                  size: 16,
+                                                  color: AppColors.primary,
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Text(
+                                                  '${l10n.nationalId}: ${r.patientNationalId}',
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w700,
+                                                    color: AppColors.primary,
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    r.isPending 
-                                        ? "By ${r.patientName} • ${l10n.pendingReview}"
-                                        : "By ${r.patientName} • ${_formatQuantity(r, context)}",
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.primary.withValues(alpha: 0.05),
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: AppColors.primary.withValues(alpha: 0.15)),
+                                        const SizedBox(height: 10),
+                                        Text(
+                                          '${r.reason} • ${DateFormatters.timeAgo(r.createdAt)}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(fontSize: 12),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
                                     ),
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      alignment: Alignment.centerLeft,
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Icon(Icons.badge_outlined, size: 16, color: AppColors.primary),
-                                          const SizedBox(width: 6),
-                                          Text(
-                                            '${l10n.nationalId}: ${r.patientNationalId}',
-                                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.primary),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    '${r.reason} • ${DateFormatters.timeAgo(r.createdAt)}',
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(fontSize: 12),
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          children: [
-                            StatusBadge(status: r.status),
-                            const Spacer(),
-                            if (r.isPending) ...[
-                               Row(
-                                  children: [
-                                     Text(l10n.review, style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.primary, fontSize: 13)),
-                                     const SizedBox(width: 4),
-                                     const Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.primary),
+                              const SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  StatusBadge(status: r.status),
+                                  const Spacer(),
+                                  if (r.isPending) ...[
+                                    Row(
+                                      children: [
+                                        Text(
+                                          l10n.review,
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.primary,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        const Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          size: 14,
+                                          color: AppColors.primary,
+                                        ),
+                                      ],
+                                    ),
                                   ],
-                               ),
+                                ],
+                              ),
                             ],
-                          ],
+                          ),
                         ),
-                      ],
+                      ),
                     ),
-                  ),
-                ),
-              ),
-            );
-          },
+                  );
+                },
               );
             }
           } else if (state is RequestError) {
@@ -223,7 +299,11 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.wifi_off_rounded, size: 64, color: AppColors.textLight),
+                  const Icon(
+                    Icons.wifi_off_rounded,
+                    size: 64,
+                    color: AppColors.textLight,
+                  ),
                   const SizedBox(height: 16),
                   Text(
                     state.message,
@@ -235,11 +315,15 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                     icon: const Icon(Icons.refresh_rounded),
                     label: Text(l10n.retry),
-                    onPressed: () => context.read<RequestBloc>().add(RequestsFetchRequested()),
+                    onPressed: () => context.read<RequestBloc>().add(
+                      RequestsFetchRequested(),
+                    ),
                   ),
                 ],
               ),
@@ -262,11 +346,17 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
     final l10n = AppLocalizations.of(context)!;
     final List<String> parts = [];
     if ((r.approvedBoxes ?? 0) > 0) {
-      parts.add("${r.approvedBoxes} ${r.approvedBoxes == 1 ? l10n.boxSingular : l10n.boxes}");
+      parts.add(
+        "${r.approvedBoxes} ${r.approvedBoxes == 1 ? l10n.boxSingular : l10n.boxes}",
+      );
     }
     if ((r.approvedStrips ?? 0) > 0) {
-      parts.add("${r.approvedStrips} ${r.approvedStrips == 1 ? l10n.stripSingular : l10n.strips}");
+      parts.add(
+        "${r.approvedStrips} ${r.approvedStrips == 1 ? l10n.stripSingular : l10n.strips}",
+      );
     }
-    return parts.isEmpty ? "1 ${r.unit.localizedName(context)}" : parts.join(" + ");
+    return parts.isEmpty
+        ? "1 ${r.unit.localizedName(context)}"
+        : parts.join(" + ");
   }
 }

@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import '../../../core/network/auth_storage.dart';
+import '../../../core/network/secure_storage.dart';
 import '../../../core/errors/failures.dart';
 import '../../../data/models/user_model.dart';
-import '../../../data/services/auth_service.dart';
+import '../../../domain/repositories/auth_repository.dart';
 
 // ─── EVENTS ───
 
@@ -57,19 +58,19 @@ class AuthRegisterRequested extends AuthEvent {
 
   @override
   List<Object?> get props => [
-        name,
-        email,
-        phone,
-        nationalId,
-        password,
-        role,
-        pharmacyName,
-        governorate,
-        city,
-        village,
-        street,
-        licensePath,
-      ];
+    name,
+    email,
+    phone,
+    nationalId,
+    password,
+    role,
+    pharmacyName,
+    governorate,
+    city,
+    village,
+    street,
+    licensePath,
+  ];
 }
 
 class AuthUpdateProfileRequested extends AuthEvent {
@@ -145,25 +146,28 @@ class AuthError extends AuthState {
 // ─── BLOC ───
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  AuthService? _authService;
+  AuthRepository? _authService;
+  final AuthStorage _authStorage;
 
-  AuthBloc({required AuthService authService})
-      : _authService = authService,
-        super(AuthInitial()) {
+  AuthBloc({required AuthRepository authService, AuthStorage? authStorage})
+    : _authService = authService,
+      _authStorage = authStorage ?? const SecureStorage(),
+      super(AuthInitial()) {
     _registerHandlers();
   }
 
   /// Temporary empty constructor for DI bootstrap.
   /// Must call [init] before dispatching any service-dependent events.
-  AuthBloc.empty()
-      : _authService = null,
-        super(AuthInitial()) {
+  AuthBloc.empty({AuthStorage? authStorage})
+    : _authService = null,
+      _authStorage = authStorage ?? const SecureStorage(),
+      super(AuthInitial()) {
     _registerHandlers();
   }
 
   /// Sets the service and triggers initial auth check.
   /// Used after DioClient is constructed with this bloc reference.
-  void init({required AuthService service}) {
+  void init({required AuthRepository service}) {
     _authService = service;
     add(AuthCheckRequested());
   }
@@ -183,9 +187,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   ) async {
     emit(AuthLoading());
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('auth_token');
-      final userData = prefs.getString('user_data');
+      final token = await _authStorage.read('auth_token');
+      final userData = await _authStorage.read('user_data');
 
       if (token != null && userData != null) {
         final user = UserModel.fromJson(jsonDecode(userData));
@@ -207,11 +210,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await _authService!.login(event.email, event.password);
 
-      final prefs = await SharedPreferences.getInstance();
-      // TODO(security): Replace SharedPreferences with flutter_secure_storage
-      // before production. SharedPreferences is unencrypted on Android.
-      await prefs.setString('auth_token', user.token);
-      await prefs.setString('user_data', jsonEncode(user.toJson()));
+      await _authStorage.write('auth_token', user.token);
+      await _authStorage.write('user_data', jsonEncode(user.toJson()));
 
       emit(AuthAuthenticated(user: user));
     } on DioException catch (e) {
@@ -245,11 +245,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         licensePath: event.licensePath,
       );
 
-      final prefs = await SharedPreferences.getInstance();
-      // TODO(security): Replace SharedPreferences with flutter_secure_storage
-      // before production. SharedPreferences is unencrypted on Android.
-      await prefs.setString('auth_token', user.token);
-      await prefs.setString('user_data', jsonEncode(user.toJson()));
+      await _authStorage.write('auth_token', user.token);
+      await _authStorage.write('user_data', jsonEncode(user.toJson()));
 
       emit(AuthAuthenticated(user: user));
     } on DioException catch (e) {
@@ -275,7 +272,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthLoading());
     try {
       final updatedUser = await _authService!.updateProfile(
-        userId: currentUser.id,
         name: event.name,
         email: event.email,
         phone: event.phone,
@@ -287,8 +283,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         profilePicturePath: event.profilePicturePath,
       );
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('user_data', jsonEncode(updatedUser.toJson()));
+      await _authStorage.write('user_data', jsonEncode(updatedUser.toJson()));
 
       emit(AuthProfileUpdateSuccess(user: updatedUser));
     } on DioException catch (e) {
@@ -305,9 +300,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
-    await prefs.remove('user_data');
+    await _authStorage.delete('auth_token');
+    await _authStorage.delete('user_data');
     emit(AuthUnauthenticated());
   }
 
@@ -328,7 +322,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           statusCode: statusCode,
         ).message;
       default:
-        return ServerFailure(message: e.message ?? 'Unexpected authentication error').message;
+        return ServerFailure(
+          message: e.message ?? 'Unexpected authentication error',
+        ).message;
     }
   }
 }

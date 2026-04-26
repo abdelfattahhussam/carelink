@@ -23,7 +23,9 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
+    context.read<NotificationBloc>().add(
+      NotificationsFetchRequested(forceRefresh: true),
+    );
     context.read<DonationBloc>().add(DonationsFetchRequested());
   }
 
@@ -31,7 +33,11 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
-        if (authState is! AuthAuthenticated) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        if (authState is! AuthAuthenticated) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
         final user = authState.user;
         return _buildBlocListener(
           Scaffold(
@@ -39,12 +45,19 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
             appBar: HomeAppBar(user: user),
             body: RefreshIndicator(
               onRefresh: () async {
-                context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
+                context.read<NotificationBloc>().add(
+                  NotificationsFetchRequested(forceRefresh: true),
+                );
                 context.read<DonationBloc>().add(DonationsFetchRequested());
               },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 90),
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  bottom: 90,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -52,7 +65,9 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
                     const SizedBox(height: 32),
                     Text(
                       AppLocalizations.of(context)!.overview,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _buildStatsGrid(context, user),
@@ -75,15 +90,26 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
           listenWhen: (previous, current) => current is DonationsLoaded,
           listener: (context, state) {
             if (state is DonationsLoaded) {
-              debugPrint('🏠 Home: Donations Loaded. Count: ${state.donations.length}');
+              debugPrint(
+                '🏠 Home: Donations Loaded. Count: ${state.donations.length}',
+              );
               // Check if any donation is in 'delivering' status
-              final pendingConfirm = state.donations.where((d) => d.status == 'delivering').firstOrNull;
+              final pendingConfirm = state.donations
+                  .where((d) => d.status == 'delivering')
+                  .firstOrNull;
               if (pendingConfirm != null && !_isConfirmDialogShowing) {
-                debugPrint('🚨 Home: Found pending confirm for ${pendingConfirm.medicineName}');
+                debugPrint(
+                  '🚨 Home: Found pending confirm for ${pendingConfirm.medicineName}',
+                );
                 // Schedule dialog after the current frame to avoid build-phase conflicts
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted && !_isConfirmDialogShowing) {
-                    _showConfirmationDialog(context, pendingConfirm.medicineName, pendingConfirm.id, isRequest: false);
+                    _showConfirmationDialog(
+                      context,
+                      pendingConfirm.medicineName,
+                      pendingConfirm.id,
+                      isRequest: false,
+                    );
                   }
                 });
               }
@@ -95,7 +121,12 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
     );
   }
 
-  void _showConfirmationDialog(BuildContext context, String medicineName, String id, {required bool isRequest}) {
+  void _showConfirmationDialog(
+    BuildContext context,
+    String medicineName,
+    String id, {
+    required bool isRequest,
+  }) {
     _isConfirmDialogShowing = true;
     showDialog<void>(
       context: context,
@@ -106,33 +137,52 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
           children: [
             const Icon(Icons.verified_user_rounded, color: AppColors.primary),
             const SizedBox(width: 12),
-            Text(isRequest ? AppLocalizations.of(context)!.confirmPickup : AppLocalizations.of(context)!.confirmDeliveryLabel),
+            Text(
+              isRequest
+                  ? AppLocalizations.of(context)!.confirmPickup
+                  : AppLocalizations.of(context)!.confirmDeliveryLabel,
+            ),
           ],
         ),
         content: Text(
-          isRequest 
-            ? AppLocalizations.of(context)!.didYouReceiveMedicine(medicineName)
-            : AppLocalizations.of(context)!.didYouDeliverMedicine(medicineName),
+          isRequest
+              ? AppLocalizations.of(
+                  context,
+                )!.didYouReceiveMedicine(medicineName)
+              : AppLocalizations.of(
+                  context,
+                )!.didYouDeliverMedicine(medicineName),
           style: const TextStyle(fontSize: 16),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(AppLocalizations.of(context)!.cancel, style: const TextStyle(color: AppColors.textSecondary)),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             onPressed: () {
               // Finalize status to 'delivered'
-              context.read<DonationBloc>().add(DonationFinalizeRequested(id: id));
+              context.read<DonationBloc>().add(
+                DonationFinalizeRequested(id: id),
+              );
               Navigator.of(dialogContext).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(isRequest ? AppLocalizations.of(context)!.confirmReceiptSuccess : AppLocalizations.of(context)!.confirmDeliverySuccess),
+                  content: Text(
+                    isRequest
+                        ? AppLocalizations.of(context)!.confirmReceiptSuccess
+                        : AppLocalizations.of(context)!.confirmDeliverySuccess,
+                  ),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -203,7 +253,9 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        AppLocalizations.of(context)!.welcomeWithName(user.name.split(' ').first),
+                        AppLocalizations.of(
+                          context,
+                        )!.welcomeWithName(user.name.split(' ').first),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 26,
@@ -218,7 +270,11 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
                         color: Colors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.volunteer_activism, color: Colors.white, size: 24),
+                      child: const Icon(
+                        Icons.volunteer_activism,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ],
                 ),
@@ -334,7 +390,10 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
                   ),
                   Text(
                     label,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 11),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -387,21 +446,28 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
                 final state = context.read<DonationBloc>().state;
                 if (state is DonationsLoaded) {
                   // Filter for items with active (non-finalized) QR codes
-                  final approved = state.donations.where((d) => d.canShowQr).toList();
+                  final approved = state.donations
+                      .where((d) => d.canShowQr)
+                      .toList();
                   if (approved.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(AppLocalizations.of(context)!.noApprovedDonations),
+                        content: Text(
+                          AppLocalizations.of(context)!.noApprovedDonations,
+                        ),
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   } else if (approved.length == 1) {
                     final item = approved.first;
-                    context.push('/qr-display', extra: {
-                      'id': item.id,
-                      'type': 'donation',
-                      'qrCode': item.qrCode,
-                    });
+                    context.push(
+                      '/qr-display',
+                      extra: {
+                        'id': item.id,
+                        'type': 'donation',
+                        'qrCode': item.qrCode,
+                      },
+                    );
                   } else {
                     _showQRSelectionSheet(context, approved);
                   }
@@ -433,18 +499,26 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
               child: Container(
                 width: 40,
                 height: 4,
-                decoration: BoxDecoration(color: AppColors.divider, borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(
+                  color: AppColors.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
             const SizedBox(height: 24),
             Text(
               AppLocalizations.of(context)!.selectMedicineForDelivery,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 8),
             Text(
               AppLocalizations.of(context)!.waitPharmacistScan,
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 24),
             Flexible(
@@ -458,28 +532,47 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.divider.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: AppColors.divider.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
                       leading: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.qr_code_2_rounded, color: AppColors.primary),
+                        child: const Icon(
+                          Icons.qr_code_2_rounded,
+                          color: AppColors.primary,
+                        ),
                       ),
-                      title: Text(item.medicineName, style: const TextStyle(fontWeight: FontWeight.w700)),
-                      subtitle: Text("${item.quantity} ${item.unit.localizedName(context)}"),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                      title: Text(
+                        item.medicineName,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      subtitle: Text(
+                        "${item.quantity} ${item.unit.localizedName(context)}",
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 16,
+                      ),
                       onTap: () {
                         context.pop();
-                        context.push('/qr-display', extra: {
-                          'id': item.id,
-                          'type': 'donation',
-                          'qrCode': item.qrCode,
-                        });
+                        context.push(
+                          '/qr-display',
+                          extra: {
+                            'id': item.id,
+                            'type': 'donation',
+                            'qrCode': item.qrCode,
+                          },
+                        );
                       },
                     ),
                   );
@@ -499,7 +592,9 @@ class _DonorHomeScreenState extends State<DonorHomeScreen> {
     VoidCallback onTap, {
     bool isPrimary = false,
   }) {
-    final color = isPrimary ? AppColors.primary : Theme.of(context).textTheme.bodySmall?.color;
+    final color = isPrimary
+        ? AppColors.primary
+        : Theme.of(context).textTheme.bodySmall?.color;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),

@@ -1,11 +1,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../constants/api_endpoints.dart';
 import '../../presentation/blocs/auth/auth_bloc.dart';
 import 'mock_interceptor.dart';
+import 'secure_storage.dart';
 
-const bool kUseMock = bool.fromEnvironment('USE_MOCK', defaultValue: true);
+const bool kUseMock = bool.fromEnvironment('USE_MOCK', defaultValue: false);
 
 /// Singleton Dio HTTP client with auth token injection and mock support
 class DioClient {
@@ -26,26 +26,28 @@ class DioClient {
     );
 
     // Add auth token interceptor
-    dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        final prefs = await SharedPreferences.getInstance();
-        final token = prefs.getString('auth_token');
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
-        handler.next(options);
-      },
-      onError: (error, handler) async {
-        // Handle 401 — clear token and notify AuthBloc to redirect to login
-        if (error.response?.statusCode == 401) {
-          final prefs = await SharedPreferences.getInstance();
-          await prefs.remove('auth_token');
-          await prefs.remove('user_data');
-          authBloc.add(AuthLogoutRequested()); // NOTIFY AuthBloc → router reacts
-        }
-        handler.next(error);
-      },
-    ));
+    dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token = await SecureStorage.instance.read('auth_token');
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          handler.next(options);
+        },
+        onError: (error, handler) async {
+          // Handle 401 — clear token and notify AuthBloc to redirect to login
+          if (error.response?.statusCode == 401) {
+            await SecureStorage.instance.delete('auth_token');
+            await SecureStorage.instance.delete('user_data');
+            authBloc.add(
+              AuthLogoutRequested(),
+            ); // NOTIFY AuthBloc → router reacts
+          }
+          handler.next(error);
+        },
+      ),
+    );
 
     if (kUseMock) {
       dio.interceptors.add(MockInterceptor());

@@ -23,7 +23,9 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
+    context.read<NotificationBloc>().add(
+      NotificationsFetchRequested(forceRefresh: true),
+    );
     context.read<MedicineBloc>().add(MedicinesFetchRequested());
     context.read<RequestBloc>().add(RequestsFetchRequested());
     final authState = context.read<AuthBloc>().state;
@@ -49,24 +51,33 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
             onRefresh: () async => _refreshData(user),
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
+                top: 20,
+                bottom: 100,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildWelcomeCard(context, user),
                   const SizedBox(height: 32),
-                  
+
                   Text(
                     AppLocalizations.of(context)!.overview,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   _buildStatsGrid(context, user),
-                  
+
                   const SizedBox(height: 32),
                   Text(
                     AppLocalizations.of(context)!.quickActions,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
                   ),
                   const SizedBox(height: 16),
                   _buildQuickActions(context, user),
@@ -82,7 +93,9 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
 
   void _refreshData(UserModel user) {
     context.read<MedicineBloc>().add(MedicinesFetchRequested());
-    context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
+    context.read<NotificationBloc>().add(
+      NotificationsFetchRequested(forceRefresh: true),
+    );
     context.read<DonationBloc>().add(PendingDonationsFetchRequested());
     context.read<RequestBloc>().add(RequestsFetchRequested());
   }
@@ -141,7 +154,9 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        AppLocalizations.of(context)!.welcomeWithName(user.name.split(' ').first),
+                        AppLocalizations.of(
+                          context,
+                        )!.welcomeWithName(user.name.split(' ').first),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 26,
@@ -156,7 +171,11 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
                         color: Colors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.local_pharmacy_rounded, color: Colors.white, size: 24),
+                      child: const Icon(
+                        Icons.local_pharmacy_rounded,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ],
                 ),
@@ -171,19 +190,30 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
                 ),
                 const SizedBox(height: 20),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.black.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.verified_rounded, color: Colors.white, size: 16),
+                      const Icon(
+                        Icons.verified_rounded,
+                        color: Colors.white,
+                        size: 16,
+                      ),
                       const SizedBox(width: 8),
                       Text(
-                        AppLocalizations.of(context)!.verifiedRole(user.role.label),
+                        AppLocalizations.of(
+                          context,
+                        )!.verifiedRole(user.role.label),
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.95),
                           fontSize: 13,
@@ -226,8 +256,12 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
     final donPending = donState is DonationsLoaded
         ? donState.donations.where((d) => d.isPending).length.toString()
         : '0';
-    final medCount = medState is MedicinesLoaded ? medState.medicines.length.toString() : '0';
-    final reqCount = reqState is RequestsLoaded ? reqState.requests.length.toString() : '0';
+    final medCount = medState is MedicinesLoaded
+        ? medState.medicines.length.toString()
+        : '0';
+    final reqCount = reqState is RequestsLoaded
+        ? reqState.requests.length.toString()
+        : '0';
     final urgentCount = reqState is RequestsLoaded
         ? reqState.requests.where((r) => r.isUrgent).length.toString()
         : '0';
@@ -302,7 +336,10 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
                 ),
                 Text(
                   label,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 11),
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11,
+                  ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -313,8 +350,6 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
       ),
     );
   }
-
-
 
   Widget _buildQuickActions(BuildContext context, UserModel user) {
     final actions = [
@@ -346,7 +381,10 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
             decoration: BoxDecoration(
               color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.5), width: 1),
+              border: Border.all(
+                color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
+                width: 1,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withValues(alpha: 0.04),
@@ -373,12 +411,16 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
                       color: (Theme.of(context).brightness == Brightness.dark)
-                        ? Colors.white.withValues(alpha: 0.95) 
-                        : AppColors.textPrimary,
+                          ? Colors.white.withValues(alpha: 0.95)
+                          : AppColors.textPrimary,
                     ),
                   ),
                 ),
-                Icon(Icons.chevron_right_rounded, color: Theme.of(context).dividerColor, size: 20),
+                Icon(
+                  Icons.chevron_right_rounded,
+                  color: Theme.of(context).dividerColor,
+                  size: 20,
+                ),
               ],
             ),
           ),
@@ -432,7 +474,9 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
     VoidCallback onTap, {
     bool isPrimary = false,
   }) {
-    final color = isPrimary ? AppColors.primary : Theme.of(context).textTheme.bodySmall?.color;
+    final color = isPrimary
+        ? AppColors.primary
+        : Theme.of(context).textTheme.bodySmall?.color;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),

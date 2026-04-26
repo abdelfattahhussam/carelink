@@ -18,6 +18,7 @@ class MedicineListScreen extends StatefulWidget {
 
 class _MedicineListScreenState extends State<MedicineListScreen> {
   final _searchCtrl = TextEditingController();
+  final _scrollCtrl = ScrollController();
   String? _filterGovernorate;
   String? _filterCity;
   String? _filterCategory;
@@ -29,7 +30,8 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
 
   bool get _isPatient {
     final authState = context.read<AuthBloc>().state;
-    return authState is AuthAuthenticated && authState.user.role == UserRole.patient;
+    return authState is AuthAuthenticated &&
+        authState.user.role == UserRole.patient;
   }
 
   @override
@@ -37,12 +39,21 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
     super.initState();
     context.read<MedicineBloc>().add(MedicinesFetchRequested());
     context.read<PharmacyBloc>().add(PharmaciesLoadRequested());
+    _scrollCtrl.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _searchCtrl.dispose();
+    _scrollCtrl.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollCtrl.position.pixels >=
+        _scrollCtrl.position.maxScrollExtent * 0.8) {
+      context.read<MedicineBloc>().add(LoadMoreMedicinesRequested());
+    }
   }
 
   void _search(String query) {
@@ -63,7 +74,12 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
       backgroundColor: Theme.of(context).cardColor,
       isScrollControlled: true,
       builder: (_) => Padding(
-        padding: const EdgeInsets.only(left: 28, right: 28, top: 12, bottom: 32),
+        padding: const EdgeInsets.only(
+          left: 28,
+          right: 28,
+          top: 12,
+          bottom: 32,
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +111,11 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                       ),
                     ],
                   ),
-                  child: const Icon(Icons.medication_rounded, color: AppColors.primary, size: 32),
+                  child: const Icon(
+                    Icons.medication_rounded,
+                    color: AppColors.primary,
+                    size: 32,
+                  ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -104,12 +124,19 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                     children: [
                       Text(
                         medicine.name,
-                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 20,
+                        ),
                       ),
                       const SizedBox(height: 6),
                       Text(
                         medicine.category,
-                        style: TextStyle(fontSize: 14, color: AppColors.textLight, fontWeight: FontWeight.w600),
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textLight,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ],
                   ),
@@ -119,7 +146,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
             const SizedBox(height: 24),
             Text(
               medicine.description,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 15,
                 color: AppColors.textSecondary,
                 height: 1.6,
@@ -164,10 +191,20 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                       onPressed: () => Navigator.pop(context),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        side: BorderSide(color: AppColors.textLight.withValues(alpha: 0.3)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        side: BorderSide(
+                          color: AppColors.textLight.withValues(alpha: 0.3),
+                        ),
                       ),
-                      child: Text(l10n.cancel, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                      child: Text(
+                        l10n.cancel,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(width: 16),
@@ -177,23 +214,36 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                       onPressed: medicine.inStock && !medicine.isExpired
                           ? () {
                               Navigator.pop(context);
-                              this.context.push('/request/${medicine.id}', extra: medicine);
+                              this.context.push(
+                                '/request/${medicine.id}',
+                                extra: medicine,
+                              );
                             }
                           : null,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.primary,
                         foregroundColor: Colors.white,
-                        disabledBackgroundColor: AppColors.textLight.withValues(alpha: 0.2),
+                        disabledBackgroundColor: AppColors.textLight.withValues(
+                          alpha: 0.2,
+                        ),
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           const Icon(Icons.send_rounded, size: 20),
                           const SizedBox(width: 8),
-                          Text(l10n.requestMedicine, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                          Text(
+                            l10n.requestMedicine,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -210,9 +260,17 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
-                  child: Text(l10n.close, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+                  child: Text(
+                    l10n.close,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -237,7 +295,11 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
         const SizedBox(width: 8),
         Text(
           text,
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: color),
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w700,
+            color: color,
+          ),
         ),
       ],
     ),
@@ -245,9 +307,13 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
 
   Widget _buildFilterBar() {
     final l10n = AppLocalizations.of(context)!;
-    
+
     if (!_isPatient) {
-      final hasFilter = _filterExpiringSoon || _filterLowStock || _filterExpired || _filterOutOfStock;
+      final hasFilter =
+          _filterExpiringSoon ||
+          _filterLowStock ||
+          _filterExpired ||
+          _filterOutOfStock;
 
       return Container(
         height: 44,
@@ -260,7 +326,8 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
               label: l10n.filterExpiringSoon,
               isActive: _filterExpiringSoon,
               icon: Icons.timer_outlined,
-              onTap: () => setState(() => _filterExpiringSoon = !_filterExpiringSoon),
+              onTap: () =>
+                  setState(() => _filterExpiringSoon = !_filterExpiringSoon),
               hideArrow: true,
             ),
             const SizedBox(width: 8),
@@ -284,7 +351,8 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
               label: l10n.filterOutOfStock,
               isActive: _filterOutOfStock,
               icon: Icons.highlight_off_rounded,
-              onTap: () => setState(() => _filterOutOfStock = !_filterOutOfStock),
+              onTap: () =>
+                  setState(() => _filterOutOfStock = !_filterOutOfStock),
               hideArrow: true,
             ),
             const SizedBox(width: 8),
@@ -297,20 +365,33 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                   _filterOutOfStock = false;
                 }),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.error.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
+                    border: Border.all(
+                      color: AppColors.error.withValues(alpha: 0.2),
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.clear_rounded, size: 14, color: AppColors.error),
+                      const Icon(
+                        Icons.clear_rounded,
+                        size: 14,
+                        color: AppColors.error,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         l10n.clearFilter,
-                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.error),
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.error,
+                        ),
                       ),
                     ],
                   ),
@@ -324,10 +405,11 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
     return BlocBuilder<PharmacyBloc, PharmacyState>(
       builder: (context, pharmacyState) {
         if (pharmacyState is! PharmaciesLoaded) return const SizedBox.shrink();
-        final hasFilter = _filterGovernorate != null || 
-                          _filterCity != null || 
-                          _filterCategory != null || 
-                          _filterAvailableNow;
+        final hasFilter =
+            _filterGovernorate != null ||
+            _filterCity != null ||
+            _filterCategory != null ||
+            _filterAvailableNow;
 
         return Container(
           height: 44,
@@ -362,11 +444,13 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                   isActive: _filterCity != null,
                   icon: Icons.location_city_outlined,
                   onTap: () {
-                    final cities = pharmacyState.pharmacies
-                        .where((p) => p.governorate == _filterGovernorate)
-                        .map((p) => p.city)
-                        .toSet()
-                        .toList()..sort();
+                    final cities =
+                        pharmacyState.pharmacies
+                            .where((p) => p.governorate == _filterGovernorate)
+                            .map((p) => p.city)
+                            .toSet()
+                            .toList()
+                          ..sort();
                     _showPickerSheet(
                       context,
                       title: l10n.filterByCity,
@@ -383,7 +467,8 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                 label: l10n.filterAvailableNow,
                 isActive: _filterAvailableNow,
                 icon: Icons.check_circle_outline,
-                onTap: () => setState(() => _filterAvailableNow = !_filterAvailableNow),
+                onTap: () =>
+                    setState(() => _filterAvailableNow = !_filterAvailableNow),
                 hideArrow: true,
               ),
               const SizedBox(width: 8),
@@ -396,13 +481,19 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                 onTap: () {
                   final medicineState = context.read<MedicineBloc>().state;
                   if (medicineState is MedicinesLoaded) {
-                     final categories = medicineState.medicines.map((m) => m.category).toSet().toList()..sort();
-                     _showPickerSheet(
-                       context,
-                       title: l10n.allCategories,
-                       items: categories,
-                       onSelected: (val) => setState(() => _filterCategory = val),
-                     );
+                    final categories =
+                        medicineState.medicines
+                            .map((m) => m.category)
+                            .toSet()
+                            .toList()
+                          ..sort();
+                    _showPickerSheet(
+                      context,
+                      title: l10n.allCategories,
+                      items: categories,
+                      onSelected: (val) =>
+                          setState(() => _filterCategory = val),
+                    );
                   }
                 },
               ),
@@ -418,20 +509,33 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                     _filterAvailableNow = false;
                   }),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.error.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.error.withValues(alpha: 0.2)),
+                      border: Border.all(
+                        color: AppColors.error.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.clear_rounded, size: 14, color: AppColors.error),
+                        const Icon(
+                          Icons.clear_rounded,
+                          size: 14,
+                          color: AppColors.error,
+                        ),
                         const SizedBox(width: 4),
                         Text(
                           l10n.clearFilter,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.error),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppColors.error,
+                          ),
                         ),
                       ],
                     ),
@@ -470,7 +574,11 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 14, color: isActive ? AppColors.primary : AppColors.textLight),
+            Icon(
+              icon,
+              size: 14,
+              color: isActive ? AppColors.primary : AppColors.textLight,
+            ),
             const SizedBox(width: 6),
             Text(
               label,
@@ -510,22 +618,31 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
           children: [
             const SizedBox(height: 12),
             Container(
-              width: 40, height: 4,
+              width: 40,
+              height: 4,
               decoration: BoxDecoration(
                 color: AppColors.textLight.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
             const SizedBox(height: 16),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16),
+            ),
             const SizedBox(height: 8),
-            ...items.map((item) => ListTile(
-              title: Text(item, style: const TextStyle(fontWeight: FontWeight.w600)),
-              onTap: () {
-                Navigator.pop(context);
-                onSelected(item);
-              },
-            )),
+            ...items.map(
+              (item) => ListTile(
+                title: Text(
+                  item,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+                onTap: () {
+                  Navigator.pop(context);
+                  onSelected(item);
+                },
+              ),
+            ),
             const SizedBox(height: 8),
           ],
         ),
@@ -537,7 +654,10 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.medicines, style: const TextStyle(fontWeight: FontWeight.w700)),
+        title: Text(
+          AppLocalizations.of(context)!.medicines,
+          style: const TextStyle(fontWeight: FontWeight.w700),
+        ),
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -569,15 +689,24 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                   setState(() {});
                   _search(query);
                 },
-                style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
                 decoration: InputDecoration(
                   hintText: AppLocalizations.of(context)!.searchMedicines,
                   hintStyle: TextStyle(
-                    fontWeight: FontWeight.w500, 
+                    fontWeight: FontWeight.w500,
                     fontSize: 15,
-                    color: Theme.of(context).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
+                    color: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.color?.withValues(alpha: 0.7),
                   ),
-                  prefixIcon: const Icon(Icons.search_rounded, color: AppColors.primary, size: 22),
+                  prefixIcon: const Icon(
+                    Icons.search_rounded,
+                    color: AppColors.primary,
+                    size: 22,
+                  ),
                   border: InputBorder.none,
                   enabledBorder: InputBorder.none,
                   focusedBorder: InputBorder.none,
@@ -608,16 +737,25 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                 }
                 if (state is MedicinesLoaded) {
                   final pharmacyState = context.watch<PharmacyBloc>().state;
-                  
+
                   // Get pharmacy IDs that match location filter
                   Set<String>? allowedPharmacyIds;
-                  if (_isPatient && pharmacyState is PharmaciesLoaded &&
+                  if (_isPatient &&
+                      pharmacyState is PharmaciesLoaded &&
                       (_filterGovernorate != null || _filterCity != null)) {
-                    allowedPharmacyIds = pharmacyState.pharmacies.where((p) {
-                      if (_filterGovernorate != null && p.governorate != _filterGovernorate) return false;
-                      if (_filterCity != null && p.city != _filterCity) return false;
-                      return true;
-                    }).map((p) => p.id).toSet();
+                    allowedPharmacyIds = pharmacyState.pharmacies
+                        .where((p) {
+                          if (_filterGovernorate != null &&
+                              p.governorate != _filterGovernorate) {
+                            return false;
+                          }
+                          if (_filterCity != null && p.city != _filterCity) {
+                            return false;
+                          }
+                          return true;
+                        })
+                        .map((p) => p.id)
+                        .toSet();
                   }
 
                   // Apply filter to medicines
@@ -625,20 +763,34 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
 
                   if (_isPatient) {
                     if (allowedPharmacyIds != null) {
-                      medicines = medicines.where((m) => m.pharmacyId == null || allowedPharmacyIds!.contains(m.pharmacyId)).toList();
+                      medicines = medicines
+                          .where(
+                            (m) =>
+                                m.pharmacyId == null ||
+                                allowedPharmacyIds!.contains(m.pharmacyId),
+                          )
+                          .toList();
                     }
                     if (_filterCategory != null) {
-                      medicines = medicines.where((m) => m.category == _filterCategory).toList();
+                      medicines = medicines
+                          .where((m) => m.category == _filterCategory)
+                          .toList();
                     }
                     if (_filterAvailableNow) {
-                      medicines = medicines.where((m) => m.inStock && !m.isExpired).toList();
+                      medicines = medicines
+                          .where((m) => m.inStock && !m.isExpired)
+                          .toList();
                     }
                   } else {
                     if (_filterExpiringSoon) {
-                      medicines = medicines.where((m) => m.daysUntilExpiry <= 30 && !m.isExpired).toList();
+                      medicines = medicines
+                          .where((m) => m.daysUntilExpiry <= 30 && !m.isExpired)
+                          .toList();
                     }
                     if (_filterLowStock) {
-                      medicines = medicines.where((m) => m.quantity <= 10 && m.inStock).toList();
+                      medicines = medicines
+                          .where((m) => m.quantity <= 10 && m.inStock)
+                          .toList();
                     }
                     if (_filterExpired) {
                       medicines = medicines.where((m) => m.isExpired).toList();
@@ -652,10 +804,13 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                     return EmptyStateWidget(
                       icon: Icons.medication_outlined,
                       title: AppLocalizations.of(context)!.noMedicinesFound,
-                      subtitle: AppLocalizations.of(context)!.tryDifferentSearch,
+                      subtitle: AppLocalizations.of(
+                        context,
+                      )!.tryDifferentSearch,
                     );
                   }
                   return ListView.builder(
+                    controller: _scrollCtrl,
                     padding: const EdgeInsets.symmetric(horizontal: 20),
                     itemCount: medicines.length,
                     itemBuilder: (context, i) {
@@ -665,7 +820,11 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                         decoration: BoxDecoration(
                           color: Theme.of(context).cardColor,
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.5)),
+                          border: Border.all(
+                            color: Theme.of(
+                              context,
+                            ).dividerColor.withValues(alpha: 0.5),
+                          ),
                           boxShadow: [
                             BoxShadow(
                               color: Colors.black.withValues(alpha: 0.03),
@@ -688,42 +847,67 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                                     height: 56,
                                     decoration: BoxDecoration(
                                       color: m.inStock
-                                          ? AppColors.primary.withValues(alpha: 0.1)
+                                          ? AppColors.primary.withValues(
+                                              alpha: 0.1,
+                                            )
                                           : AppColors.surfaceVariant,
                                       borderRadius: BorderRadius.circular(16),
                                     ),
                                     child: Icon(
                                       Icons.medication_rounded,
-                                      color: m.inStock ? AppColors.primary : AppColors.textLight,
+                                      color: m.inStock
+                                          ? AppColors.primary
+                                          : AppColors.textLight,
                                       size: 28,
                                     ),
                                   ),
                                   const SizedBox(width: 16),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           m.name,
-                                          style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .titleMedium
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.bold,
+                                              ),
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
                                           m.category,
-                                          style: Theme.of(context).textTheme.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodySmall
+                                              ?.copyWith(
+                                                fontWeight: FontWeight.w600,
+                                              ),
                                         ),
-                                        if (m.pharmacyName != null && m.pharmacyName!.isNotEmpty) ...[
+                                        if (m.pharmacyName != null &&
+                                            m.pharmacyName!.isNotEmpty) ...[
                                           const SizedBox(height: 4),
                                           Row(
                                             children: [
-                                              Icon(Icons.local_pharmacy_outlined, size: 12, color: AppColors.textLight),
+                                              const Icon(
+                                                Icons.local_pharmacy_outlined,
+                                                size: 12,
+                                                color: AppColors.textLight,
+                                              ),
                                               const SizedBox(width: 4),
                                               Expanded(
                                                 child: Text(
                                                   '${AppLocalizations.of(context)!.availableAtPharmacy} ${m.pharmacyName}',
-                                                  style: TextStyle(fontSize: 11, color: AppColors.textLight, fontWeight: FontWeight.w500),
+                                                  style: const TextStyle(
+                                                    fontSize: 11,
+                                                    color: AppColors.textLight,
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
                                                   maxLines: 1,
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
                                               ),
                                             ],
@@ -735,15 +919,42 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                                           runSpacing: 8,
                                           children: [
                                             if (!m.inStock)
-                                              _tag(AppLocalizations.of(context)!.outOfStock, AppColors.error)
+                                              _tag(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.outOfStock,
+                                                AppColors.error,
+                                              )
                                             else if (!_isPatient)
-                                              _tag("${m.quantity} ${m.unit.localizedName(context)}", AppColors.success)
+                                              _tag(
+                                                "${m.quantity} ${m.unit.localizedName(context)}",
+                                                AppColors.success,
+                                              )
                                             else
-                                              _tag(AppLocalizations.of(context)!.available, AppColors.success),
+                                              _tag(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.available,
+                                                AppColors.success,
+                                              ),
                                             if (m.isExpired)
-                                              _tag(AppLocalizations.of(context)!.expired, AppColors.expired)
+                                              _tag(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.expired,
+                                                AppColors.expired,
+                                              )
                                             else
-                                              _tag(AppLocalizations.of(context)!.expDate(DateFormatters.formatDate(m.expiryDate)), AppColors.info),
+                                              _tag(
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.expDate(
+                                                  DateFormatters.formatDate(
+                                                    m.expiryDate,
+                                                  ),
+                                                ),
+                                                AppColors.info,
+                                              ),
                                           ],
                                         ),
                                       ],
@@ -752,11 +963,17 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
                                   Container(
                                     margin: const EdgeInsets.only(left: 8),
                                     decoration: BoxDecoration(
-                                      color: Theme.of(context).dividerColor.withValues(alpha: 0.1),
+                                      color: Theme.of(
+                                        context,
+                                      ).dividerColor.withValues(alpha: 0.1),
                                       shape: BoxShape.circle,
                                     ),
                                     padding: const EdgeInsets.all(4),
-                                    child: Icon(Icons.chevron_right_rounded, color: Theme.of(context).dividerColor, size: 20),
+                                    child: Icon(
+                                      Icons.chevron_right_rounded,
+                                      color: Theme.of(context).dividerColor,
+                                      size: 20,
+                                    ),
                                   ),
                                 ],
                               ),

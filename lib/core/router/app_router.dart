@@ -56,7 +56,8 @@ class AppRouter {
           return null;
         }
 
-        final bool publicRoute = state.matchedLocation == '/login' ||
+        final bool publicRoute =
+            state.matchedLocation == '/login' ||
             state.matchedLocation == '/register' ||
             state.matchedLocation == '/onboarding' ||
             state.matchedLocation == '/language-selection';
@@ -72,7 +73,7 @@ class AppRouter {
 
         if (authState is AuthAuthenticated) {
           final user = authState.user;
-          
+
           if (publicRoute || state.matchedLocation == '/home') {
             return RBACConfig.homeRouteFor(user.role);
           }
@@ -91,50 +92,104 @@ class AppRouter {
 
         return null;
       },
-    routes: [
-      GoRoute(path: '/', redirect: (context, state) => '/splash'),
-      GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
-      GoRoute(path: '/onboarding', builder: (context, state) => const OnboardingScreen()),
-      GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
-      GoRoute(path: '/register', builder: (context, state) => const RegisterScreen()),
-      GoRoute(path: '/language-selection', builder: (context, state) => const LanguageSelectionScreen()),
-      
-      // Home Router (now just a fallback/loading shell)
-      GoRoute(path: '/home', builder: (context, state) => const HomeRouterScreen()),
-      
-      // Role specific homes
-      GoRoute(path: '/dashboard', builder: (context, state) => const PharmacistDashboardScreen()),
-      GoRoute(path: '/donor-home', builder: (context, state) => const DonorHomeScreen()),
-      GoRoute(path: '/patient-home', builder: (context, state) => const PatientHomeScreen()),
-      GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
+      routes: [
+        GoRoute(path: '/', redirect: (context, state) => '/splash'),
+        GoRoute(
+          path: '/splash',
+          builder: (context, state) => const SplashScreen(),
+        ),
+        GoRoute(
+          path: '/onboarding',
+          builder: (context, state) => const OnboardingScreen(),
+        ),
+        GoRoute(
+          path: '/login',
+          builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: '/register',
+          builder: (context, state) => const RegisterScreen(),
+        ),
+        GoRoute(
+          path: '/language-selection',
+          builder: (context, state) => const LanguageSelectionScreen(),
+        ),
 
-      GoRoute(path: '/donate', builder: (context, state) => const DonationScreen()),
-      GoRoute(path: '/my-donations', builder: (context, state) => const MyDonationsScreen()),
-      GoRoute(path: '/medicines', builder: (context, state) => const MedicineListScreen()),
-      GoRoute(
-        path: '/request/:id',
-        builder: (context, state) {
-          final medicine = state.extra as MedicineModel?;
-          return RequestScreen(medicine: medicine);
-        },
-      ),
-      GoRoute(path: '/my-requests', builder: (context, state) => const MyRequestsScreen()),
-      GoRoute(path: '/review', builder: (context, state) => const PharmacistReviewScreen()),
-      GoRoute(path: '/manage-requests', builder: (context, state) => const ManageRequestsScreen()),
-      GoRoute(
-        path: '/qr-display',
-        builder: (context, state) {
-          final extra = state.extra as Map<String, dynamic>? ?? {};
-          return QrDisplayScreen(
-            qrData: extra['qrCode'] as String?,
-            itemId: extra['id'] as String?,
-            itemType: extra['type'] as String?,
-          );
-        },
-      ),
-      GoRoute(path: '/qr-scan', builder: (context, state) => const QrScanScreen()),
-      GoRoute(path: '/notifications', builder: (context, state) => const NotificationsScreen()),
-    ],
+        // Home Router (now just a fallback/loading shell)
+        GoRoute(
+          path: '/home',
+          builder: (context, state) => const HomeRouterScreen(),
+        ),
+
+        // Role specific homes
+        GoRoute(
+          path: '/dashboard',
+          builder: (context, state) => const PharmacistDashboardScreen(),
+        ),
+        GoRoute(
+          path: '/donor-home',
+          builder: (context, state) => const DonorHomeScreen(),
+        ),
+        GoRoute(
+          path: '/patient-home',
+          builder: (context, state) => const PatientHomeScreen(),
+        ),
+        GoRoute(
+          path: '/profile',
+          builder: (context, state) => const ProfileScreen(),
+        ),
+
+        GoRoute(
+          path: '/donate',
+          builder: (context, state) => const DonationScreen(),
+        ),
+        GoRoute(
+          path: '/my-donations',
+          builder: (context, state) => const MyDonationsScreen(),
+        ),
+        GoRoute(
+          path: '/medicines',
+          builder: (context, state) => const MedicineListScreen(),
+        ),
+        GoRoute(
+          path: '/request/:id',
+          builder: (context, state) {
+            final medicine = state.extra as MedicineModel?;
+            return RequestScreen(medicine: medicine);
+          },
+        ),
+        GoRoute(
+          path: '/my-requests',
+          builder: (context, state) => const MyRequestsScreen(),
+        ),
+        GoRoute(
+          path: '/review',
+          builder: (context, state) => const PharmacistReviewScreen(),
+        ),
+        GoRoute(
+          path: '/manage-requests',
+          builder: (context, state) => const ManageRequestsScreen(),
+        ),
+        GoRoute(
+          path: '/qr-display',
+          builder: (context, state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            return QrDisplayScreen(
+              qrData: extra['qrCode'] as String?,
+              itemId: extra['id'] as String?,
+              itemType: extra['type'] as String?,
+            );
+          },
+        ),
+        GoRoute(
+          path: '/qr-scan',
+          builder: (context, state) => const QrScanScreen(),
+        ),
+        GoRoute(
+          path: '/notifications',
+          builder: (context, state) => const NotificationsScreen(),
+        ),
+      ],
     );
   }
 }

@@ -302,5 +302,6 @@
   "allCategories": "كل الفئات",
   "all": "الكل",
   "noRequestsFound": "لا توجد طلبات هنا",
-  "noDonationsFound": "لا توجد تبرعات هنا"
+  "noDonationsFound": "لا توجد تبرعات هنا",
+  "registrationSuccess": "تم إنشاء الحساب بنجاح!"
 }

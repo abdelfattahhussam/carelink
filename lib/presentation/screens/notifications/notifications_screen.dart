@@ -16,6 +16,7 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class _NotificationsScreenState extends State<NotificationsScreen> {
+  final _scrollCtrl = ScrollController();
   @override
   void initState() {
     super.initState();
@@ -23,42 +24,54 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     context.read<NotificationBloc>().add(
       NotificationsFetchRequested(forceRefresh: true),
     );
+    _scrollCtrl.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollCtrl.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollCtrl.position.pixels >=
+        _scrollCtrl.position.maxScrollExtent * 0.8) {
+      context.read<NotificationBloc>().add(LoadMoreNotificationsRequested());
+    }
   }
 
   IconData _iconForType(NotificationType type) => switch (type) {
-    NotificationType.donationApproved  => Icons.check_circle_rounded,
-    NotificationType.donationRejected  => Icons.cancel_rounded,
-    NotificationType.newRequest        => Icons.inbox_rounded,
-    NotificationType.newDonation       => Icons.volunteer_activism_rounded,
-    NotificationType.requestApproved   => Icons.thumb_up_rounded,
-    NotificationType.requestRejected   => Icons.thumb_down_rounded,
-    NotificationType.expiryWarning     => Icons.warning_amber_rounded,
+    NotificationType.donationApproved => Icons.check_circle_rounded,
+    NotificationType.donationRejected => Icons.cancel_rounded,
+    NotificationType.newRequest => Icons.inbox_rounded,
+    NotificationType.newDonation => Icons.volunteer_activism_rounded,
+    NotificationType.requestApproved => Icons.thumb_up_rounded,
+    NotificationType.requestRejected => Icons.thumb_down_rounded,
+    NotificationType.expiryWarning => Icons.warning_amber_rounded,
   };
 
   Color _colorForType(NotificationType type) => switch (type) {
-    NotificationType.donationApproved  => AppColors.success,
-    NotificationType.donationRejected  => AppColors.error,
-    NotificationType.newRequest        => AppColors.info,
-    NotificationType.newDonation       => AppColors.info,
-    NotificationType.requestApproved   => AppColors.primary,
-    NotificationType.requestRejected   => AppColors.error,
-    NotificationType.expiryWarning     => AppColors.warning,
+    NotificationType.donationApproved => AppColors.success,
+    NotificationType.donationRejected => AppColors.error,
+    NotificationType.newRequest => AppColors.info,
+    NotificationType.newDonation => AppColors.info,
+    NotificationType.requestApproved => AppColors.primary,
+    NotificationType.requestRejected => AppColors.error,
+    NotificationType.expiryWarning => AppColors.warning,
   };
 
   String _getLocalizedTitle(BuildContext context, NotificationModel n) {
     final l10n = AppLocalizations.of(context)!;
     return switch (n.type) {
-      NotificationType.donationApproved  => l10n.notifDonationApprovedTitle,
-      NotificationType.donationRejected  => l10n.notifDonationRejectedTitle,
-      NotificationType.newRequest        => l10n.notifNewRequestTitle,
-      NotificationType.newDonation       => l10n.notifNewDonationTitle,
-      NotificationType.requestApproved   => l10n.notifRequestApprovedTitle,
-      NotificationType.requestRejected   => l10n.notifRequestRejectedTitle,
-      NotificationType.expiryWarning     => l10n.notifExpiryWarningTitle,
+      NotificationType.donationApproved => l10n.notifDonationApprovedTitle,
+      NotificationType.donationRejected => l10n.notifDonationRejectedTitle,
+      NotificationType.newRequest => l10n.notifNewRequestTitle,
+      NotificationType.newDonation => l10n.notifNewDonationTitle,
+      NotificationType.requestApproved => l10n.notifRequestApprovedTitle,
+      NotificationType.requestRejected => l10n.notifRequestRejectedTitle,
+      NotificationType.expiryWarning => l10n.notifExpiryWarningTitle,
     };
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,8 +91,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
       ),
       body: BlocBuilder<NotificationBloc, NotificationState>(
         builder: (context, state) {
-          if (state is NotificationLoading) return const Center(child: CircularProgressIndicator());
-          if (state is NotificationError) return Center(child: Text(state.message));
+          if (state is NotificationLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (state is NotificationError) {
+            return Center(child: Text(state.message));
+          }
           if (state is NotificationsLoaded) {
             if (state.notifications.isEmpty) {
               return EmptyStateWidget(
@@ -89,6 +106,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               );
             }
             return ListView.builder(
+              controller: _scrollCtrl,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
               itemCount: state.notifications.length,
               itemBuilder: (context, i) {
@@ -105,14 +123,24 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                       alignment: AlignmentDirectional.centerEnd,
                       padding: const EdgeInsetsDirectional.only(end: 24),
-                      child: const Icon(Icons.done_all, color: AppColors.success, size: 28),
+                      child: const Icon(
+                        Icons.done_all,
+                        color: AppColors.success,
+                        size: 28,
+                      ),
                     ),
-                    onDismissed: (_) => context.read<NotificationBloc>().add(NotificationDismissRequested(notificationId: n.id)),
+                    onDismissed: (_) => context.read<NotificationBloc>().add(
+                      NotificationDismissRequested(notificationId: n.id),
+                    ),
                     child: Container(
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(24),
-                        border: Border.all(color: Theme.of(context).dividerColor.withValues(alpha: 0.5)),
+                        border: Border.all(
+                          color: Theme.of(
+                            context,
+                          ).dividerColor.withValues(alpha: 0.5),
+                        ),
                         boxShadow: [
                           BoxShadow(
                             color: Colors.black.withValues(alpha: 0.03),
@@ -128,9 +156,13 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           onTap: () {
                             // Mark as read (not dismiss) so it stays in the list
                             if (!n.isRead) {
-                              context.read<NotificationBloc>().add(NotificationMarkReadRequested(notificationId: n.id));
+                              context.read<NotificationBloc>().add(
+                                NotificationMarkReadRequested(
+                                  notificationId: n.id,
+                                ),
+                              );
                             }
-                            
+
                             switch (n.type) {
                               case NotificationType.donationApproved:
                               case NotificationType.donationRejected:
@@ -157,47 +189,75 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                     color: color.withValues(alpha: 0.15),
                                     borderRadius: BorderRadius.circular(16),
                                   ),
-                                  child: Icon(_iconForType(n.type), color: color, size: 28),
+                                  child: Icon(
+                                    _iconForType(n.type),
+                                    color: color,
+                                    size: 28,
+                                  ),
                                 ),
                                 const SizedBox(width: 16),
                                 Expanded(
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
                                           Expanded(
                                             child: Text(
                                               _getLocalizedTitle(context, n),
-                                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                                fontWeight: n.isRead ? FontWeight.w600 : FontWeight.bold,
-                                                color: n.isRead ? Theme.of(context).textTheme.bodyMedium?.color : color,
-                                              ),
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .titleSmall
+                                                  ?.copyWith(
+                                                    fontWeight: n.isRead
+                                                        ? FontWeight.w600
+                                                        : FontWeight.bold,
+                                                    color: n.isRead
+                                                        ? Theme.of(context)
+                                                              .textTheme
+                                                              .bodyMedium
+                                                              ?.color
+                                                        : color,
+                                                  ),
                                             ),
                                           ),
                                           if (!n.isRead)
                                             Container(
                                               width: 10,
                                               height: 10,
-                                              margin: const EdgeInsets.only(left: 8),
-                                              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+                                              margin: const EdgeInsets.only(
+                                                left: 8,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: color,
+                                                shape: BoxShape.circle,
+                                              ),
                                             ),
                                         ],
                                       ),
                                       const SizedBox(height: 8),
                                       Text(
                                         n.body,
-                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          color: Theme.of(context).textTheme.bodySmall?.color,
-                                          height: 1.5,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.copyWith(
+                                              color: Theme.of(
+                                                context,
+                                              ).textTheme.bodySmall?.color,
+                                              height: 1.5,
+                                            ),
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
                                         DateFormatters.timeAgo(n.createdAt),
-                                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .labelSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            ),
                                       ),
                                     ],
                                   ),

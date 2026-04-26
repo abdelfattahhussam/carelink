@@ -1,47 +1,50 @@
-carelink_app/
-├── android/
-├── ios/
-├── assets/
-│   └── images/
+carelink/
+├── .github
+│   └── workflows
+│       └── ci.yml
+├── assets
+│   └── images
 │       ├── app_icon.png
 │       ├── logo.png
 │       ├── solid_teal.png
 │       └── transparent.png
-├── lib/
-│   ├── main.dart
-│   ├── app.dart
-│   ├── l10n/
-│   │   ├── app_ar.arb
-│   │   ├── app_en.arb
-│   │   ├── app_localizations.dart
-│   │   ├── app_localizations_ar.dart
-│   │   └── app_localizations_en.dart
-│   ├── core/
-│   │   ├── config/
+├── lib
+│   ├── core
+│   │   ├── config
 │   │   │   └── rbac_config.dart
-│   │   ├── constants/
+│   │   ├── constants
 │   │   │   ├── api_endpoints.dart
 │   │   │   ├── app_colors.dart
 │   │   │   └── app_strings.dart
-│   │   ├── errors/
+│   │   ├── errors
 │   │   │   ├── exceptions.dart
 │   │   │   └── failures.dart
-│   │   ├── network/
+│   │   ├── network
+│   │   │   ├── auth_storage.dart
 │   │   │   ├── dio_client.dart
-│   │   │   └── mock_interceptor.dart
-│   │   ├── router/
+│   │   │   ├── mock_interceptor.dart
+│   │   │   └── secure_storage.dart
+│   │   ├── router
 │   │   │   ├── app_router.dart
 │   │   │   └── route_permissions.dart
-│   │   ├── theme/
+│   │   ├── theme
 │   │   │   └── app_theme.dart
-│   │   ├── utils/
+│   │   ├── utils
 │   │   │   ├── date_formatters.dart
 │   │   │   └── validators.dart
-│   │   └── widgets/
+│   │   └── widgets
+│   │       ├── app_button.dart
+│   │       ├── app_text_field.dart
+│   │       ├── empty_state_widget.dart
+│   │       ├── home_app_bar.dart
+│   │       ├── loading_overlay.dart
+│   │       ├── notification_badge.dart
+│   │       ├── role_badge.dart
 │   │       ├── shared_widgets.dart
-│   │       └── shimmer_loading.dart
-│   ├── data/
-│   │   ├── models/
+│   │       ├── shimmer_loading.dart
+│   │       └── status_badge.dart
+│   ├── data
+│   │   ├── models
 │   │   │   ├── donation_model.dart
 │   │   │   ├── medicine_model.dart
 │   │   │   ├── medicine_unit.dart
@@ -49,7 +52,7 @@ carelink_app/
 │   │   │   ├── pharmacy_model.dart
 │   │   │   ├── request_model.dart
 │   │   │   └── user_model.dart
-│   │   └── services/
+│   │   └── services
 │   │       ├── auth_service.dart
 │   │       ├── donation_service.dart
 │   │       ├── medicine_service.dart
@@ -57,71 +60,101 @@ carelink_app/
 │   │       ├── pharmacy_service.dart
 │   │       ├── qr_service.dart
 │   │       └── request_service.dart
-│   └── presentation/
-│       ├── blocs/
-│       │   ├── auth/
-│       │   │   └── auth_bloc.dart
-│       │   ├── donation/
-│       │   │   └── donation_bloc.dart
-│       │   ├── medicine/
-│       │   │   └── medicine_bloc.dart
-│       │   ├── notification/
-│       │   │   └── notification_bloc.dart
-│       │   ├── pharmacy/
-│       │   │   └── pharmacy_bloc.dart
-│       │   ├── qr/
-│       │   │   └── qr_bloc.dart
-│       │   ├── request/
-│       │   │   └── request_bloc.dart
-│       │   └── settings/
-│       │       ├── settings_cubit.dart
-│       │       └── settings_state.dart
-│       ├── screens/
-│       │   ├── auth/
-│       │   │   ├── login_screen.dart
-│       │   │   └── register_screen.dart
-│       │   ├── dashboard/
-│       │   │   └── pharmacist_dashboard_screen.dart
-│       │   ├── donation/
-│       │   │   ├── donation_screen.dart
-│       │   │   ├── my_donations_screen.dart
-│       │   │   └── pharmacy_picker_screen.dart
-│       │   ├── home/
-│       │   │   ├── donor_home_screen.dart
-│       │   │   ├── home_router_screen.dart
-│       │   │   └── patient_home_screen.dart
-│       │   ├── medicine/
-│       │   │   └── medicine_list_screen.dart
-│       │   ├── notifications/
-│       │   │   └── notifications_screen.dart
-│       │   ├── onboarding/
-│       │   │   ├── language_selection_screen.dart
-│       │   │   └── onboarding_screen.dart
-│       │   ├── pharmacist/
-│       │   │   ├── manage_requests_screen.dart
-│       │   │   ├── pharmacist_review_screen.dart
-│       │   │   └── widgets/
-│       │   │       └── request_decision_bottom_sheet.dart
-│       │   ├── profile/
-│       │   │   └── profile_screen.dart
-│       │   ├── qr/
-│       │   │   ├── qr_display_screen.dart
-│       │   │   └── qr_scan_screen.dart
-│       │   ├── request/
-│       │   │   ├── my_requests_screen.dart
-│       │   │   └── request_screen.dart
-│       │   └── splash/
-│       │       ├── carelink_logo.dart
-│       │       └── splash_screen.dart
-│       └── shared/
-│           └── widgets/
-│               └── permission_guard.dart
-├── test/
+│   ├── domain
+│   │   └── repositories
+│   │       ├── auth_repository.dart
+│   │       ├── donation_repository.dart
+│   │       ├── medicine_repository.dart
+│   │       ├── notification_repository.dart
+│   │       ├── pharmacy_repository.dart
+│   │       ├── qr_repository.dart
+│   │       └── request_repository.dart
+│   ├── l10n
+│   │   ├── app_ar.arb
+│   │   ├── app_en.arb
+│   │   ├── app_localizations.dart
+│   │   ├── app_localizations_ar.dart
+│   │   └── app_localizations_en.dart
+│   ├── presentation
+│   │   ├── blocs
+│   │   │   ├── auth
+│   │   │   │   └── auth_bloc.dart
+│   │   │   ├── donation
+│   │   │   │   └── donation_bloc.dart
+│   │   │   ├── medicine
+│   │   │   │   └── medicine_bloc.dart
+│   │   │   ├── notification
+│   │   │   │   └── notification_bloc.dart
+│   │   │   ├── pharmacy
+│   │   │   │   └── pharmacy_bloc.dart
+│   │   │   ├── qr
+│   │   │   │   └── qr_bloc.dart
+│   │   │   ├── request
+│   │   │   │   └── request_bloc.dart
+│   │   │   └── settings
+│   │   │       ├── settings_cubit.dart
+│   │   │       └── settings_state.dart
+│   │   ├── screens
+│   │   │   ├── auth
+│   │   │   │   ├── login_screen.dart
+│   │   │   │   └── register_screen.dart
+│   │   │   ├── dashboard
+│   │   │   │   └── pharmacist_dashboard_screen.dart
+│   │   │   ├── donation
+│   │   │   │   ├── donation_screen.dart
+│   │   │   │   ├── my_donations_screen.dart
+│   │   │   │   └── pharmacy_picker_screen.dart
+│   │   │   ├── home
+│   │   │   │   ├── donor_home_screen.dart
+│   │   │   │   ├── home_router_screen.dart
+│   │   │   │   └── patient_home_screen.dart
+│   │   │   ├── medicine
+│   │   │   │   └── medicine_list_screen.dart
+│   │   │   ├── notifications
+│   │   │   │   └── notifications_screen.dart
+│   │   │   ├── onboarding
+│   │   │   │   ├── language_selection_screen.dart
+│   │   │   │   └── onboarding_screen.dart
+│   │   │   ├── pharmacist
+│   │   │   │   ├── widgets
+│   │   │   │   │   └── request_decision_bottom_sheet.dart
+│   │   │   │   ├── manage_requests_screen.dart
+│   │   │   │   └── pharmacist_review_screen.dart
+│   │   │   ├── profile
+│   │   │   │   └── profile_screen.dart
+│   │   │   ├── qr
+│   │   │   │   ├── qr_display_screen.dart
+│   │   │   │   └── qr_scan_screen.dart
+│   │   │   ├── request
+│   │   │   │   ├── my_requests_screen.dart
+│   │   │   │   └── request_screen.dart
+│   │   │   └── splash
+│   │   │       ├── carelink_logo.dart
+│   │   │       └── splash_screen.dart
+│   │   └── shared
+│   │       └── widgets
+│   │           └── permission_guard.dart
+│   ├── app.dart
+│   └── main.dart
+├── test
+│   ├── blocs
+│   │   ├── auth_bloc_test.dart
+│   │   └── donation_bloc_test.dart
+│   ├── core
+│   │   └── validators_test.dart
+│   ├── helpers
+│   │   └── fake_auth_storage.dart
+│   ├── models
+│   │   └── donation_model_test.dart
 │   └── widget_test.dart
-├── l10n.yaml
-├── pubspec.yaml
-├── pubspec.lock
-├── analysis_options.yaml
-├── flutter_native_splash.yaml
+├── .gitignore
+├── .metadata
 ├── README.md
+├── analysis_options.yaml
+├── carelink_app.iml
+├── flutter_native_splash.yaml
+├── generate_tree.dart
+├── l10n.yaml
+├── pubspec.lock
+├── pubspec.yaml
 └── tree.txt

@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../data/services/qr_service.dart';
+import '../../../domain/repositories/qr_repository.dart';
 
 // ─── EVENTS ───
 
@@ -34,6 +34,7 @@ abstract class QrState extends Equatable {
 }
 
 class QrInitial extends QrState {}
+
 class QrLoading extends QrState {}
 
 class QrVerified extends QrState {
@@ -63,31 +64,32 @@ class QrError extends QrState {
 // ─── BLOC ───
 
 class QrBloc extends Bloc<QrEvent, QrState> {
-  final QrService _service;
+  final QrRepository _service;
 
-  QrBloc({required QrService service})
-      : _service = service,
-        super(QrInitial()) {
+  QrBloc({required QrRepository service})
+    : _service = service,
+      super(QrInitial()) {
     on<QrVerifyRequested>(_onVerify);
     on<QrReset>(_onReset);
     on<QrConfirmProcessed>(_onConfirm);
   }
 
-  Future<void> _onVerify(
-    QrVerifyRequested event,
-    Emitter<QrState> emit,
-  ) async {
+  Future<void> _onVerify(QrVerifyRequested event, Emitter<QrState> emit) async {
     emit(QrLoading());
     try {
       final result = await _service.verifyQr(event.qrCode);
       final verified = result['verified'] == true;
 
-      emit(QrVerified(
-        isValid: verified,
-        type: result['type'] ?? '',
-        data: verified ? (result['data'] as Map<String, dynamic>? ?? {}) : {},
-        message: verified ? null : (result['message'] ?? 'QR code not recognized'),
-      ));
+      emit(
+        QrVerified(
+          isValid: verified,
+          type: result['type'] ?? '',
+          data: verified ? (result['data'] as Map<String, dynamic>? ?? {}) : {},
+          message: verified
+              ? null
+              : (result['message'] ?? 'QR code not recognized'),
+        ),
+      );
     } catch (e) {
       emit(QrError(message: e.toString()));
     }

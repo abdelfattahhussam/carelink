@@ -1,0 +1,18 @@
+feat: Finalize CareLink production readiness (Phases 1-3)
+
+Phase 1:
+- SecureStorage migration and IDOR fixes
+- Default to real backend mode
+- Repository interfaces and architecture cleanup
+
+Phase 2:
+- Shared widgets modularization and pagination scaffolding
+- Notification badge optimization and filter bug fixes
+- Localization updates and registration success feedback
+- Demo chips hidden in production
+
+Phase 3:
+- CI/CD GitHub Actions setup
+- AuthStorage abstraction and unit tests
+- Lint rule upgrades and repository cleanup
+- README and tree.txt updates

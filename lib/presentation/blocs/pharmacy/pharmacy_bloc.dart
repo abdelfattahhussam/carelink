@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../core/errors/failures.dart';
 import '../../../data/models/pharmacy_model.dart';
-import '../../../data/services/pharmacy_service.dart';
+import '../../../domain/repositories/pharmacy_repository.dart';
 
 // ─── EVENTS ───
 
@@ -93,9 +93,15 @@ class PharmaciesLoaded extends PharmacyState {
   /// Pharmacies after applying all filters
   List<PharmacyModel> get filtered {
     return pharmacies.where((p) {
-      if (filterGovernorate != null && p.governorate != filterGovernorate) return false;
-      if (filterCity != null && p.city != filterCity) return false;
-      if (filterDistrict != null && p.district != filterDistrict) return false;
+      if (filterGovernorate != null && p.governorate != filterGovernorate) {
+        return false;
+      }
+      if (filterCity != null && p.city != filterCity) {
+        return false;
+      }
+      if (filterDistrict != null && p.district != filterDistrict) {
+        return false;
+      }
       return p.isActive;
     }).toList();
   }
@@ -112,15 +118,25 @@ class PharmaciesLoaded extends PharmacyState {
   }) {
     return PharmaciesLoaded(
       pharmacies: pharmacies ?? this.pharmacies,
-      selectedPharmacy: clearSelection ? null : selectedPharmacy ?? this.selectedPharmacy,
+      selectedPharmacy: clearSelection
+          ? null
+          : selectedPharmacy ?? this.selectedPharmacy,
       filterGovernorate: filterGovernorate ?? this.filterGovernorate,
       filterCity: clearCity ? null : filterCity ?? this.filterCity,
-      filterDistrict: clearDistrict ? null : filterDistrict ?? this.filterDistrict,
+      filterDistrict: clearDistrict
+          ? null
+          : filterDistrict ?? this.filterDistrict,
     );
   }
 
   @override
-  List<Object?> get props => [pharmacies, selectedPharmacy, filterGovernorate, filterCity, filterDistrict];
+  List<Object?> get props => [
+    pharmacies,
+    selectedPharmacy,
+    filterGovernorate,
+    filterCity,
+    filterDistrict,
+  ];
 }
 
 class PharmacyError extends PharmacyState {
@@ -133,18 +149,21 @@ class PharmacyError extends PharmacyState {
 // ─── BLOC ───
 
 class PharmacyBloc extends Bloc<PharmacyEvent, PharmacyState> {
-  final PharmacyService _service;
+  final PharmacyRepository _service;
 
-  PharmacyBloc({required PharmacyService service})
-      : _service = service,
-        super(PharmacyInitial()) {
+  PharmacyBloc({required PharmacyRepository service})
+    : _service = service,
+      super(PharmacyInitial()) {
     on<PharmaciesLoadRequested>(_onLoad);
     on<PharmacyFilterChanged>(_onFilterChanged);
     on<PharmacySelected>(_onSelected);
     on<PharmacySelectionCleared>(_onCleared);
   }
 
-  Future<void> _onLoad(PharmaciesLoadRequested event, Emitter<PharmacyState> emit) async {
+  Future<void> _onLoad(
+    PharmaciesLoadRequested event,
+    Emitter<PharmacyState> emit,
+  ) async {
     emit(PharmacyLoading());
     try {
       final pharmacies = await _service.getPharmacies(
@@ -160,40 +179,49 @@ class PharmacyBloc extends Bloc<PharmacyEvent, PharmacyState> {
     }
   }
 
-  void _onFilterChanged(PharmacyFilterChanged event, Emitter<PharmacyState> emit) {
+  void _onFilterChanged(
+    PharmacyFilterChanged event,
+    Emitter<PharmacyState> emit,
+  ) {
     if (state is! PharmaciesLoaded) return;
     final current = state as PharmaciesLoaded;
 
     // When governorate changes — clear city and district
-    if (event.governorate != null && event.governorate != current.filterGovernorate) {
-      emit(current.copyWith(
-        filterGovernorate: event.governorate,
-        clearCity: true,
-        clearDistrict: true,
-        clearSelection: true,
-      ));
+    if (event.governorate != null &&
+        event.governorate != current.filterGovernorate) {
+      emit(
+        current.copyWith(
+          filterGovernorate: event.governorate,
+          clearCity: true,
+          clearDistrict: true,
+          clearSelection: true,
+        ),
+      );
       return;
     }
 
     // When city changes — clear district
     if (event.city != null && event.city != current.filterCity) {
-      emit(current.copyWith(
-        filterCity: event.city,
-        clearDistrict: true,
-        clearSelection: true,
-      ));
+      emit(
+        current.copyWith(
+          filterCity: event.city,
+          clearDistrict: true,
+          clearSelection: true,
+        ),
+      );
       return;
     }
 
-    emit(current.copyWith(
-      filterDistrict: event.district,
-      clearSelection: true,
-    ));
+    emit(
+      current.copyWith(filterDistrict: event.district, clearSelection: true),
+    );
   }
 
   void _onSelected(PharmacySelected event, Emitter<PharmacyState> emit) {
     if (state is! PharmaciesLoaded) return;
-    emit((state as PharmaciesLoaded).copyWith(selectedPharmacy: event.pharmacy));
+    emit(
+      (state as PharmaciesLoaded).copyWith(selectedPharmacy: event.pharmacy),
+    );
   }
 
   void _onCleared(PharmacySelectionCleared event, Emitter<PharmacyState> emit) {

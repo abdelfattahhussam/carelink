@@ -64,7 +64,10 @@ void main() {
         'role': 'donor',
       });
 
-      final copy = original.copyWith(name: 'Modified', role: UserRole.pharmacist);
+      final copy = original.copyWith(
+        name: 'Modified',
+        role: UserRole.pharmacist,
+      );
 
       expect(copy.name, 'Modified');
       expect(copy.role, UserRole.pharmacist);
@@ -94,8 +97,11 @@ void main() {
     });
 
     test('accent is distinct from warning', () {
-      expect(AppColors.accent.toARGB32() != AppColors.warning.toARGB32(), true,
-          reason: 'Accent and Warning must be visually distinct');
+      expect(
+        AppColors.accent.toARGB32() != AppColors.warning.toARGB32(),
+        true,
+        reason: 'Accent and Warning must be visually distinct',
+      );
     });
 
     test('heroGradient uses Teal → Sky Blue', () {
@@ -106,8 +112,12 @@ void main() {
     });
 
     test('dividerDark is distinct from surfaceVariantDark', () {
-      expect(AppColors.dividerDark.toARGB32() != AppColors.surfaceVariantDark.toARGB32(), true,
-          reason: 'Divider must be visible against input backgrounds');
+      expect(
+        AppColors.dividerDark.toARGB32() !=
+            AppColors.surfaceVariantDark.toARGB32(),
+        true,
+        reason: 'Divider must be visible against input backgrounds',
+      );
       expect(AppColors.dividerDark.toARGB32(), 0xFF475569);
     });
   });

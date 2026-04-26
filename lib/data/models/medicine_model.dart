@@ -86,5 +86,14 @@ class MedicineModel extends Equatable {
   }
 
   @override
-  List<Object?> get props => [id, name, status, quantity, unit, expiryDate, pharmacyId, pharmacyName];
+  List<Object?> get props => [
+    id,
+    name,
+    status,
+    quantity,
+    unit,
+    expiryDate,
+    pharmacyId,
+    pharmacyName,
+  ];
 }

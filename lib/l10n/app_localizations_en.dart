@@ -971,4 +971,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noDonationsFound => 'No Donations Found';
+
+  @override
+  String get registrationSuccess => 'Account created successfully!';
 }

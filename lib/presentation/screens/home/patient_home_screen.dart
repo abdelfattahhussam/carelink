@@ -24,7 +24,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
+    context.read<NotificationBloc>().add(
+      NotificationsFetchRequested(forceRefresh: true),
+    );
     context.read<RequestBloc>().add(RequestsFetchRequested());
     context.read<MedicineBloc>().add(MedicinesFetchRequested());
   }
@@ -33,7 +35,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
-        if (authState is! AuthAuthenticated) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        if (authState is! AuthAuthenticated) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
         final user = authState.user;
         return _buildBlocListener(
           Scaffold(
@@ -41,13 +47,20 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
             appBar: HomeAppBar(user: user),
             body: RefreshIndicator(
               onRefresh: () async {
-                context.read<NotificationBloc>().add(NotificationsFetchRequested(forceRefresh: true));
+                context.read<NotificationBloc>().add(
+                  NotificationsFetchRequested(forceRefresh: true),
+                );
                 context.read<RequestBloc>().add(RequestsFetchRequested());
                 context.read<MedicineBloc>().add(MedicinesFetchRequested());
               },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                  bottom: 100,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -55,7 +68,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     const SizedBox(height: 32),
                     Text(
                       AppLocalizations.of(context)!.overview,
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w700),
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _buildStatsGrid(context),
@@ -78,15 +93,26 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
           listenWhen: (previous, current) => current is RequestsLoaded,
           listener: (context, state) {
             if (state is RequestsLoaded) {
-              debugPrint('🏠 Home: Requests Loaded. Count: ${state.requests.length}');
+              debugPrint(
+                '🏠 Home: Requests Loaded. Count: ${state.requests.length}',
+              );
               // Check if any request is in 'delivering' status
-              final pendingConfirm = state.requests.where((r) => r.status == 'delivering').firstOrNull;
+              final pendingConfirm = state.requests
+                  .where((r) => r.status == 'delivering')
+                  .firstOrNull;
               if (pendingConfirm != null && !_isConfirmDialogShowing) {
-                debugPrint('🚨 Home: Found pending confirm for ${pendingConfirm.medicineName}');
+                debugPrint(
+                  '🚨 Home: Found pending confirm for ${pendingConfirm.medicineName}',
+                );
                 // Schedule dialog after the current frame to avoid build-phase conflicts
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted && !_isConfirmDialogShowing) {
-                    _showConfirmationDialog(context, pendingConfirm.medicineName, pendingConfirm.id, isRequest: true);
+                    _showConfirmationDialog(
+                      context,
+                      pendingConfirm.medicineName,
+                      pendingConfirm.id,
+                      isRequest: true,
+                    );
                   }
                 });
               }
@@ -98,7 +124,12 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     );
   }
 
-  void _showConfirmationDialog(BuildContext context, String medicineName, String id, {required bool isRequest}) {
+  void _showConfirmationDialog(
+    BuildContext context,
+    String medicineName,
+    String id, {
+    required bool isRequest,
+  }) {
     _isConfirmDialogShowing = true;
     showDialog<void>(
       context: context,
@@ -119,23 +150,32 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: Text(AppLocalizations.of(context)!.cancel, style: const TextStyle(color: AppColors.textSecondary)),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: AppColors.textSecondary),
+            ),
           ),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             onPressed: () {
               // Finalize status to 'delivered'
               if (isRequest) {
-                context.read<RequestBloc>().add(RequestFinalizeRequested(id: id));
+                context.read<RequestBloc>().add(
+                  RequestFinalizeRequested(id: id),
+                );
               }
               Navigator.of(dialogContext).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text(AppLocalizations.of(context)!.confirmReceiptSuccess),
+                  content: Text(
+                    AppLocalizations.of(context)!.confirmReceiptSuccess,
+                  ),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                 ),
@@ -206,7 +246,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   children: [
                     Expanded(
                       child: Text(
-                        AppLocalizations.of(context)!.welcomeWithName(user.name.split(' ').first),
+                        AppLocalizations.of(
+                          context,
+                        )!.welcomeWithName(user.name.split(' ').first),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 26,
@@ -221,7 +263,11 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                         color: Colors.white.withValues(alpha: 0.2),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(Icons.person, color: Colors.white, size: 24),
+                      child: const Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: 24,
+                      ),
                     ),
                   ],
                 ),
@@ -252,7 +298,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
         if (state is RequestsLoaded) {
           total = state.requests.length;
           approved = state.requests.where((r) => r.isApproved).length;
-          urgent = state.requests.where((r) => r.isUrgent && r.isPending).length;
+          urgent = state.requests
+              .where((r) => r.isUrgent && r.isPending)
+              .length;
           rejected = state.requests.where((r) => r.isRejected).length;
         }
         return GridView.count(
@@ -338,7 +386,10 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                   ),
                   Text(
                     label,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, fontSize: 11),
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -391,21 +442,28 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                 final state = context.read<RequestBloc>().state;
                 if (state is RequestsLoaded) {
                   // Filter for items with active (non-finalized) QR codes
-                  final approved = state.requests.where((r) => r.canShowQr).toList();
+                  final approved = state.requests
+                      .where((r) => r.canShowQr)
+                      .toList();
                   if (approved.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text(AppLocalizations.of(context)!.noApprovedRequests),
+                        content: Text(
+                          AppLocalizations.of(context)!.noApprovedRequests,
+                        ),
                         behavior: SnackBarBehavior.floating,
                       ),
                     );
                   } else if (approved.length == 1) {
                     final item = approved.first;
-                    context.push('/qr-display', extra: {
-                      'id': item.id,
-                      'type': 'request',
-                      'qrCode': item.qrCode,
-                    });
+                    context.push(
+                      '/qr-display',
+                      extra: {
+                        'id': item.id,
+                        'type': 'request',
+                        'qrCode': item.qrCode,
+                      },
+                    );
                   } else {
                     _showQRSelectionSheet(context, approved);
                   }
@@ -437,18 +495,26 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
               child: Container(
                 width: 40,
                 height: 4,
-                decoration: BoxDecoration(color: AppColors.divider, borderRadius: BorderRadius.circular(2)),
+                decoration: BoxDecoration(
+                  color: AppColors.divider,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
             const SizedBox(height: 24),
             Text(
               AppLocalizations.of(context)!.selectMedicineForPickup,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800),
             ),
             const SizedBox(height: 8),
             Text(
               AppLocalizations.of(context)!.waitPharmacistScan,
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+              style: const TextStyle(
+                color: AppColors.textSecondary,
+                fontSize: 14,
+              ),
             ),
             const SizedBox(height: 24),
             Flexible(
@@ -462,28 +528,47 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
                     decoration: BoxDecoration(
                       color: Theme.of(context).cardColor,
                       borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: AppColors.divider.withValues(alpha: 0.3)),
+                      border: Border.all(
+                        color: AppColors.divider.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 8,
+                      ),
                       leading: Container(
                         padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.1),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.qr_code_2_rounded, color: AppColors.primary),
+                        child: const Icon(
+                          Icons.qr_code_2_rounded,
+                          color: AppColors.primary,
+                        ),
                       ),
-                      title: Text(item.medicineName, style: const TextStyle(fontWeight: FontWeight.w700)),
-                      subtitle: Text("${item.quantity} ${item.unit.localizedName(context)}"),
-                      trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
+                      title: Text(
+                        item.medicineName,
+                        style: const TextStyle(fontWeight: FontWeight.w700),
+                      ),
+                      subtitle: Text(
+                        "${item.quantity} ${item.unit.localizedName(context)}",
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        size: 16,
+                      ),
                       onTap: () {
                         context.pop();
-                        context.push('/qr-display', extra: {
-                          'id': item.id,
-                          'type': 'request',
-                          'qrCode': item.qrCode,
-                        });
+                        context.push(
+                          '/qr-display',
+                          extra: {
+                            'id': item.id,
+                            'type': 'request',
+                            'qrCode': item.qrCode,
+                          },
+                        );
                       },
                     ),
                   );
@@ -503,7 +588,9 @@ class _PatientHomeScreenState extends State<PatientHomeScreen> {
     VoidCallback onTap, {
     bool isPrimary = false,
   }) {
-    final color = isPrimary ? AppColors.primary : Theme.of(context).textTheme.bodySmall?.color;
+    final color = isPrimary
+        ? AppColors.primary
+        : Theme.of(context).textTheme.bodySmall?.color;
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),

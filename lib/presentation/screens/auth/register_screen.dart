@@ -17,7 +17,8 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProviderStateMixin {
+class _RegisterScreenState extends State<RegisterScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -25,14 +26,14 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _nationalIdController = TextEditingController();
-  
+
   // Pharmacist specific controllers
   final _pharmacyNameController = TextEditingController();
   final _governorateController = TextEditingController();
   final _cityController = TextEditingController();
   final _villageController = TextEditingController();
   final _streetController = TextEditingController();
-  
+
   String? _licensePath;
   bool _obscurePassword = true;
   UserRole _selectedRole = UserRole.patient;
@@ -50,11 +51,14 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    _fadeAnimation = CurvedAnimation(parent: _fadeController, curve: Curves.easeOut);
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic));
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeOut,
+    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
+        );
 
     _fadeController.forward();
   }
@@ -99,30 +103,46 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
       }
 
       context.read<AuthBloc>().add(
-            AuthRegisterRequested(
-              name: _nameController.text.trim(),
-              email: _emailController.text.trim(),
-              phone: _phoneController.text.trim(),
-              nationalId: _nationalIdController.text.trim(),
-              password: _passwordController.text,
-              role: _selectedRole,
-              pharmacyName: _selectedRole == UserRole.pharmacist ? _pharmacyNameController.text.trim() : null,
-              governorate: _governorateController.text.trim(),
-              city: _cityController.text.trim(),
-              village: _villageController.text.trim(),
-              street: _streetController.text.trim(),
-              licensePath: _selectedRole == UserRole.pharmacist ? _licensePath : null,
-            ),
-          );
+        AuthRegisterRequested(
+          name: _nameController.text.trim(),
+          email: _emailController.text.trim(),
+          phone: _phoneController.text.trim(),
+          nationalId: _nationalIdController.text.trim(),
+          password: _passwordController.text,
+          role: _selectedRole,
+          pharmacyName: _selectedRole == UserRole.pharmacist
+              ? _pharmacyNameController.text.trim()
+              : null,
+          governorate: _governorateController.text.trim(),
+          city: _cityController.text.trim(),
+          village: _villageController.text.trim(),
+          street: _streetController.text.trim(),
+          licensePath: _selectedRole == UserRole.pharmacist
+              ? _licensePath
+              : null,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final roles = [
-      {'value': UserRole.donor, 'label': AppLocalizations.of(context)!.donor, 'icon': Icons.volunteer_activism},
-      {'value': UserRole.patient, 'label': AppLocalizations.of(context)!.patient, 'icon': Icons.person},
-      {'value': UserRole.pharmacist, 'label': AppLocalizations.of(context)!.pharmacist, 'icon': Icons.medical_services},
+      {
+        'value': UserRole.donor,
+        'label': AppLocalizations.of(context)!.donor,
+        'icon': Icons.volunteer_activism,
+      },
+      {
+        'value': UserRole.patient,
+        'label': AppLocalizations.of(context)!.patient,
+        'icon': Icons.person,
+      },
+      {
+        'value': UserRole.pharmacist,
+        'label': AppLocalizations.of(context)!.pharmacist,
+        'icon': Icons.medical_services,
+      },
     ];
 
     return BlocListener<AuthBloc, AuthState>(
@@ -134,6 +154,13 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
               backgroundColor: AppColors.error,
             ),
           );
+        } else if (state is AuthAuthenticated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.registrationSuccess),
+              backgroundColor: AppColors.success,
+            ),
+          );
         }
       },
       child: Scaffold(
@@ -141,7 +168,11 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
           backgroundColor: Colors.transparent,
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.white),
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+              size: 20,
+              color: Colors.white,
+            ),
             onPressed: () => context.pop(),
           ),
         ),
@@ -164,7 +195,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                 ),
               ),
             ),
-            
+
             Positioned(
               top: -50,
               right: -50,
@@ -192,17 +223,19 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                         const SizedBox(height: 10),
                         Text(
                           AppLocalizations.of(context)!.createAccount,
-                          style: Theme.of(context).textTheme.headlineLarge?.copyWith(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.headlineLarge
+                              ?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                         const SizedBox(height: 8),
                         Text(
                           'Join ${AppLocalizations.of(context)!.appTitle} and make a difference',
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.8),
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Colors.white.withValues(alpha: 0.8),
+                              ),
                         ),
                         const SizedBox(height: 32),
 
@@ -214,7 +247,9 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                             borderRadius: BorderRadius.circular(32),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.08),
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.08,
+                                ),
                                 blurRadius: 24,
                                 offset: const Offset(0, 12),
                               ),
@@ -231,41 +266,65 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                 // Role selection
                                 Text(
                                   AppLocalizations.of(context)!.selectRole,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.textSecondary,
-                                  ),
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.textSecondary,
+                                      ),
                                 ),
                                 const SizedBox(height: 12),
                                 Row(
                                   children: roles.map((role) {
-                                    final isSelected = _selectedRole == role['value'];
+                                    final isSelected =
+                                        _selectedRole == role['value'];
                                     return Expanded(
                                       child: GestureDetector(
-                                        onTap: () => setState(() => _selectedRole = role['value'] as UserRole),
+                                        onTap: () => setState(
+                                          () => _selectedRole =
+                                              role['value'] as UserRole,
+                                        ),
                                         child: AnimatedContainer(
-                                          duration: const Duration(milliseconds: 250),
+                                          duration: const Duration(
+                                            milliseconds: 250,
+                                          ),
                                           curve: Curves.easeOutCubic,
-                                          margin: const EdgeInsets.symmetric(horizontal: 4),
-                                          padding: const EdgeInsets.symmetric(vertical: 16),
+                                          margin: const EdgeInsets.symmetric(
+                                            horizontal: 4,
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            vertical: 16,
+                                          ),
                                           decoration: BoxDecoration(
                                             color: isSelected
-                                                ? AppColors.primary.withValues(alpha: 0.08)
+                                                ? AppColors.primary.withValues(
+                                                    alpha: 0.08,
+                                                  )
                                                 : AppColors.surfaceVariant,
-                                            borderRadius: BorderRadius.circular(16),
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
                                             border: Border.all(
                                               color: isSelected
                                                   ? AppColors.primary
-                                                  : AppColors.divider.withValues(alpha: 0.5),
+                                                  : AppColors.divider
+                                                        .withValues(alpha: 0.5),
                                               width: isSelected ? 2 : 1,
                                             ),
-                                            boxShadow: isSelected ? [
-                                              BoxShadow(
-                                                color: AppColors.primary.withValues(alpha: 0.1),
-                                                blurRadius: 10,
-                                                offset: const Offset(0, 4),
-                                              )
-                                            ] : null,
+                                            boxShadow: isSelected
+                                                ? [
+                                                    BoxShadow(
+                                                      color: AppColors.primary
+                                                          .withValues(
+                                                            alpha: 0.1,
+                                                          ),
+                                                      blurRadius: 10,
+                                                      offset: const Offset(
+                                                        0,
+                                                        4,
+                                                      ),
+                                                    ),
+                                                  ]
+                                                : null,
                                           ),
                                           child: Column(
                                             children: [
@@ -299,14 +358,20 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                 const SizedBox(height: 32),
 
                                 // General Info Section
-                                _sectionTitle(Icons.person_outline, AppLocalizations.of(context)!.fullName),
+                                _sectionTitle(
+                                  Icons.person_outline,
+                                  AppLocalizations.of(context)!.fullName,
+                                ),
                                 const SizedBox(height: 12),
                                 AppTextField(
                                   controller: _nameController,
                                   label: AppLocalizations.of(context)!.fullName,
                                   hint: AppLocalizations.of(context)!.fullName,
                                   prefixIcon: Icons.person_outline,
-                                  validator: (v) => Validators.required(v, AppLocalizations.of(context)!.name),
+                                  validator: (v) => Validators.required(
+                                    v,
+                                    AppLocalizations.of(context)!.name,
+                                  ),
                                 ),
                                 const SizedBox(height: 16),
 
@@ -316,9 +381,14 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                   hint: AppLocalizations.of(context)!.email,
                                   prefixIcon: Icons.email_outlined,
                                   keyboardType: TextInputType.emailAddress,
-                                  validator: (v) => Validators.email(v,
-                                    requiredMsg: AppLocalizations.of(context)!.emailRequired,
-                                    invalidMsg: AppLocalizations.of(context)!.emailInvalid,
+                                  validator: (v) => Validators.email(
+                                    v,
+                                    requiredMsg: AppLocalizations.of(
+                                      context,
+                                    )!.emailRequired,
+                                    invalidMsg: AppLocalizations.of(
+                                      context,
+                                    )!.emailInvalid,
                                   ),
                                 ),
                                 const SizedBox(height: 16),
@@ -330,24 +400,35 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                   prefixIcon: Icons.phone_outlined,
                                   keyboardType: TextInputType.phone,
                                   maxLength: 11,
-                                  validator: (v) => Validators.phone(v,
-                                    requiredMsg: AppLocalizations.of(context)!.phoneRequired,
-                                    invalidMsg: AppLocalizations.of(context)!.phoneInvalid,
+                                  validator: (v) => Validators.phone(
+                                    v,
+                                    requiredMsg: AppLocalizations.of(
+                                      context,
+                                    )!.phoneRequired,
+                                    invalidMsg: AppLocalizations.of(
+                                      context,
+                                    )!.phoneInvalid,
                                   ),
                                 ),
                                 const SizedBox(height: 16),
 
                                 AppTextField(
                                   controller: _nationalIdController,
-                                  label: AppLocalizations.of(context)!.nationalId,
+                                  label: AppLocalizations.of(
+                                    context,
+                                  )!.nationalId,
                                   hint: '29901011234567',
                                   prefixIcon: Icons.badge_outlined,
                                   keyboardType: TextInputType.number,
                                   maxLength: 14,
                                   validator: (v) => Validators.nationalId(
-                                    v, 
-                                    AppLocalizations.of(context)!.nationalIdRequired,
-                                    AppLocalizations.of(context)!.nationalIdInvalid,
+                                    v,
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.nationalIdRequired,
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.nationalIdInvalid,
                                   ),
                                 ),
                                 const SizedBox(height: 24),
@@ -355,83 +436,150 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                 // Pharmacist Extra Section
                                 AnimatedSwitcher(
                                   duration: const Duration(milliseconds: 300),
-                                  child: _selectedRole == UserRole.pharmacist ? Column(
-                                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                                    children: [
-                                      _sectionTitle(Icons.local_pharmacy_outlined, AppLocalizations.of(context)!.pharmacyName),
-                                      const SizedBox(height: 12),
-                                      AppTextField(
-                                        controller: _pharmacyNameController,
-                                        label: AppLocalizations.of(context)!.pharmacyName,
-                                        hint: AppLocalizations.of(context)!.pharmacyName,
-                                        prefixIcon: Icons.storefront_outlined,
-                                        validator: (v) => Validators.required(v, AppLocalizations.of(context)!.pharmacyName),
-                                      ),
-                                      const SizedBox(height: 20),
-
-                                      // Premium License Upload
-                                      InkWell(
-                                        onTap: _pickLicenseImage,
-                                        borderRadius: BorderRadius.circular(16),
-                                        child: AnimatedContainer(
-                                          duration: const Duration(milliseconds: 200),
-                                          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primary.withValues(alpha: 0.05),
-                                            borderRadius: BorderRadius.circular(16),
-                                            border: Border.all(
-                                              color: _licensePath != null ? AppColors.success : AppColors.primary.withValues(alpha: 0.3),
-                                              width: _licensePath != null ? 2 : 1,
+                                  child: _selectedRole == UserRole.pharmacist
+                                      ? Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            _sectionTitle(
+                                              Icons.local_pharmacy_outlined,
+                                              AppLocalizations.of(
+                                                context,
+                                              )!.pharmacyName,
                                             ),
-                                          ),
-                                          child: Column(
-                                            children: [
-                                              Icon(
-                                                _licensePath != null ? Icons.verified_rounded : Icons.cloud_upload_outlined,
-                                                color: _licensePath != null ? AppColors.success : AppColors.primary,
-                                                size: 32,
-                                              ),
-                                              const SizedBox(height: 12),
-                                              Text(
-                                                _licensePath != null
-                                                    ? _licensePath!.split('/').last
-                                                    : AppLocalizations.of(context)!.uploadLicense,
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  color: _licensePath != null ? AppColors.success : AppColors.primaryDark,
+                                            const SizedBox(height: 12),
+                                            AppTextField(
+                                              controller:
+                                                  _pharmacyNameController,
+                                              label: AppLocalizations.of(
+                                                context,
+                                              )!.pharmacyName,
+                                              hint: AppLocalizations.of(
+                                                context,
+                                              )!.pharmacyName,
+                                              prefixIcon:
+                                                  Icons.storefront_outlined,
+                                              validator: (v) =>
+                                                  Validators.required(
+                                                    v,
+                                                    AppLocalizations.of(
+                                                      context,
+                                                    )!.pharmacyName,
+                                                  ),
+                                            ),
+                                            const SizedBox(height: 20),
+
+                                            // Premium License Upload
+                                            InkWell(
+                                              onTap: _pickLicenseImage,
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                              child: AnimatedContainer(
+                                                duration: const Duration(
+                                                  milliseconds: 200,
                                                 ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                      vertical: 24,
+                                                      horizontal: 20,
+                                                    ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.primary
+                                                      .withValues(alpha: 0.05),
+                                                  borderRadius:
+                                                      BorderRadius.circular(16),
+                                                  border: Border.all(
+                                                    color: _licensePath != null
+                                                        ? AppColors.success
+                                                        : AppColors.primary
+                                                              .withValues(
+                                                                alpha: 0.3,
+                                                              ),
+                                                    width: _licensePath != null
+                                                        ? 2
+                                                        : 1,
+                                                  ),
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Icon(
+                                                      _licensePath != null
+                                                          ? Icons
+                                                                .verified_rounded
+                                                          : Icons
+                                                                .cloud_upload_outlined,
+                                                      color:
+                                                          _licensePath != null
+                                                          ? AppColors.success
+                                                          : AppColors.primary,
+                                                      size: 32,
+                                                    ),
+                                                    const SizedBox(height: 12),
+                                                    Text(
+                                                      _licensePath != null
+                                                          ? _licensePath!
+                                                                .split('/')
+                                                                .last
+                                                          : AppLocalizations.of(
+                                                              context,
+                                                            )!.uploadLicense,
+                                                      style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color:
+                                                            _licensePath != null
+                                                            ? AppColors.success
+                                                            : AppColors
+                                                                  .primaryDark,
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 32),
-                                    ],
-                                  ) : const SizedBox.shrink(),
+                                            ),
+                                            const SizedBox(height: 32),
+                                          ],
+                                        )
+                                      : const SizedBox.shrink(),
                                 ),
 
                                 // Address Section
-                                _sectionTitle(Icons.location_on_outlined, 
-                                  _selectedRole == UserRole.pharmacist 
-                                      ? AppLocalizations.of(context)!.addressInfo 
-                                      : AppLocalizations.of(context)!.address
+                                _sectionTitle(
+                                  Icons.location_on_outlined,
+                                  _selectedRole == UserRole.pharmacist
+                                      ? AppLocalizations.of(
+                                          context,
+                                        )!.addressInfo
+                                      : AppLocalizations.of(context)!.address,
                                 ),
                                 const SizedBox(height: 12),
                                 AppTextField(
                                   controller: _governorateController,
-                                  label: AppLocalizations.of(context)!.governorate,
-                                  hint: AppLocalizations.of(context)!.governorate,
-                                  validator: (v) => Validators.required(v, AppLocalizations.of(context)!.governorate),
+                                  label: AppLocalizations.of(
+                                    context,
+                                  )!.governorate,
+                                  hint: AppLocalizations.of(
+                                    context,
+                                  )!.governorate,
+                                  validator: (v) => Validators.required(
+                                    v,
+                                    AppLocalizations.of(context)!.governorate,
+                                  ),
                                 ),
                                 const SizedBox(height: 16),
                                 AppTextField(
                                   controller: _cityController,
                                   label: AppLocalizations.of(context)!.city,
                                   hint: AppLocalizations.of(context)!.city,
-                                  validator: (v) => Validators.required(v, AppLocalizations.of(context)!.city),
+                                  validator: (v) => Validators.required(
+                                    v,
+                                    AppLocalizations.of(context)!.city,
+                                  ),
                                 ),
                                 const SizedBox(height: 16),
                                 AppTextField(
@@ -444,12 +592,18 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                   controller: _streetController,
                                   label: AppLocalizations.of(context)!.street,
                                   hint: AppLocalizations.of(context)!.street,
-                                  validator: (v) => Validators.required(v, AppLocalizations.of(context)!.street),
+                                  validator: (v) => Validators.required(
+                                    v,
+                                    AppLocalizations.of(context)!.street,
+                                  ),
                                 ),
                                 const SizedBox(height: 24),
 
                                 // Security Section
-                                _sectionTitle(Icons.security_outlined, AppLocalizations.of(context)!.password),
+                                _sectionTitle(
+                                  Icons.security_outlined,
+                                  AppLocalizations.of(context)!.password,
+                                ),
                                 const SizedBox(height: 12),
                                 AppTextField(
                                   controller: _passwordController,
@@ -457,9 +611,14 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                   hint: "••••••••",
                                   prefixIcon: Icons.lock_outline,
                                   obscureText: _obscurePassword,
-                                  validator: (v) => Validators.password(v,
-                                    requiredMsg: AppLocalizations.of(context)!.passwordRequired,
-                                    weakMsg: AppLocalizations.of(context)!.passwordTooShort,
+                                  validator: (v) => Validators.password(
+                                    v,
+                                    requiredMsg: AppLocalizations.of(
+                                      context,
+                                    )!.passwordRequired,
+                                    weakMsg: AppLocalizations.of(
+                                      context,
+                                    )!.passwordTooShort,
                                   ),
                                   suffix: IconButton(
                                     icon: Icon(
@@ -469,22 +628,31 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                       color: AppColors.textLight,
                                       size: 22,
                                     ),
-                                    onPressed: () =>
-                                        setState(() => _obscurePassword = !_obscurePassword),
+                                    onPressed: () => setState(
+                                      () =>
+                                          _obscurePassword = !_obscurePassword,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 16),
                                 AppTextField(
                                   controller: _confirmPasswordController,
-                                  label: AppLocalizations.of(context)!.confirmPassword,
+                                  label: AppLocalizations.of(
+                                    context,
+                                  )!.confirmPassword,
                                   hint: "••••••••",
                                   prefixIcon: Icons.lock_outline,
                                   obscureText: true,
-                                  validator: (v) =>
-                                      Validators.confirmPassword(v, _passwordController.text,
-                                        requiredMsg: AppLocalizations.of(context)!.confirmPasswordRequired,
-                                        mismatchMsg: AppLocalizations.of(context)!.passwordsDoNotMatch,
-                                      ),
+                                  validator: (v) => Validators.confirmPassword(
+                                    v,
+                                    _passwordController.text,
+                                    requiredMsg: AppLocalizations.of(
+                                      context,
+                                    )!.confirmPasswordRequired,
+                                    mismatchMsg: AppLocalizations.of(
+                                      context,
+                                    )!.passwordsDoNotMatch,
+                                  ),
                                 ),
                                 const SizedBox(height: 40),
 
@@ -494,11 +662,15 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                     return SizedBox(
                                       height: 56,
                                       child: ElevatedButton(
-                                        onPressed: state is AuthLoading ? null : _submit,
+                                        onPressed: state is AuthLoading
+                                            ? null
+                                            : _submit,
                                         style: ElevatedButton.styleFrom(
                                           elevation: 0,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(16),
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
                                           ),
                                         ),
                                         child: state is AuthLoading
@@ -507,12 +679,20 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                                                 width: 24,
                                                 child: CircularProgressIndicator(
                                                   strokeWidth: 2,
-                                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                        Color
+                                                      >(Colors.white),
                                                 ),
                                               )
                                             : Text(
-                                                AppLocalizations.of(context)!.signUp,
-                                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.signUp,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
                                               ),
                                       ),
                                     );
@@ -522,7 +702,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 24),
 
                         // Login link
@@ -566,7 +746,7 @@ class _RegisterScreenState extends State<RegisterScreen> with SingleTickerProvid
         const SizedBox(width: 8),
         Text(
           title,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w700,
             color: AppColors.primaryDark,

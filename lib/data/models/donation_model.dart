@@ -47,6 +47,7 @@ class DonationModel extends Equatable {
   bool get isDelivered => status == 'delivered';
   bool get isDelivering => status == 'delivering';
   bool get hasQrCode => qrCode != null && qrCode!.isNotEmpty;
+
   /// Whether the QR code should be visible — only for active (non-finalized) statuses
   bool get canShowQr => hasQrCode && (isApproved || isDelivering);
 
@@ -96,21 +97,21 @@ class DonationModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        medicineId,
-        medicineName,
-        donorId,
-        donorName,
-        status,
-        qrCode,
-        quantity,
-        unit,
-        notes,
-        boxImagePath,
-        reviewReason,
-        reviewedBy,
-        pharmacyId,
-        pharmacyName,
-        createdAt,
-      ];
+    id,
+    medicineId,
+    medicineName,
+    donorId,
+    donorName,
+    status,
+    qrCode,
+    quantity,
+    unit,
+    notes,
+    boxImagePath,
+    reviewReason,
+    reviewedBy,
+    pharmacyId,
+    pharmacyName,
+    createdAt,
+  ];
 }

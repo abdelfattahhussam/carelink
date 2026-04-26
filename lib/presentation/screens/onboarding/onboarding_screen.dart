@@ -33,12 +33,13 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     _contentFade = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(parent: _contentController, curve: Curves.easeOut),
     );
-    _contentSlide = Tween<Offset>(
-      begin: const Offset(0, 0.06),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _contentController, curve: Curves.easeOutCubic),
-    );
+    _contentSlide =
+        Tween<Offset>(begin: const Offset(0, 0.06), end: Offset.zero).animate(
+          CurvedAnimation(
+            parent: _contentController,
+            curve: Curves.easeOutCubic,
+          ),
+        );
     _contentController.forward();
   }
 
@@ -117,7 +118,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                   onPressed: () => _completeOnboarding(context),
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 8),
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -127,8 +130,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     style: GoogleFonts.inter(
                       fontSize: 15,
                       fontWeight: FontWeight.w600,
-                      color:
-                          isDark ? AppColors.primaryLight : AppColors.primary,
+                      color: isDark
+                          ? AppColors.primaryLight
+                          : AppColors.primary,
                     ),
                   ),
                 ),
@@ -203,9 +207,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              _currentPage == 2
-                                  ? l10n.getStarted
-                                  : l10n.next,
+                              _currentPage == 2 ? l10n.getStarted : l10n.next,
                             ),
                             const SizedBox(width: 8),
                             Icon(
@@ -280,12 +282,16 @@ class _OnboardingPageWidget extends StatelessWidget {
               gradient: RadialGradient(
                 colors: [
                   data.gradientColors[0].withValues(alpha: isDark ? 0.18 : 0.1),
-                  data.gradientColors[1].withValues(alpha: isDark ? 0.06 : 0.03),
+                  data.gradientColors[1].withValues(
+                    alpha: isDark ? 0.06 : 0.03,
+                  ),
                 ],
               ),
               shape: BoxShape.circle,
               border: Border.all(
-                color: data.gradientColors[0].withValues(alpha: isDark ? 0.25 : 0.12),
+                color: data.gradientColors[0].withValues(
+                  alpha: isDark ? 0.25 : 0.12,
+                ),
                 width: 2,
               ),
             ),

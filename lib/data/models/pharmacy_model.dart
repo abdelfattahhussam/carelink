@@ -50,5 +50,12 @@ class PharmacyModel extends Equatable {
   String get fullLocation => '$governorate، $city، $district';
 
   @override
-  List<Object?> get props => [id, name, pharmacistId, governorate, city, isActive];
+  List<Object?> get props => [
+    id,
+    name,
+    pharmacistId,
+    governorate,
+    city,
+    isActive,
+  ];
 }

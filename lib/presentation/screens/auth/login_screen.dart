@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/shared_widgets.dart';
+import '../../../core/network/dio_client.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../splash/carelink_logo.dart';
 
@@ -16,7 +17,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -33,11 +35,14 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       vsync: this,
       duration: const Duration(milliseconds: 800),
     );
-    _fadeAnimation = CurvedAnimation(parent: _fadeController, curve: Curves.easeOut);
-    _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.1),
-      end: Offset.zero,
-    ).animate(CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic));
+    _fadeAnimation = CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeOut,
+    );
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0, 0.1), end: Offset.zero).animate(
+          CurvedAnimation(parent: _fadeController, curve: Curves.easeOutCubic),
+        );
 
     _fadeController.forward();
   }
@@ -53,11 +58,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
   void _submit() {
     if (_formKey.currentState?.validate() ?? false) {
       context.read<AuthBloc>().add(
-            AuthLoginRequested(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            ),
-          );
+        AuthLoginRequested(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        ),
+      );
     }
   }
 
@@ -73,7 +78,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
               content: Text(state.message),
               backgroundColor: AppColors.error,
               behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           );
         }
@@ -97,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                 ),
               ),
             ),
-            
+
             // Subtle Pattern/Glow Layer (Optional)
             Positioned(
               top: -50,
@@ -122,14 +129,17 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                     child: Column(
                       children: [
                         const SizedBox(height: 20),
-                        
+
                         // Glass Logo
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.2),
                             shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 1.5),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.3),
+                              width: 1.5,
+                            ),
                           ),
                           child: const CareLinkLogo(
                             size: 48,
@@ -137,21 +147,23 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                           ),
                         ),
                         const SizedBox(height: 16),
-                        
+
                         Text(
                           AppLocalizations.of(context)!.appTitle,
-                          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                            color: Colors.white,
-                            letterSpacing: 1.2,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: Theme.of(context).textTheme.headlineMedium
+                              ?.copyWith(
+                                color: Colors.white,
+                                letterSpacing: 1.2,
+                                fontWeight: FontWeight.bold,
+                              ),
                         ),
                         const SizedBox(height: 4),
                         Text(
                           AppLocalizations.of(context)!.welcomeBack,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Colors.white.withValues(alpha: 0.8),
-                          ),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: Colors.white.withValues(alpha: 0.8),
+                              ),
                         ),
                         const SizedBox(height: 32),
 
@@ -163,7 +175,9 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             borderRadius: BorderRadius.circular(32),
                             boxShadow: [
                               BoxShadow(
-                                color: AppColors.primary.withValues(alpha: 0.08),
+                                color: AppColors.primary.withValues(
+                                  alpha: 0.08,
+                                ),
                                 blurRadius: 24,
                                 offset: const Offset(0, 12),
                               ),
@@ -184,9 +198,14 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                   hint: AppLocalizations.of(context)!.email,
                                   prefixIcon: Icons.email_outlined,
                                   keyboardType: TextInputType.emailAddress,
-                                  validator: (v) => Validators.email(v,
-                                    requiredMsg: AppLocalizations.of(context)!.emailRequired,
-                                    invalidMsg: AppLocalizations.of(context)!.emailInvalid,
+                                  validator: (v) => Validators.email(
+                                    v,
+                                    requiredMsg: AppLocalizations.of(
+                                      context,
+                                    )!.emailRequired,
+                                    invalidMsg: AppLocalizations.of(
+                                      context,
+                                    )!.emailInvalid,
                                   ),
                                 ),
                                 const SizedBox(height: 20),
@@ -198,9 +217,14 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                   hint: "••••••••",
                                   prefixIcon: Icons.lock_outline,
                                   obscureText: _obscurePassword,
-                                  validator: (v) => Validators.password(v,
-                                    requiredMsg: AppLocalizations.of(context)!.passwordRequired,
-                                    weakMsg: AppLocalizations.of(context)!.passwordTooShort,
+                                  validator: (v) => Validators.password(
+                                    v,
+                                    requiredMsg: AppLocalizations.of(
+                                      context,
+                                    )!.passwordRequired,
+                                    weakMsg: AppLocalizations.of(
+                                      context,
+                                    )!.passwordTooShort,
                                   ),
                                   suffix: IconButton(
                                     icon: Icon(
@@ -210,8 +234,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                       color: AppColors.textLight,
                                       size: 20,
                                     ),
-                                    onPressed: () =>
-                                        setState(() => _obscurePassword = !_obscurePassword),
+                                    onPressed: () => setState(
+                                      () =>
+                                          _obscurePassword = !_obscurePassword,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(height: 12),
@@ -220,8 +246,10 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                 Align(
                                   alignment: Alignment.centerRight,
                                   child: Text(
-                                    AppLocalizations.of(context)!.forgotPassword,
-                                    style: TextStyle(
+                                    AppLocalizations.of(
+                                      context,
+                                    )!.forgotPassword,
+                                    style: const TextStyle(
                                       fontSize: 12,
                                       color: AppColors.primary,
                                       fontWeight: FontWeight.w600,
@@ -236,11 +264,15 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                     return SizedBox(
                                       height: 56,
                                       child: ElevatedButton(
-                                        onPressed: state is AuthLoading ? null : _submit,
+                                        onPressed: state is AuthLoading
+                                            ? null
+                                            : _submit,
                                         style: ElevatedButton.styleFrom(
                                           elevation: 0,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(16),
+                                            borderRadius: BorderRadius.circular(
+                                              16,
+                                            ),
                                           ),
                                         ),
                                         child: state is AuthLoading
@@ -249,12 +281,20 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                                                 width: 24,
                                                 child: CircularProgressIndicator(
                                                   strokeWidth: 2,
-                                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<
+                                                        Color
+                                                      >(Colors.white),
                                                 ),
                                               )
                                             : Text(
-                                                AppLocalizations.of(context)!.signIn,
-                                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                                                AppLocalizations.of(
+                                                  context,
+                                                )!.signIn,
+                                                style: const TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
                                               ),
                                       ),
                                     );
@@ -264,53 +304,83 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
                             ),
                           ),
                         ),
-                        
+
                         const SizedBox(height: 24),
 
-                        // Demo Accounts Refined
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryContainer.withValues(alpha: 0.6),
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: AppColors.primary.withValues(alpha: 0.1)),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.auto_awesome, size: 16, color: AppColors.primaryDark),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    AppLocalizations.of(context)!.demoAccounts,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 13,
+                        // Demo Accounts — hidden in production
+                        if (kUseMock) ...[
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.primaryContainer.withValues(
+                                alpha: 0.6,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: AppColors.primary.withValues(alpha: 0.1),
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.auto_awesome,
+                                      size: 16,
                                       color: AppColors.primaryDark,
                                     ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.demoAccounts,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 13,
+                                        color: AppColors.primaryDark,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Wrap(
+                                  spacing: 8,
+                                  runSpacing: 8,
+                                  children: [
+                                    _demoChip(
+                                      'Donor',
+                                      'donor@test.com',
+                                      Icons.volunteer_activism,
+                                    ),
+                                    _demoChip(
+                                      'Patient',
+                                      'patient@test.com',
+                                      Icons.person,
+                                    ),
+                                    _demoChip(
+                                      'Pharmacist',
+                                      'pharmacist@test.com',
+                                      Icons.medical_services,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.passwordAnyValue,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.textSecondary,
+                                    fontStyle: FontStyle.italic,
                                   ),
-                                ],
-                              ),
-                              const SizedBox(height: 12),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 8,
-                                children: [
-                                  _demoChip('Donor', 'donor@test.com', Icons.volunteer_activism),
-                                  _demoChip('Patient', 'patient@test.com', Icons.person),
-                                  _demoChip('Pharmacist', 'pharmacist@test.com', Icons.medical_services),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                AppLocalizations.of(context)!.passwordAnyValue,
-                                style: TextStyle(fontSize: 11, color: AppColors.textSecondary, fontStyle: FontStyle.italic),
-                              ),
-                            ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                        
+                        ],
+
                         const SizedBox(height: 32),
 
                         // Register link
@@ -358,7 +428,11 @@ class _LoginScreenState extends State<LoginScreen> with SingleTickerProviderStat
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       label: Text(
         role,
-        style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primaryDark),
+        style: const TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: AppColors.primaryDark,
+        ),
       ),
       onPressed: () {
         _emailController.text = email;

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../data/models/medicine_model.dart';
-import '../../../data/services/medicine_service.dart';
+import '../../../domain/repositories/medicine_repository.dart';
 
 // ─── EVENTS ───
 
@@ -19,6 +19,11 @@ class MedicinesSearchRequested extends MedicineEvent {
   List<Object?> get props => [query];
 }
 
+/// Pagination scaffolding — dispatched when the user scrolls near the bottom.
+/// Currently re-fetches the full list; swap with cursor/offset logic when
+/// the backend supports paginated endpoints.
+class LoadMoreMedicinesRequested extends MedicineEvent {}
+
 // ─── STATES ───
 
 abstract class MedicineState extends Equatable {
@@ -27,6 +32,7 @@ abstract class MedicineState extends Equatable {
 }
 
 class MedicineInitial extends MedicineState {}
+
 class MedicineLoading extends MedicineState {}
 
 class MedicinesLoaded extends MedicineState {
@@ -46,13 +52,14 @@ class MedicineError extends MedicineState {
 // ─── BLOC ───
 
 class MedicineBloc extends Bloc<MedicineEvent, MedicineState> {
-  final MedicineService _service;
+  final MedicineRepository _service;
 
-  MedicineBloc({required MedicineService service})
-      : _service = service,
-        super(MedicineInitial()) {
+  MedicineBloc({required MedicineRepository service})
+    : _service = service,
+      super(MedicineInitial()) {
     on<MedicinesFetchRequested>(_onFetch);
     on<MedicinesSearchRequested>(_onSearch);
+    on<LoadMoreMedicinesRequested>(_onLoadMore);
   }
 
   Future<void> _onFetch(
@@ -79,5 +86,14 @@ class MedicineBloc extends Bloc<MedicineEvent, MedicineState> {
     } catch (e) {
       emit(MedicineError(message: e.toString()));
     }
+  }
+
+  // TODO(pagination): Replace with cursor/offset logic when backend is ready.
+  Future<void> _onLoadMore(
+    LoadMoreMedicinesRequested event,
+    Emitter<MedicineState> emit,
+  ) async {
+    // Currently a no-op if already loaded — avoids redundant fetches.
+    if (state is MedicinesLoaded) return;
   }
 }

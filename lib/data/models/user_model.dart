@@ -7,8 +7,10 @@ enum UserRole {
   pharmacist;
 
   String toJson() => name;
-  static UserRole fromJson(String json) =>
-      UserRole.values.firstWhere((e) => e.name == json, orElse: () => UserRole.patient);
+  static UserRole fromJson(String json) => UserRole.values.firstWhere(
+    (e) => e.name == json,
+    orElse: () => UserRole.patient,
+  );
 
   String get label => name[0].toUpperCase() + name.substring(1);
 }
@@ -33,7 +35,7 @@ class UserModel extends Equatable {
   final String? street;
   final String? licensePath;
   final String? profilePicturePath;
-  
+
   // Multi-step identity verification fields
   final String? idCardFrontPath;
   final String? idCardBackPath;
@@ -70,7 +72,8 @@ class UserModel extends Equatable {
   bool get isPharmacist => role == UserRole.pharmacist;
 
   /// Centralized permission check — delegates to RBACConfig
-  bool get canRequestMedicine => RBACConfig.hasPermission(role, AppPermission.requestMedicine);
+  bool get canRequestMedicine =>
+      RBACConfig.hasPermission(role, AppPermission.requestMedicine);
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -168,22 +171,22 @@ class UserModel extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        email,
-        phone,
-        role,
-        status,
-        token,
-        pharmacyName,
-        governorate,
-        city,
-        village,
-        street,
-        licensePath,
-        profilePicturePath,
-        idCardFrontPath,
-        idCardBackPath,
-        selfiePath,
-      ];
+    id,
+    name,
+    email,
+    phone,
+    role,
+    status,
+    token,
+    pharmacyName,
+    governorate,
+    city,
+    village,
+    street,
+    licensePath,
+    profilePicturePath,
+    idCardFrontPath,
+    idCardBackPath,
+    selfiePath,
+  ];
 }

@@ -2,7 +2,8 @@
 class Validators {
   Validators._();
 
-  static String? email(String? value, {
+  static String? email(
+    String? value, {
     String requiredMsg = 'Email is required',
     String invalidMsg = 'Please enter a valid email',
   }) {
@@ -16,7 +17,8 @@ class Validators {
     return null;
   }
 
-  static String? password(String? value, {
+  static String? password(
+    String? value, {
     String requiredMsg = 'Password is required',
     String weakMsg = 'Password must be at least 6 characters',
   }) {
@@ -29,7 +31,9 @@ class Validators {
     return null;
   }
 
-  static String? confirmPassword(String? value, String password, {
+  static String? confirmPassword(
+    String? value,
+    String password, {
     String requiredMsg = 'Please confirm your password',
     String mismatchMsg = 'Passwords do not match',
   }) {
@@ -49,7 +53,8 @@ class Validators {
     return null;
   }
 
-  static String? phone(String? value, {
+  static String? phone(
+    String? value, {
     String requiredMsg = 'Phone number is required',
     String invalidMsg = 'Please enter a valid phone number',
   }) {
@@ -74,7 +79,11 @@ class Validators {
     return null;
   }
 
-  static String? nationalId(String? value, String errorRequired, String errorInvalid) {
+  static String? nationalId(
+    String? value,
+    String errorRequired,
+    String errorInvalid,
+  ) {
     if (value == null || value.trim().isEmpty) {
       return errorRequired;
     }

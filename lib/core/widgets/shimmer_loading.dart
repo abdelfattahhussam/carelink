@@ -6,7 +6,7 @@ class ShimmerCardList extends StatelessWidget {
   final bool isListTileStyle;
 
   const ShimmerCardList({
-    super.key, 
+    super.key,
     this.itemCount = 5,
     this.isListTileStyle = false,
   });
@@ -51,13 +51,19 @@ class ShimmerCardList extends StatelessWidget {
                         Container(
                           width: double.infinity,
                           height: 14,
-                          decoration: BoxDecoration(color: containerColor, borderRadius: BorderRadius.circular(4)),
+                          decoration: BoxDecoration(
+                            color: containerColor,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ),
                         const SizedBox(height: 10),
                         Container(
                           width: 180,
                           height: 12,
-                          decoration: BoxDecoration(color: containerColor, borderRadius: BorderRadius.circular(4)),
+                          decoration: BoxDecoration(
+                            color: containerColor,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
                         ),
                         const SizedBox(height: 10),
                         Row(
@@ -65,16 +71,22 @@ class ShimmerCardList extends StatelessWidget {
                             Container(
                               width: 80,
                               height: 12,
-                              decoration: BoxDecoration(color: containerColor, borderRadius: BorderRadius.circular(4)),
+                              decoration: BoxDecoration(
+                                color: containerColor,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
                             ),
                             if (!isListTileStyle) ...[
                               const Spacer(),
                               Container(
                                 width: 60,
                                 height: 24,
-                                decoration: BoxDecoration(color: containerColor, borderRadius: BorderRadius.circular(12)),
+                                decoration: BoxDecoration(
+                                  color: containerColor,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
                               ),
-                            ]
+                            ],
                           ],
                         ),
                       ],

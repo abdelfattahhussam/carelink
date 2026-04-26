@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../core/errors/failures.dart';
 import '../../../data/models/request_model.dart';
-import '../../../data/services/request_service.dart';
+import '../../../domain/repositories/request_repository.dart';
 import '../auth/auth_bloc.dart';
 
 // ─── ENUMS ───
@@ -45,7 +45,7 @@ class RequestApproveRequested extends RequestEvent {
   final String? reviewReason;
 
   RequestApproveRequested({
-    required this.requestId, 
+    required this.requestId,
     required this.action,
     this.approvedBoxes,
     this.approvedStrips,
@@ -53,7 +53,13 @@ class RequestApproveRequested extends RequestEvent {
   });
 
   @override
-  List<Object?> get props => [requestId, action, approvedBoxes, approvedStrips, reviewReason];
+  List<Object?> get props => [
+    requestId,
+    action,
+    approvedBoxes,
+    approvedStrips,
+    reviewReason,
+  ];
 }
 
 class RequestFinalizeRequested extends RequestEvent {
@@ -63,6 +69,9 @@ class RequestFinalizeRequested extends RequestEvent {
   List<Object?> get props => [id];
 }
 
+/// Pagination scaffolding — dispatched when the user scrolls near the bottom.
+class LoadMoreRequestsRequested extends RequestEvent {}
+
 // ─── STATES ───
 
 abstract class RequestState extends Equatable {
@@ -71,6 +80,7 @@ abstract class RequestState extends Equatable {
 }
 
 class RequestInitial extends RequestState {}
+
 class RequestLoading extends RequestState {}
 
 class RequestsLoaded extends RequestState {
@@ -105,17 +115,18 @@ class RequestError extends RequestState {
 // ─── BLOC ───
 
 class RequestBloc extends Bloc<RequestEvent, RequestState> {
-  final RequestService _service;
+  final RequestRepository _service;
   final AuthBloc _authBloc;
 
-  RequestBloc({required RequestService service, required AuthBloc authBloc})
-      : _service = service,
-        _authBloc = authBloc,
-        super(RequestInitial()) {
+  RequestBloc({required RequestRepository service, required AuthBloc authBloc})
+    : _service = service,
+      _authBloc = authBloc,
+      super(RequestInitial()) {
     on<RequestsFetchRequested>(_onFetch);
     on<RequestCreateRequested>(_onCreate);
     on<RequestApproveRequested>(_onApprove);
     on<RequestFinalizeRequested>(_onFinalize);
+    on<LoadMoreRequestsRequested>(_onLoadMore);
   }
 
   Future<void> _onFetch(
@@ -139,7 +150,11 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
     final authState = _authBloc.state;
     if (authState is AuthAuthenticated) {
       if (!authState.user.canRequestMedicine) {
-        emit(RequestError(message: 'Unauthorized: Only patients can request medicine.'));
+        emit(
+          RequestError(
+            message: 'Unauthorized: Only patients can request medicine.',
+          ),
+        );
         return;
       }
     } else {
@@ -197,5 +212,13 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
     } catch (e) {
       emit(RequestError(message: e.toString()));
     }
+  }
+
+  // TODO(pagination): Replace with cursor/offset logic when backend is ready.
+  Future<void> _onLoadMore(
+    LoadMoreRequestsRequested event,
+    Emitter<RequestState> emit,
+  ) async {
+    if (state is RequestsLoaded) return;
   }
 }

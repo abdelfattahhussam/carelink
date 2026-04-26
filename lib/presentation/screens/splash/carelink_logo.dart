@@ -7,11 +7,7 @@ class CareLinkLogo extends StatelessWidget {
   final double size;
   final Color? color;
 
-  const CareLinkLogo({
-    super.key,
-    this.size = 100,
-    this.color,
-  });
+  const CareLinkLogo({super.key, this.size = 100, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +16,7 @@ class CareLinkLogo extends StatelessWidget {
     return SizedBox(
       width: size,
       height: size,
-      child: CustomPaint(
-        painter: _CareLinkLogoPainter(color: logoColor),
-      ),
+      child: CustomPaint(painter: _CareLinkLogoPainter(color: logoColor)),
     );
   }
 }
@@ -74,22 +68,14 @@ class _CareLinkLogoPainter extends CustomPainter {
 
     // Vertical bar
     final verticalRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(
-        center: center,
-        width: crossWidth,
-        height: crossLength,
-      ),
+      Rect.fromCenter(center: center, width: crossWidth, height: crossLength),
       Radius.circular(crossWidth / 2),
     );
     canvas.drawRRect(verticalRect, crossPaint);
 
     // Horizontal bar
     final horizontalRect = RRect.fromRectAndRadius(
-      Rect.fromCenter(
-        center: center,
-        width: crossLength,
-        height: crossWidth,
-      ),
+      Rect.fromCenter(center: center, width: crossLength, height: crossWidth),
       Radius.circular(crossWidth / 2),
     );
     canvas.drawRRect(horizontalRect, crossPaint);

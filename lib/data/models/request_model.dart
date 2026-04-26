@@ -18,7 +18,7 @@ class RequestModel extends Equatable {
   final String? prescriptionPath; // Added for prescription uploads
   final String? pharmacyId; // Nullable for backward compat
   final String? pharmacyName;
-  
+
   // Review fields
   final int? approvedBoxes;
   final int? approvedStrips;
@@ -58,6 +58,7 @@ class RequestModel extends Equatable {
   bool get isDelivered => status == 'delivered';
   bool get isDelivering => status == 'delivering';
   bool get hasQrCode => qrCode != null && qrCode!.isNotEmpty;
+
   /// Whether the QR code should be visible — only for active (non-finalized) statuses
   bool get canShowQr => hasQrCode && (isApproved || isDelivering);
 
@@ -82,7 +83,9 @@ class RequestModel extends Equatable {
       approvedStrips: json['approvedStrips'],
       reviewReason: json['reviewReason'],
       reviewedBy: json['reviewedBy'],
-      reviewedAt: json['reviewedAt'] != null ? DateTime.parse(json['reviewedAt']) : null,
+      reviewedAt: json['reviewedAt'] != null
+          ? DateTime.parse(json['reviewedAt'])
+          : null,
       createdAt: json['createdAt'] != null
           ? DateTime.parse(json['createdAt'])
           : DateTime.now(),
@@ -117,8 +120,17 @@ class RequestModel extends Equatable {
 
   @override
   List<Object?> get props => [
-    id, status, isUrgent, qrCode, unit, prescriptionPath,
-    approvedBoxes, approvedStrips, reviewReason, reviewedAt,
-    pharmacyId, pharmacyName,
+    id,
+    status,
+    isUrgent,
+    qrCode,
+    unit,
+    prescriptionPath,
+    approvedBoxes,
+    approvedStrips,
+    reviewReason,
+    reviewedAt,
+    pharmacyId,
+    pharmacyName,
   ];
 }
