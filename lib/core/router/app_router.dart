@@ -13,8 +13,7 @@ import '../../presentation/screens/profile/profile_screen.dart';
 import '../../presentation/screens/onboarding/language_selection_screen.dart';
 import '../../presentation/screens/dashboard/pharmacist_dashboard_screen.dart';
 import '../../presentation/screens/home/home_router_screen.dart';
-import '../../presentation/screens/home/donor_home_screen.dart';
-import '../../presentation/screens/home/patient_home_screen.dart';
+import '../../presentation/screens/home/user_home_screen.dart';
 import '../../presentation/screens/donation/donation_screen.dart';
 import '../../presentation/screens/donation/my_donations_screen.dart';
 import '../../presentation/screens/medicine/medicine_list_screen.dart';
@@ -126,13 +125,20 @@ class AppRouter {
           path: '/dashboard',
           builder: (context, state) => const PharmacistDashboardScreen(),
         ),
+        // Unified user home (Phase B)
+        GoRoute(
+          path: '/user-home',
+          builder: (context, state) => const UserHomeScreen(),
+        ),
+
+        // Legacy role-specific homes — redirect to /user-home
         GoRoute(
           path: '/donor-home',
-          builder: (context, state) => const DonorHomeScreen(),
+          redirect: (context, state) => '/user-home',
         ),
         GoRoute(
           path: '/patient-home',
-          builder: (context, state) => const PatientHomeScreen(),
+          redirect: (context, state) => '/user-home',
         ),
         GoRoute(
           path: '/profile',
