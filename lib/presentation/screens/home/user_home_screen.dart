@@ -47,6 +47,7 @@ class UserHomeScreen extends StatefulWidget {
 
 class _UserHomeScreenState extends State<UserHomeScreen> {
   bool _isConfirmDialogShowing = false;
+  final Set<String> _shownConfirmationIds = {};
 
   @override
   void initState() {
@@ -148,7 +149,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               final pendingConfirm = state.donations
                   .where((d) => d.isDelivering)
                   .firstOrNull;
-              if (pendingConfirm != null && !_isConfirmDialogShowing) {
+              if (pendingConfirm != null &&
+                  !_isConfirmDialogShowing &&
+                  !_shownConfirmationIds.contains(pendingConfirm.id)) {
+                _shownConfirmationIds.add(pendingConfirm.id);
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted && !_isConfirmDialogShowing) {
                     _showConfirmationDialog(
@@ -171,7 +175,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               final pendingConfirm = state.requests
                   .where((r) => r.isDelivering)
                   .firstOrNull;
-              if (pendingConfirm != null && !_isConfirmDialogShowing) {
+              if (pendingConfirm != null &&
+                  !_isConfirmDialogShowing &&
+                  !_shownConfirmationIds.contains(pendingConfirm.id)) {
+                _shownConfirmationIds.add(pendingConfirm.id);
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted && !_isConfirmDialogShowing) {
                     _showConfirmationDialog(

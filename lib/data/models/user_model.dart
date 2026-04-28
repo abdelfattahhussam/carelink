@@ -84,7 +84,7 @@ class UserModel extends Equatable {
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
       nationalId: json['nationalId'] ?? '',
-      role: UserRole.fromJson(json['role'] ?? 'patient'),
+      role: UserRole.fromJson(json['role'] ?? 'user'),
       status: json['status'] ?? 'verified',
       token: json['token'] ?? '',
       createdAt: json['createdAt'] != null

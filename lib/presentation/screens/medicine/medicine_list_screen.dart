@@ -30,6 +30,10 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
 
   /// Whether the current user has the `requestMedicine` permission.
   /// Uses the centralised RBAC permission model.
+  ///
+  /// Uses [context.read] intentionally — this screen is always mounted
+  /// behind an auth redirect guard, so the user's role cannot change
+  /// while this screen is active. No reactive rebuild is needed here.
   bool get _canRequestMedicine {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) return false;

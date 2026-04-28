@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../core/network/auth_storage.dart';
 import '../../../core/network/secure_storage.dart';
+import '../../../core/errors/dio_error_mapper.dart';
 import '../../../core/errors/failures.dart';
 import '../../../data/models/user_model.dart';
 import '../../../domain/repositories/auth_repository.dart';
@@ -215,7 +216,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       emit(AuthAuthenticated(user: user));
     } on DioException catch (e) {
-      emit(AuthError(message: _mapDioExceptionToMessage(e)));
+      emit(AuthError(message: DioErrorMapper.toMessage(e)));
     } on Failure catch (f) {
       emit(AuthError(message: f.message));
     } catch (e) {
@@ -250,7 +251,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       emit(AuthAuthenticated(user: user));
     } on DioException catch (e) {
-      emit(AuthError(message: _mapDioExceptionToMessage(e)));
+      emit(AuthError(message: DioErrorMapper.toMessage(e)));
     } on Failure catch (f) {
       emit(AuthError(message: f.message));
     } catch (e) {
@@ -287,7 +288,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       emit(AuthProfileUpdateSuccess(user: updatedUser));
     } on DioException catch (e) {
-      emit(AuthError(message: _mapDioExceptionToMessage(e)));
+      emit(AuthError(message: DioErrorMapper.toMessage(e)));
     } on Failure catch (f) {
       emit(AuthError(message: f.message));
     } catch (e) {
@@ -305,26 +306,5 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(AuthUnauthenticated());
   }
 
-  String _mapDioExceptionToMessage(DioException e) {
-    switch (e.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-      case DioExceptionType.connectionError:
-        return const NetworkFailure().message;
-      case DioExceptionType.badResponse:
-        final statusCode = e.response?.statusCode;
-        if (statusCode == 401 || statusCode == 403) {
-          return const AuthFailure().message;
-        }
-        return ServerFailure(
-          message: e.response?.data?['error'] ?? 'Authentication server error',
-          statusCode: statusCode,
-        ).message;
-      default:
-        return ServerFailure(
-          message: e.message ?? 'Unexpected authentication error',
-        ).message;
-    }
-  }
+
 }

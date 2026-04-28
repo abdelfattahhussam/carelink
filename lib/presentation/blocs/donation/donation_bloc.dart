@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
-import '../../../core/errors/failures.dart';
+import '../../../core/errors/dio_error_mapper.dart';
 import '../../../data/models/donation_model.dart';
 import '../../../domain/repositories/donation_repository.dart';
 
@@ -144,7 +144,7 @@ class DonationBloc extends Bloc<DonationEvent, DonationState> {
       final donations = await _service.getDonations();
       emit(DonationsLoaded(donations: donations));
     } on DioException catch (e) {
-      emit(DonationError(message: _mapDioExceptionToMessage(e)));
+      emit(DonationError(message: DioErrorMapper.toMessage(e)));
     } catch (e) {
       emit(DonationError(message: e.toString()));
     }
@@ -159,7 +159,7 @@ class DonationBloc extends Bloc<DonationEvent, DonationState> {
       final donations = await _service.getPendingDonations();
       emit(DonationsLoaded(donations: donations));
     } on DioException catch (e) {
-      emit(DonationError(message: _mapDioExceptionToMessage(e)));
+      emit(DonationError(message: DioErrorMapper.toMessage(e)));
     } catch (e) {
       emit(DonationError(message: e.toString()));
     }
@@ -184,7 +184,7 @@ class DonationBloc extends Bloc<DonationEvent, DonationState> {
       );
       emit(DonationCreated(donation: donation));
     } on DioException catch (e) {
-      emit(DonationError(message: _mapDioExceptionToMessage(e)));
+      emit(DonationError(message: DioErrorMapper.toMessage(e)));
     } catch (e) {
       emit(DonationError(message: e.toString()));
     }
@@ -203,7 +203,7 @@ class DonationBloc extends Bloc<DonationEvent, DonationState> {
       );
       emit(DonationReviewed(donation: donation, action: event.action));
     } on DioException catch (e) {
-      emit(DonationError(message: _mapDioExceptionToMessage(e)));
+      emit(DonationError(message: DioErrorMapper.toMessage(e)));
     } catch (e) {
       emit(DonationError(message: e.toString()));
     }
@@ -222,26 +222,7 @@ class DonationBloc extends Bloc<DonationEvent, DonationState> {
     }
   }
 
-  String _mapDioExceptionToMessage(DioException e) {
-    switch (e.type) {
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-      case DioExceptionType.connectionError:
-        return const NetworkFailure().message;
-      case DioExceptionType.badResponse:
-        final statusCode = e.response?.statusCode;
-        if (statusCode == 401 || statusCode == 403) {
-          return const AuthFailure().message;
-        }
-        return ServerFailure(
-          message: e.response?.data?['error'] ?? 'Server error occurred',
-          statusCode: statusCode,
-        ).message;
-      default:
-        return ServerFailure(message: e.message ?? 'Unexpected error').message;
-    }
-  }
+
 
   // TODO(pagination): Replace with cursor/offset logic when backend is ready.
   Future<void> _onLoadMore(
