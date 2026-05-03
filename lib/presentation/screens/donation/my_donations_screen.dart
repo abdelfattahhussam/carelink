@@ -7,10 +7,12 @@ import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/shared_widgets.dart';
 import '../../../core/widgets/shimmer_loading.dart';
 import '../../../data/models/donation_model.dart';
+import '../../../data/models/donation_status.dart';
 import '../../../data/models/pharmacy_model.dart';
 import '../../blocs/donation/donation_bloc.dart';
 import '../../blocs/pharmacy/pharmacy_bloc.dart';
 import 'pharmacy_picker_screen.dart';
+import '../../shared/extensions/medicine_unit_x.dart';
 
 /// Shows the list of donor's own donations with status
 class MyDonationsScreen extends StatefulWidget {
@@ -20,7 +22,7 @@ class MyDonationsScreen extends StatefulWidget {
 }
 
 class _MyDonationsScreenState extends State<MyDonationsScreen> {
-  String _selectedFilter = 'all';
+  DonationStatus? _selectedFilter;
   final _scrollCtrl = ScrollController();
 
   @override
@@ -110,7 +112,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                 (a, b) => b.createdAt.compareTo(a.createdAt),
               );
 
-              if (_selectedFilter != 'all') {
+              if (_selectedFilter != null) {
                 filteredDonations = filteredDonations
                     .where((d) => d.status == _selectedFilter)
                     .toList();
@@ -231,7 +233,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                                           const SizedBox(height: 14),
                                           Row(
                                             children: [
-                                              StatusBadge(status: d.status),
+                                              StatusBadge(status: d.status.displayStatus),
                                               if (d.canShowQr) ...[
                                                 const SizedBox(width: 8),
                                                 GestureDetector(
@@ -422,11 +424,11 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
   Widget _buildFilterRow(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final filters = [
-      {'key': 'all', 'label': l10n.all},
-      {'key': 'pending', 'label': l10n.pending},
-      {'key': 'approved', 'label': l10n.approved},
-      {'key': 'rejected', 'label': l10n.rejected},
-      {'key': 'delivered', 'label': l10n.delivered},
+      (null, l10n.all),
+      (DonationStatus.pending, l10n.pending),
+      (DonationStatus.approved, l10n.approved),
+      (DonationStatus.rejected, l10n.rejected),
+      (DonationStatus.delivered, l10n.delivered),
     ];
 
     return Container(
@@ -437,14 +439,14 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: filters.length,
         itemBuilder: (context, i) {
-          final f = filters[i];
-          final isActive = _selectedFilter == f['key'];
+          final (filterValue, label) = filters[i];
+          final isActive = _selectedFilter == filterValue;
           return Padding(
             padding: const EdgeInsets.only(right: 8),
             child: ChoiceChip(
               showCheckmark: false,
               label: Text(
-                f['label']!,
+                label,
                 style: TextStyle(
                   fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                   fontSize: 13,
@@ -464,7 +466,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
               ),
               onSelected: (selected) {
                 if (selected) {
-                  setState(() => _selectedFilter = f['key']!);
+                  setState(() => _selectedFilter = filterValue);
                 }
               },
             ),

@@ -171,7 +171,12 @@ class PharmacyBloc extends Bloc<PharmacyEvent, PharmacyState> {
         city: event.city,
         district: event.district,
       );
-      emit(PharmaciesLoaded(pharmacies: pharmacies));
+      emit(PharmaciesLoaded(
+        pharmacies: pharmacies,
+        filterGovernorate: event.governorate,
+        filterCity: event.city,
+        filterDistrict: event.district,
+      ));
     } on Failure catch (e) {
       emit(PharmacyError(e.message));
     } catch (e) {

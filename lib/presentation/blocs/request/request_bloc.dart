@@ -147,18 +147,17 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
     Emitter<RequestState> emit,
   ) async {
     // ─── RBAC GUARD: Only patients can create requests ───
-    final authState = _authBloc.state;
-    if (authState is AuthAuthenticated) {
-      if (!authState.user.canRequestMedicine) {
-        emit(
-          RequestError(
-            message: 'Unauthorized: Only patients can request medicine.',
-          ),
-        );
-        return;
-      }
-    } else {
+    final user = _authBloc.state.authenticatedUser;
+    if (user == null) {
       emit(RequestError(message: 'Authentication required.'));
+      return;
+    }
+    if (!user.canRequestMedicine) {
+      emit(
+        RequestError(
+          message: 'Unauthorized: Only patients can request medicine.',
+        ),
+      );
       return;
     }
 
@@ -166,7 +165,7 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
     try {
       final request = await _service.createRequest(
         medicineId: event.medicineId,
-        patientNationalId: authState.user.nationalId, // Pass mandatory ID
+        patientNationalId: user.nationalId, // Pass mandatory ID
         quantity: event.quantity, // Pass the event's quantity
         isUrgent: event.isUrgent,
         reason: event.reason,
@@ -184,6 +183,21 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
     RequestApproveRequested event,
     Emitter<RequestState> emit,
   ) async {
+    // ─── RBAC GUARD: Only pharmacists can approve/reject requests ───
+    final user = _authBloc.state.authenticatedUser;
+    if (user == null) {
+      emit(RequestError(message: 'Authentication required.'));
+      return;
+    }
+    if (!user.canReviewRequests) {
+      emit(
+        RequestError(
+          message: 'Unauthorized: insufficient role to review requests.',
+        ),
+      );
+      return;
+    }
+
     emit(RequestLoading());
     try {
       final request = await _service.approveRequest(
@@ -205,12 +219,33 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
     RequestFinalizeRequested event,
     Emitter<RequestState> emit,
   ) async {
+    // ─── RBAC GUARD: Only pharmacists can finalize requests ───
+    final user = _authBloc.state.authenticatedUser;
+    if (user == null) {
+      emit(RequestError(message: 'Authentication required.'));
+      return;
+    }
+    if (!user.canReviewRequests) {
+      emit(
+        RequestError(
+          message: 'Unauthorized: insufficient role to finalize requests.',
+        ),
+      );
+      return;
+    }
+
+    emit(RequestLoading());
     try {
       await _service.updateRequestStatus(event.id, 'delivered');
+    } catch (e) {
+      emit(RequestError(message: e.toString()));
+      return;
+    }
+    try {
       final requests = await _service.getRequests();
       emit(RequestsLoaded(requests: requests));
     } catch (e) {
-      emit(RequestError(message: e.toString()));
+      emit(RequestError(message: 'Finalized, but failed to refresh list.'));
     }
   }
 
@@ -219,6 +254,7 @@ class RequestBloc extends Bloc<RequestEvent, RequestState> {
     LoadMoreRequestsRequested event,
     Emitter<RequestState> emit,
   ) async {
-    if (state is RequestsLoaded) return;
+    if (state is! RequestsLoaded) return;
+    // TODO: implement cursor/offset pagination
   }
 }

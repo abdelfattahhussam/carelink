@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/models/display_status.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/shared_widgets.dart';
 import '../../../core/widgets/shimmer_loading.dart';
 import '../../blocs/donation/donation_bloc.dart';
 import '../../blocs/notification/notification_bloc.dart';
+import '../../shared/extensions/medicine_unit_x.dart';
 
 /// Pharmacist review screen — approve/reject pending donations
 class PharmacistReviewScreen extends StatefulWidget {
@@ -355,7 +357,7 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                                 ],
                               ),
                             ),
-                            const StatusBadge(status: 'pending'),
+                            const StatusBadge(status: DisplayStatus.pending),
                           ],
                         ),
                         if (d.boxImagePath != null) ...[

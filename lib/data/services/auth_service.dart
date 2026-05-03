@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import '../../core/constants/api_endpoints.dart';
-import '../../core/errors/failures.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../models/user_model.dart';
+import 'service_helpers.dart';
 
 /// Authentication API service
 class AuthService implements AuthRepository {
@@ -12,15 +12,13 @@ class AuthService implements AuthRepository {
   /// Login with email and password → returns UserModel with JWT
   @override
   Future<UserModel> login(String email, String password) async {
-    final response = await _dio.post(
-      ApiEndpoints.login,
-      data: {'email': email, 'password': password},
+    return guardedDioCall(
+      () => _dio.post(
+        ApiEndpoints.login,
+        data: {'email': email, 'password': password},
+      ),
+      (data) => UserModel.fromJson(data['data']),
     );
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      return UserModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(message: response.data['error'] ?? 'Login failed');
   }
 
   /// Register a new user
@@ -39,29 +37,25 @@ class AuthService implements AuthRepository {
     String? street,
     String? licensePath,
   }) async {
-    final response = await _dio.post(
-      ApiEndpoints.register,
-      data: {
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'nationalId': nationalId,
-        'password': password,
-        'role': role.toJson(),
-        'pharmacyName': ?pharmacyName,
-        'governorate': ?governorate,
-        'city': ?city,
-        'village': ?village,
-        'street': ?street,
-        'licensePath': ?licensePath,
-      },
-    );
-
-    if (response.statusCode == 201 && response.data['success'] == true) {
-      return UserModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(
-      message: response.data['error'] ?? 'Registration failed',
+    return guardedDioCall(
+      () => _dio.post(
+        ApiEndpoints.register,
+        data: {
+          'name': name,
+          'email': email,
+          'phone': phone,
+          'nationalId': nationalId,
+          'password': password,
+          'role': role.toJson(),
+          'pharmacyName': ?pharmacyName,
+          'governorate': ?governorate,
+          'city': ?city,
+          'village': ?village,
+          'street': ?street,
+          'licensePath': ?licensePath,
+        },
+      ),
+      (data) => UserModel.fromJson(data['data']),
     );
   }
 
@@ -78,40 +72,31 @@ class AuthService implements AuthRepository {
     String? street,
     String? profilePicturePath,
   }) async {
-    // In a real app, this would be a PATCH or PUT request
-    final response = await _dio.post(
-      ApiEndpoints.profile, // Assuming profile endpoint supports updates
-      data: {
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'pharmacyName': pharmacyName,
-        'governorate': governorate,
-        'city': city,
-        'village': village,
-        'street': street,
-        'profilePicturePath': profilePicturePath,
-      },
-    );
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      return UserModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(
-      message: response.data['error'] ?? 'Profile update failed',
+    return guardedDioCall(
+      () => _dio.patch(
+        ApiEndpoints.profile,
+        data: {
+          'name': name,
+          'email': email,
+          'phone': phone,
+          'pharmacyName': pharmacyName,
+          'governorate': governorate,
+          'city': city,
+          'village': village,
+          'street': street,
+          'profilePicturePath': profilePicturePath,
+        },
+      ),
+      (data) => UserModel.fromJson(data['data']),
     );
   }
 
   /// Get current user profile using stored token
   @override
   Future<UserModel> getProfile() async {
-    final response = await _dio.get(ApiEndpoints.profile);
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      return UserModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(
-      message: response.data['error'] ?? 'Failed to get profile',
+    return guardedDioCall(
+      () => _dio.get(ApiEndpoints.profile),
+      (data) => UserModel.fromJson(data['data']),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/models/display_status.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/utils/name_utils.dart';
 import '../../../core/widgets/shared_widgets.dart';
@@ -599,7 +600,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             ),
             ...recent.map((d) => _recentItemTile(
               medicineName: d.medicineName,
-              status: d.status,
+              status: d.status.displayStatus,
               date: d.createdAt,
               icon: Icons.volunteer_activism,
               color: AppColors.primary,
@@ -642,7 +643,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             ),
             ...recent.map((r) => _recentItemTile(
               medicineName: r.medicineName,
-              status: r.status,
+              status: r.status.displayStatus,
               date: r.createdAt,
               icon: Icons.inbox_rounded,
               color: AppColors.secondary,
@@ -655,7 +656,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
 
   Widget _recentItemTile({
     required String medicineName,
-    required String status,
+    required DisplayStatus status,
     required DateTime date,
     required IconData icon,
     required Color color,

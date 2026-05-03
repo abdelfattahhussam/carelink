@@ -9,6 +9,8 @@ import '../../../core/widgets/shared_widgets.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/medicine/medicine_bloc.dart';
 import '../../blocs/pharmacy/pharmacy_bloc.dart';
+import '../../shared/extensions/medicine_unit_x.dart';
+import '../../../data/models/medicine_model.dart';
 
 class MedicineListScreen extends StatefulWidget {
   const MedicineListScreen({super.key});
@@ -70,7 +72,7 @@ class _MedicineListScreenState extends State<MedicineListScreen> {
     }
   }
 
-  void _showMedicineDetails(BuildContext context, dynamic medicine) {
+  void _showMedicineDetails(BuildContext context, MedicineModel medicine) {
     final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,

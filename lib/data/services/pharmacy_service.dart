@@ -3,6 +3,7 @@ import '../../core/constants/api_endpoints.dart';
 import '../../core/errors/failures.dart';
 import '../../domain/repositories/pharmacy_repository.dart';
 import '../models/pharmacy_model.dart';
+import 'service_helpers.dart';
 
 /// Pharmacy API service — fetches pharmacy listings with optional filters
 class PharmacyService implements PharmacyRepository {
@@ -16,30 +17,36 @@ class PharmacyService implements PharmacyRepository {
     String? city,
     String? district,
   }) async {
-    final response = await _dio.get(
-      ApiEndpoints.pharmacies,
-      queryParameters: {
-        'governorate': ?governorate,
-        'city': ?city,
-        'district': ?district,
+    return guardedDioCall(
+      () => _dio.get(
+        ApiEndpoints.pharmacies,
+        queryParameters: {
+          'governorate': ?governorate,
+          'city': ?city,
+          'district': ?district,
+        },
+      ),
+      (data) {
+        final list = data['data'] as List;
+        return list.map((e) => PharmacyModel.fromJson(e)).toList();
       },
     );
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      final list = response.data['data'] as List;
-      return list.map((e) => PharmacyModel.fromJson(e)).toList();
-    }
-    throw const ServerFailure(message: 'Failed to fetch pharmacies');
   }
 
-  /// Get the pharmacy owned by a specific pharmacist
+  /// Get the pharmacy owned by a specific pharmacist.
+  ///
+  /// Returns `null` when the backend reports no pharmacy for this user
+  /// (e.g. 404 or `success: false`), rather than throwing.
   @override
   Future<PharmacyModel?> getPharmacyByPharmacist(String pharmacistId) async {
-    final response = await _dio.get(
-      ApiEndpoints.pharmacyByPharmacist(pharmacistId),
-    );
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      return PharmacyModel.fromJson(response.data['data']);
+    try {
+      return await guardedDioCall(
+        () => _dio.get(ApiEndpoints.pharmacyByPharmacist(pharmacistId)),
+        (data) => PharmacyModel.fromJson(data['data']),
+      );
+    } on ServerFailure {
+      // "No pharmacy found" is a valid domain state, not an error.
+      return null;
     }
-    return null;
   }
 }

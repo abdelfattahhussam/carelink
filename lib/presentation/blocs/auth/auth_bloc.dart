@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
+import '../../../core/constants/storage_keys.dart';
 import '../../../core/network/auth_storage.dart';
 import '../../../core/network/secure_storage.dart';
 import '../../../core/errors/dio_error_mapper.dart';
@@ -116,30 +117,56 @@ class AuthLogoutRequested extends AuthEvent {}
 // ─── STATES ───
 
 abstract class AuthState extends Equatable {
+  const AuthState();
+
+  /// Returns the authenticated user if this state carries one, null otherwise.
+  /// Override in any state subclass that represents a valid session.
+  UserModel? get authenticatedUser => null;
+
+  /// Convenience check — true when this state carries a valid user.
+  bool get isAuthenticated => authenticatedUser != null;
+
   @override
   List<Object?> get props => [];
 }
 
-class AuthInitial extends AuthState {}
+class AuthInitial extends AuthState {
+  const AuthInitial();
+}
 
-class AuthLoading extends AuthState {}
+class AuthLoading extends AuthState {
+  const AuthLoading();
+}
 
 class AuthAuthenticated extends AuthState {
   final UserModel user;
-  AuthAuthenticated({required this.user});
+  const AuthAuthenticated({required this.user});
+
+  @override
+  UserModel get authenticatedUser => user;
+
   @override
   List<Object?> get props => [user];
 }
 
-class AuthProfileUpdateSuccess extends AuthAuthenticated {
-  AuthProfileUpdateSuccess({required super.user});
+class AuthProfileUpdateSuccess extends AuthState {
+  final UserModel user;
+  const AuthProfileUpdateSuccess({required this.user});
+
+  @override
+  UserModel get authenticatedUser => user;
+
+  @override
+  List<Object?> get props => [user];
 }
 
-class AuthUnauthenticated extends AuthState {}
+class AuthUnauthenticated extends AuthState {
+  const AuthUnauthenticated();
+}
 
 class AuthError extends AuthState {
   final String message;
-  AuthError({required this.message});
+  const AuthError({required this.message});
   @override
   List<Object?> get props => [message];
 }
@@ -153,7 +180,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({required AuthRepository authService, AuthStorage? authStorage})
     : _authService = authService,
       _authStorage = authStorage ?? const SecureStorage(),
-      super(AuthInitial()) {
+      super(const AuthInitial()) {
     _registerHandlers();
   }
 
@@ -162,13 +189,30 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc.empty({AuthStorage? authStorage})
     : _authService = null,
       _authStorage = authStorage ?? const SecureStorage(),
-      super(AuthInitial()) {
+      super(const AuthInitial()) {
     _registerHandlers();
   }
 
+  /// Returns the service, throwing a descriptive error if [init] was not called.
+  AuthRepository get _requireService {
+    final s = _authService;
+    if (s == null) {
+      throw StateError(
+        'AuthBloc: _authService is null. '
+        'Call init(service:) before dispatching service-dependent events.',
+      );
+    }
+    return s;
+  }
+
   /// Sets the service and triggers initial auth check.
-  /// Used after DioClient is constructed with this bloc reference.
+  /// Must only be called on [AuthBloc.empty] instances after DioClient is constructed.
   void init({required AuthRepository service}) {
+    if (_authService != null) {
+      throw StateError(
+        'AuthBloc.init() must only be called on instances created with AuthBloc.empty().',
+      );
+    }
     _authService = service;
     add(AuthCheckRequested());
   }
@@ -186,19 +230,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthCheckRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoading());
+    emit(const AuthLoading());
     try {
-      final token = await _authStorage.read('auth_token');
-      final userData = await _authStorage.read('user_data');
+      final token = await _authStorage.read(StorageKeys.authToken);
+      final userData = await _authStorage.read(StorageKeys.userData);
 
       if (token != null && userData != null) {
         final user = UserModel.fromJson(jsonDecode(userData));
         emit(AuthAuthenticated(user: user));
       } else {
-        emit(AuthUnauthenticated());
+        emit(const AuthUnauthenticated());
       }
     } catch (e) {
-      emit(AuthUnauthenticated());
+      emit(const AuthUnauthenticated());
     }
   }
 
@@ -207,12 +251,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLoginRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoading());
+    emit(const AuthLoading());
     try {
-      final user = await _authService!.login(event.email, event.password);
+      final user = await _requireService.login(event.email, event.password);
 
-      await _authStorage.write('auth_token', user.token);
-      await _authStorage.write('user_data', jsonEncode(user.toJson()));
+      await _authStorage.write(StorageKeys.authToken, user.token);
+      await _authStorage.write(StorageKeys.userData, jsonEncode(user.toJson()));
 
       emit(AuthAuthenticated(user: user));
     } on DioException catch (e) {
@@ -229,9 +273,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthRegisterRequested event,
     Emitter<AuthState> emit,
   ) async {
-    emit(AuthLoading());
+    emit(const AuthLoading());
     try {
-      final user = await _authService!.register(
+      final user = await _requireService.register(
         name: event.name,
         email: event.email,
         phone: event.phone,
@@ -246,8 +290,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         licensePath: event.licensePath,
       );
 
-      await _authStorage.write('auth_token', user.token);
-      await _authStorage.write('user_data', jsonEncode(user.toJson()));
+      await _authStorage.write(StorageKeys.authToken, user.token);
+      await _authStorage.write(StorageKeys.userData, jsonEncode(user.toJson()));
 
       emit(AuthAuthenticated(user: user));
     } on DioException catch (e) {
@@ -264,15 +308,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthUpdateProfileRequested event,
     Emitter<AuthState> emit,
   ) async {
-    final currentState = state;
-    UserModel? currentUser;
-    if (currentState is AuthAuthenticated) currentUser = currentState.user;
+    final currentUser = state.authenticatedUser;
 
-    if (currentUser == null) return;
+    if (currentUser == null) {
+      emit(const AuthError(message: 'Authentication required to update profile.'));
+      return;
+    }
 
-    emit(AuthLoading());
+    emit(const AuthLoading());
     try {
-      final updatedUser = await _authService!.updateProfile(
+      final updatedUser = await _requireService.updateProfile(
         name: event.name,
         email: event.email,
         phone: event.phone,
@@ -284,7 +329,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         profilePicturePath: event.profilePicturePath,
       );
 
-      await _authStorage.write('user_data', jsonEncode(updatedUser.toJson()));
+      await _authStorage.write(StorageKeys.userData, jsonEncode(updatedUser.toJson()));
 
       emit(AuthProfileUpdateSuccess(user: updatedUser));
     } on DioException catch (e) {
@@ -301,9 +346,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     AuthLogoutRequested event,
     Emitter<AuthState> emit,
   ) async {
-    await _authStorage.delete('auth_token');
-    await _authStorage.delete('user_data');
-    emit(AuthUnauthenticated());
+    for (final key in StorageKeys.all) {
+      try {
+        await _authStorage.delete(key);
+      } catch (_) {
+        // Per-key failure is non-fatal — continue deleting remaining keys
+      }
+    }
+    emit(const AuthUnauthenticated());
   }
 
 

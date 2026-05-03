@@ -56,6 +56,8 @@ class PharmacyModel extends Equatable {
     pharmacistId,
     governorate,
     city,
+    district,
+    address,
     isActive,
   ];
 }

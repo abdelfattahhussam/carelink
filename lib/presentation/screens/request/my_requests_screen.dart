@@ -9,6 +9,8 @@ import '../../../core/widgets/shimmer_loading.dart';
 import '../../blocs/request/request_bloc.dart';
 import '../../blocs/pharmacy/pharmacy_bloc.dart';
 import '../../../data/models/request_model.dart';
+import '../../../data/models/request_status.dart';
+import '../../shared/extensions/medicine_unit_x.dart';
 
 /// Shows patient's own requests with status tracking
 class MyRequestsScreen extends StatefulWidget {
@@ -18,7 +20,7 @@ class MyRequestsScreen extends StatefulWidget {
 }
 
 class _MyRequestsScreenState extends State<MyRequestsScreen> {
-  String _selectedFilter = 'all';
+  RequestStatus? _selectedFilter;
   final _scrollCtrl = ScrollController();
 
   @override
@@ -100,7 +102,7 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
                 (a, b) => b.createdAt.compareTo(a.createdAt),
               );
 
-              if (_selectedFilter != 'all') {
+              if (_selectedFilter != null) {
                 filteredRequests = filteredRequests
                     .where((r) => r.status == _selectedFilter)
                     .toList();
@@ -382,7 +384,7 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
                                     const SizedBox(height: 20),
                                     Row(
                                       children: [
-                                        StatusBadge(status: r.status),
+                                        StatusBadge(status: r.status.displayStatus),
                                         const Spacer(),
                                         if (r.canShowQr)
                                           GestureDetector(
@@ -551,11 +553,11 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
   Widget _buildFilterRow(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final filters = [
-      {'key': 'all', 'label': l10n.all},
-      {'key': 'pending', 'label': l10n.pending},
-      {'key': 'approved', 'label': l10n.approved},
-      {'key': 'rejected', 'label': l10n.rejected},
-      {'key': 'delivered', 'label': l10n.delivered},
+      (null, l10n.all),
+      (RequestStatus.pending, l10n.pending),
+      (RequestStatus.approved, l10n.approved),
+      (RequestStatus.rejected, l10n.rejected),
+      (RequestStatus.delivered, l10n.delivered),
     ];
 
     return Container(
@@ -566,14 +568,14 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16),
         itemCount: filters.length,
         itemBuilder: (context, i) {
-          final f = filters[i];
-          final isActive = _selectedFilter == f['key'];
+          final (filterValue, label) = filters[i];
+          final isActive = _selectedFilter == filterValue;
           return Padding(
             padding: const EdgeInsets.only(right: 8),
             child: ChoiceChip(
               showCheckmark: false,
               label: Text(
-                f['label']!,
+                label,
                 style: TextStyle(
                   fontWeight: isActive ? FontWeight.w700 : FontWeight.w600,
                   fontSize: 13,
@@ -593,7 +595,7 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
               ),
               onSelected: (selected) {
                 if (selected) {
-                  setState(() => _selectedFilter = f['key']!);
+                  setState(() => _selectedFilter = filterValue);
                 }
               },
             ),

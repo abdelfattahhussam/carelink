@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:carelink_app/data/models/medicine_status.dart';
 import 'package:carelink_app/data/models/medicine_unit.dart';
 
 /// Medicine model representing a donated medicine item
@@ -11,7 +12,7 @@ class MedicineModel extends Equatable {
   final MedicineUnit unit;
   final String donorId;
   final String donorName;
-  final String status; // 'pending', 'approved', 'rejected', 'expired'
+  final MedicineStatus status;
   final String imageUrl;
   final String category;
   final String? pharmacyId; // Nullable for backward compat
@@ -35,8 +36,8 @@ class MedicineModel extends Equatable {
     required this.createdAt,
   });
 
-  bool get isApproved => status == 'approved';
-  bool get isPending => status == 'pending';
+  bool get isApproved => status == MedicineStatus.approved;
+  bool get isPending => status == MedicineStatus.pending;
   bool get isExpired => expiryDate.isBefore(DateTime.now());
   bool get inStock => quantity > 0;
 
@@ -48,21 +49,17 @@ class MedicineModel extends Equatable {
       id: json['id'] ?? '',
       name: json['name'] ?? '',
       description: json['description'] ?? '',
-      expiryDate: json['expiryDate'] != null
-          ? DateTime.parse(json['expiryDate'])
-          : DateTime.now().add(const Duration(days: 90)),
+      expiryDate: DateTime.parse(json['expiryDate'].toString()),
       quantity: json['quantity'] ?? 0,
       unit: MedicineUnit.fromJson(json['unit']?.toString()),
       donorId: json['donorId'] ?? '',
       donorName: json['donorName'] ?? '',
-      status: json['status'] ?? 'pending',
+      status: MedicineStatus.fromJson(json['status']?.toString()),
       imageUrl: json['imageUrl'] ?? '',
       category: json['category'] ?? 'General',
       pharmacyId: json['pharmacyId'],
       pharmacyName: json['pharmacyName'],
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
+      createdAt: DateTime.parse(json['createdAt'].toString()),
     );
   }
 
@@ -76,7 +73,7 @@ class MedicineModel extends Equatable {
       'unit': unit.toJson(),
       'donorId': donorId,
       'donorName': donorName,
-      'status': status,
+      'status': status.toJson(),
       'imageUrl': imageUrl,
       'category': category,
       'pharmacyId': pharmacyId,
@@ -89,11 +86,17 @@ class MedicineModel extends Equatable {
   List<Object?> get props => [
     id,
     name,
-    status,
+    description,
+    expiryDate,
     quantity,
     unit,
-    expiryDate,
+    donorId,
+    donorName,
+    status,
+    imageUrl,
+    category,
     pharmacyId,
     pharmacyName,
+    createdAt,
   ];
 }

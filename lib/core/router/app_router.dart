@@ -70,9 +70,10 @@ class AppRouter {
           return '/login';
         }
 
-        if (authState is AuthAuthenticated) {
-          final user = authState.user;
+        // Extract user from any authenticated state variant
+        final user = authState.authenticatedUser;
 
+        if (user != null) {
           if (publicRoute || state.matchedLocation == '/home') {
             return RBACConfig.homeRouteFor(user.role);
           }
@@ -81,7 +82,7 @@ class AppRouter {
 
           // Check permissions for the current path
           for (final entry in routePermissions.entries) {
-            if (path.startsWith(entry.key)) {
+            if (path == entry.key || path.startsWith('${entry.key}/')) {
               if (!RBACConfig.can(user, entry.value)) {
                 return RBACConfig.homeRouteFor(user.role);
               }
@@ -150,7 +151,9 @@ class AppRouter {
         GoRoute(
           path: '/request/:id',
           builder: (context, state) {
-            final medicine = state.extra as MedicineModel?;
+            final medicine = state.extra is MedicineModel
+                ? state.extra as MedicineModel
+                : null;
             return RequestScreen(medicine: medicine);
           },
         ),
@@ -169,7 +172,9 @@ class AppRouter {
         GoRoute(
           path: '/qr-display',
           builder: (context, state) {
-            final extra = state.extra as Map<String, dynamic>? ?? {};
+            final extra = state.extra is Map<String, dynamic>
+                ? state.extra as Map<String, dynamic>
+                : <String, dynamic>{};
             return QrDisplayScreen(
               qrData: extra['qrCode'] as String?,
               itemId: extra['id'] as String?,

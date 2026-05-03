@@ -67,15 +67,16 @@ class UserModel extends Equatable {
   });
 
   /// Whether the user's identity has been verified
-  // TODO(backend): Replace with real verification check once backend implements user verification flow.
-  // Currently hardcoded to true — all users are treated as verified.
-  bool get isVerified => true;
+  bool get isVerified => status == 'verified';
   bool get isUser => role == UserRole.user;
   bool get isPharmacist => role == UserRole.pharmacist;
 
   /// Centralized permission check — delegates to RBAC single source of truth
   bool get canRequestMedicine =>
       RBACConfig.hasPermission(role, AppPermission.requestMedicine);
+
+  bool get canReviewRequests =>
+      RBACConfig.hasPermission(role, AppPermission.manageRequests);
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
@@ -87,9 +88,7 @@ class UserModel extends Equatable {
       role: UserRole.fromJson(json['role'] ?? 'user'),
       status: json['status'] ?? 'verified',
       token: json['token'] ?? '',
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
+      createdAt: DateTime.parse(json['createdAt'].toString()),
       pharmacyName: json['pharmacyName'],
       governorate: json['governorate'],
       city: json['city'],
@@ -177,9 +176,11 @@ class UserModel extends Equatable {
     name,
     email,
     phone,
+    nationalId,
     role,
     status,
     token,
+    createdAt,
     pharmacyName,
     governorate,
     city,

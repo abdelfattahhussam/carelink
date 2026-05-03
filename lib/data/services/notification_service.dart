@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import '../../core/constants/api_endpoints.dart';
-import '../../core/errors/failures.dart';
 import '../../domain/repositories/notification_repository.dart';
 import '../models/notification_model.dart';
+import 'service_helpers.dart';
 
 /// Notification API service
 class NotificationService implements NotificationRepository {
@@ -12,24 +12,30 @@ class NotificationService implements NotificationRepository {
   /// Get all notifications for current user
   @override
   Future<List<NotificationModel>> getNotifications() async {
-    final response = await _dio.get(ApiEndpoints.notifications);
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      final list = response.data['data'] as List;
-      return list.map((e) => NotificationModel.fromJson(e)).toList();
-    }
-    throw const ServerFailure(message: 'Failed to fetch notifications');
+    return guardedDioCall(
+      () => _dio.get(ApiEndpoints.notifications),
+      (data) {
+        final list = data['data'] as List;
+        return list.map((e) => NotificationModel.fromJson(e)).toList();
+      },
+    );
   }
 
   /// Mark a notification as read
   @override
   Future<void> markAsRead(String notificationId) async {
-    await _dio.post(ApiEndpoints.markRead(notificationId));
+    return guardedDioCall(
+      () => _dio.post(ApiEndpoints.markRead(notificationId)),
+      (_) {},
+    );
   }
 
   /// Permanently dismiss/delete a notification
   @override
   Future<void> dismissNotification(String notificationId) async {
-    await _dio.delete('${ApiEndpoints.notifications}/$notificationId');
+    return guardedDioCall(
+      () => _dio.delete('${ApiEndpoints.notifications}/$notificationId'),
+      (_) {},
+    );
   }
 }

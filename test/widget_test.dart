@@ -41,7 +41,7 @@ void main() {
     });
 
     test('fromJson handles missing fields with defaults', () {
-      final user = UserModel.fromJson({});
+      final user = UserModel.fromJson({'createdAt': '2026-01-01T00:00:00.000'});
 
       expect(user.id, '');
       expect(user.role, UserRole.user);
@@ -51,10 +51,10 @@ void main() {
 
     test('fromJson maps legacy donor/patient to user, pharmacist stays', () {
       for (final role in ['donor', 'patient', 'user']) {
-        final user = UserModel.fromJson({'role': role});
+        final user = UserModel.fromJson({'role': role, 'createdAt': '2026-01-01T00:00:00.000'});
         expect(user.role, UserRole.user);
       }
-      final pharmacist = UserModel.fromJson({'role': 'pharmacist'});
+      final pharmacist = UserModel.fromJson({'role': 'pharmacist', 'createdAt': '2026-01-01T00:00:00.000'});
       expect(pharmacist.role, UserRole.pharmacist);
     });
 
@@ -63,6 +63,7 @@ void main() {
         'id': 'u1',
         'name': 'Original',
         'role': 'user',
+        'createdAt': '2026-01-01T00:00:00.000',
       });
 
       final copy = original.copyWith(

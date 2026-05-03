@@ -437,6 +437,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get delivered => 'تم التسليم';
 
   @override
+  String get delivering => 'جاري التسليم';
+
+  @override
   String get expired => 'منتهي الصلاحية';
 
   @override

@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import '../../core/constants/api_endpoints.dart';
-import '../../core/errors/failures.dart';
 import '../../domain/repositories/donation_repository.dart';
 import '../models/donation_model.dart';
+import 'service_helpers.dart';
 
 /// Donation API service
 class DonationService implements DonationRepository {
@@ -22,51 +22,47 @@ class DonationService implements DonationRepository {
     required String pharmacyId,
     required String pharmacyName,
   }) async {
-    final response = await _dio.post(
-      ApiEndpoints.donations,
-      data: {
-        'name': name,
-        'notes': notes,
-        'expiryDate': expiryDate,
-        'quantity': quantity,
-        'unit': unit,
-        'category': category ?? 'General',
-        'boxImagePath': boxImagePath,
-        'pharmacyId': pharmacyId,
-        'pharmacyName': pharmacyName,
-      },
-    );
-
-    if (response.statusCode == 201 && response.data['success'] == true) {
-      return DonationModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(
-      message: response.data['error'] ?? 'Failed to create donation',
+    return guardedDioCall(
+      () => _dio.post(
+        ApiEndpoints.donations,
+        data: {
+          'name': name,
+          'notes': notes,
+          'expiryDate': expiryDate,
+          'quantity': quantity,
+          'unit': unit,
+          'category': category ?? 'General',
+          'boxImagePath': boxImagePath,
+          'pharmacyId': pharmacyId,
+          'pharmacyName': pharmacyName,
+        },
+      ),
+      (data) => DonationModel.fromJson(data['data']),
     );
   }
 
   /// Get all donations (filtered by role on server side)
   @override
   Future<List<DonationModel>> getDonations() async {
-    final response = await _dio.get(ApiEndpoints.donations);
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      final list = response.data['data'] as List;
-      return list.map((e) => DonationModel.fromJson(e)).toList();
-    }
-    throw const ServerFailure(message: 'Failed to fetch donations');
+    return guardedDioCall(
+      () => _dio.get(ApiEndpoints.donations),
+      (data) {
+        final list = data['data'] as List;
+        return list.map((e) => DonationModel.fromJson(e)).toList();
+      },
+    );
   }
 
   /// Get pending donations for pharmacist review
   @override
   Future<List<DonationModel>> getPendingDonations() async {
-    final response = await _dio.get(ApiEndpoints.pendingDonations);
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      final list = response.data['data'] as List;
-      return list.map((e) => DonationModel.fromJson(e)).toList();
-    }
-    throw const ServerFailure(message: 'Failed to fetch pending donations');
+    return guardedDioCall(
+      () => _dio.get(ApiEndpoints.pendingDonations),
+      (data) {
+        final list = data['data'] as List;
+        return list.map((e) => DonationModel.fromJson(e)).toList();
+      },
+    );
   }
 
   /// Review a donation (approve or reject) — pharmacist only
@@ -76,30 +72,28 @@ class DonationService implements DonationRepository {
     required String action, // 'approve' or 'reject'
     String? notes,
   }) async {
-    final response = await _dio.post(
-      ApiEndpoints.reviewDonation,
-      data: {'donationId': donationId, 'action': action, 'notes': notes ?? ''},
+    return guardedDioCall(
+      () => _dio.post(
+        ApiEndpoints.reviewDonation,
+        data: {
+          'donationId': donationId,
+          'action': action,
+          'notes': notes ?? '',
+        },
+      ),
+      (data) => DonationModel.fromJson(data['data']),
     );
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      return DonationModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(message: response.data['error'] ?? 'Review failed');
   }
 
   /// Update donation status (for QR confirmation flow)
   @override
   Future<DonationModel> updateDonationStatus(String id, String status) async {
-    final response = await _dio.post(
-      '${ApiEndpoints.donations}/$id/status',
-      data: {'status': status},
-    );
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      return DonationModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(
-      message: response.data['error'] ?? 'Status update failed',
+    return guardedDioCall(
+      () => _dio.post(
+        '${ApiEndpoints.donations}/$id/status',
+        data: {'status': status},
+      ),
+      (data) => DonationModel.fromJson(data['data']),
     );
   }
 }

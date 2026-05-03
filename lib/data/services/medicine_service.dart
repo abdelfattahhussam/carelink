@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import '../../core/constants/api_endpoints.dart';
-import '../../core/errors/failures.dart';
 import '../../domain/repositories/medicine_repository.dart';
 import '../models/medicine_model.dart';
+import 'service_helpers.dart';
 
 /// Medicine API service
 class MedicineService implements MedicineRepository {
@@ -12,29 +12,27 @@ class MedicineService implements MedicineRepository {
   /// Get all approved medicines
   @override
   Future<List<MedicineModel>> getMedicines() async {
-    final response = await _dio.get(ApiEndpoints.medicines);
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      final list = response.data['data'] as List;
-      return list.map((e) => MedicineModel.fromJson(e)).toList();
-    }
-    throw ServerFailure(
-      message: response.data['error'] ?? 'Failed to fetch medicines',
+    return guardedDioCall(
+      () => _dio.get(ApiEndpoints.medicines),
+      (data) {
+        final list = data['data'] as List;
+        return list.map((e) => MedicineModel.fromJson(e)).toList();
+      },
     );
   }
 
   /// Search medicines by name or category
   @override
   Future<List<MedicineModel>> searchMedicines(String query) async {
-    final response = await _dio.get(
-      ApiEndpoints.searchMedicines,
-      queryParameters: {'q': query},
+    return guardedDioCall(
+      () => _dio.get(
+        ApiEndpoints.searchMedicines,
+        queryParameters: {'q': query},
+      ),
+      (data) {
+        final list = data['data'] as List;
+        return list.map((e) => MedicineModel.fromJson(e)).toList();
+      },
     );
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      final list = response.data['data'] as List;
-      return list.map((e) => MedicineModel.fromJson(e)).toList();
-    }
-    throw ServerFailure(message: response.data['error'] ?? 'Search failed');
   }
 }

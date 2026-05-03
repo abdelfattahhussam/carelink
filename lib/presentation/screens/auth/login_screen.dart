@@ -450,7 +450,7 @@ class _LoginScreenState extends State<LoginScreen>
       ),
       onPressed: () {
         _emailController.text = email;
-        _passwordController.text = 'password';
+        _passwordController.text = 'password123';
       },
     );
   }

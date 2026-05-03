@@ -1,11 +1,51 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 /// Mock interceptor that simulates backend API responses.
 /// Remove this interceptor and point to real base URL for production.
 class MockInterceptor extends Interceptor {
-  // In-memory mock data stores
-  static final List<Map<String, dynamic>> _users = [
+  // In-memory mock data stores (instance-level for test isolation)
+  final List<Map<String, dynamic>> _users;
+  final List<Map<String, dynamic>> _pharmacies;
+  final List<Map<String, dynamic>> _medicines;
+  final List<Map<String, dynamic>> _donations;
+  final List<Map<String, dynamic>> _requests;
+  final List<Map<String, dynamic>> _notifications;
+  final Set<String> _dismissedExpiryIds;
+
+  final _uuid = const Uuid();
+
+  /// Default constructor with fresh seed data.
+  MockInterceptor()
+      : _users = _buildDefaultUsers(),
+        _pharmacies = _buildDefaultPharmacies(),
+        _medicines = _buildDefaultMedicines(),
+        _donations = _buildDefaultDonations(),
+        _requests = _buildDefaultRequests(),
+        _notifications = _buildDefaultNotifications(),
+        _dismissedExpiryIds = {};
+
+  /// Test constructor for injecting custom seed state.
+  @visibleForTesting
+  MockInterceptor.withState({
+    List<Map<String, dynamic>>? users,
+    List<Map<String, dynamic>>? pharmacies,
+    List<Map<String, dynamic>>? medicines,
+    List<Map<String, dynamic>>? donations,
+    List<Map<String, dynamic>>? requests,
+    List<Map<String, dynamic>>? notifications,
+  })  : _users = users ?? _buildDefaultUsers(),
+        _pharmacies = pharmacies ?? _buildDefaultPharmacies(),
+        _medicines = medicines ?? _buildDefaultMedicines(),
+        _donations = donations ?? _buildDefaultDonations(),
+        _requests = requests ?? _buildDefaultRequests(),
+        _notifications = notifications ?? _buildDefaultNotifications(),
+        _dismissedExpiryIds = {};
+
+  // ─── DEFAULT SEED DATA BUILDERS ───
+
+  static List<Map<String, dynamic>> _buildDefaultUsers() => [
     {
       'id': 'user-1',
       'name': 'Ahmed Hassan',
@@ -13,6 +53,7 @@ class MockInterceptor extends Interceptor {
       'phone': '+201234567890',
       'nationalId': '29001011234567',
       'role': 'user',
+      'password': 'password123',
       'status': 'verified',
       'token': 'mock-jwt-token-donor',
       'createdAt': DateTime.now()
@@ -26,6 +67,7 @@ class MockInterceptor extends Interceptor {
       'phone': '+201098765432',
       'nationalId': '29505057654321',
       'role': 'user',
+      'password': 'password123',
       'status': 'verified',
       'token': 'mock-jwt-token-patient',
       'createdAt': DateTime.now()
@@ -39,6 +81,7 @@ class MockInterceptor extends Interceptor {
       'phone': '+201112233445',
       'nationalId': '28004041122334',
       'role': 'pharmacist',
+      'password': 'password123',
       'status': 'verified',
       'token': 'mock-jwt-token-pharmacist',
       'createdAt': DateTime.now()
@@ -47,7 +90,7 @@ class MockInterceptor extends Interceptor {
     },
   ];
 
-  static final List<Map<String, dynamic>> _pharmacies = [
+  static List<Map<String, dynamic>> _buildDefaultPharmacies() => [
     {
       'id': 'pharm-1',
       'name': 'صيدلية النور',
@@ -100,7 +143,7 @@ class MockInterceptor extends Interceptor {
     },
   ];
 
-  static final List<Map<String, dynamic>> _medicines = [
+  static List<Map<String, dynamic>> _buildDefaultMedicines() => [
     {
       'id': 'med-1',
       'name': 'Amoxicillin 500mg',
@@ -243,7 +286,7 @@ class MockInterceptor extends Interceptor {
     },
   ];
 
-  static final List<Map<String, dynamic>> _donations = [
+  static List<Map<String, dynamic>> _buildDefaultDonations() => [
     {
       'id': 'don-1',
       'medicineId': 'med-1',
@@ -282,7 +325,7 @@ class MockInterceptor extends Interceptor {
     },
   ];
 
-  static final List<Map<String, dynamic>> _requests = [
+  static List<Map<String, dynamic>> _buildDefaultRequests() => [
     {
       'id': 'req-1',
       'patientId': 'user-2',
@@ -321,9 +364,7 @@ class MockInterceptor extends Interceptor {
     },
   ];
 
-  static final Set<String> _dismissedExpiryIds = {};
-
-  static final List<Map<String, dynamic>> _notifications = [
+  static List<Map<String, dynamic>> _buildDefaultNotifications() => [
     {
       'id': 'notif-1',
       'title': 'Donation Approved',
@@ -363,8 +404,6 @@ class MockInterceptor extends Interceptor {
           .toIso8601String(),
     },
   ];
-
-  final _uuid = const Uuid();
 
   @override
   void onRequest(
@@ -452,13 +491,28 @@ class MockInterceptor extends Interceptor {
         );
       }
 
-      handler.resolve(response);
+      // Fix #4: Error responses must be rejected so Dio's onError fires
+      if (response.statusCode != null && response.statusCode! >= 400) {
+        handler.reject(
+          DioException(
+            requestOptions: options,
+            response: response,
+            type: DioExceptionType.badResponse,
+          ),
+        );
+      } else {
+        handler.resolve(response);
+      }
     } catch (e) {
-      handler.resolve(
-        Response(
+      handler.reject(
+        DioException(
           requestOptions: options,
-          statusCode: 500,
-          data: {'error': e.toString()},
+          response: Response(
+            requestOptions: options,
+            statusCode: 500,
+            data: {'error': e.toString()},
+          ),
+          type: DioExceptionType.badResponse,
         ),
       );
     }
@@ -488,10 +542,8 @@ class MockInterceptor extends Interceptor {
       );
     }
 
-    // TODO(backend): Real API must validate password server-side with hashing.
-    // Mock intentionally accepts any password for development convenience.
-    // Remove this comment and enforce real auth when connecting to backend.
-    if (password.isEmpty) {
+    // Validate password against stored seed value
+    if (password != user['password']) {
       return Response(
         requestOptions: options,
         statusCode: 401,
@@ -521,6 +573,7 @@ class MockInterceptor extends Interceptor {
       'phone': data?['phone'] ?? '',
       'nationalId': data?['nationalId'] ?? '',
       'role': role,
+      'password': data?['password'] ?? '',
       'status': 'verified',
       'token': 'mock-jwt-token-$id',
       'createdAt': DateTime.now().toIso8601String(),
@@ -1089,7 +1142,44 @@ class MockInterceptor extends Interceptor {
 
   // ─── PHARMACIST HANDLERS ───
 
+  /// Extracts the authenticated user from the token and asserts pharmacist role.
+  /// Returns the pharmacist user on success, or a Response error on failure.
+  ({Map<String, dynamic>? user, Response? error}) _requirePharmacist(
+      RequestOptions options) {
+    final token =
+        options.headers['Authorization']?.toString().replaceFirst(
+          'Bearer ',
+          '',
+        ) ??
+        '';
+    final user = _users.where((u) => u['token'] == token).firstOrNull;
+    if (user == null) {
+      return (
+        user: null,
+        error: Response(
+          requestOptions: options,
+          statusCode: 401,
+          data: {'error': 'Unauthorized'},
+        ),
+      );
+    }
+    if (user['role'] != 'pharmacist') {
+      return (
+        user: null,
+        error: Response(
+          requestOptions: options,
+          statusCode: 403,
+          data: {'error': 'Forbidden: pharmacist role required'},
+        ),
+      );
+    }
+    return (user: user, error: null);
+  }
+
   Response _handleReviewDonation(RequestOptions options) {
+    final (:user, :error) = _requirePharmacist(options);
+    if (error != null) return error;
+
     final data = options.data as Map<String, dynamic>?;
     final donationId = data?['donationId'] ?? '';
     final action = data?['action'] ?? ''; // 'approve' or 'reject'
@@ -1149,6 +1239,9 @@ class MockInterceptor extends Interceptor {
   }
 
   Response _handleApproveRequest(RequestOptions options) {
+    final (:user, :error) = _requirePharmacist(options);
+    if (error != null) return error;
+
     final data = options.data as Map<String, dynamic>?;
     final requestId = data?['requestId'] ?? '';
     final action = data?['action'] ?? '';
@@ -1161,14 +1254,6 @@ class MockInterceptor extends Interceptor {
         data: {'error': 'Request not found'},
       );
     }
-
-    final token =
-        options.headers['Authorization']?.toString().replaceFirst(
-          'Bearer ',
-          '',
-        ) ??
-        '';
-    final user = _users.where((u) => u['token'] == token).firstOrNull;
 
     if (action == 'approve') {
       _requests[reqIndex]['status'] = 'approved';

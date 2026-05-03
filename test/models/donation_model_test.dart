@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:carelink_app/data/models/donation_model.dart';
+import 'package:carelink_app/data/models/donation_status.dart';
 import 'package:carelink_app/data/models/medicine_unit.dart';
 
 void main() {
@@ -51,14 +52,17 @@ void main() {
     });
 
     test('missing fields get defaults', () {
-      final model = DonationModel.fromJson({});
+      final model = DonationModel.fromJson({
+        'status': 'pending',
+        'createdAt': '2026-01-01T00:00:00.000',
+      });
 
       expect(model.id, '');
       expect(model.medicineId, '');
       expect(model.medicineName, '');
       expect(model.donorId, '');
       expect(model.donorName, '');
-      expect(model.status, 'pending');
+      expect(model.status, DonationStatus.pending);
       expect(model.quantity, 0);
       expect(model.notes, '');
       expect(model.qrCode, isNull);

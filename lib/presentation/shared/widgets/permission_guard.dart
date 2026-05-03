@@ -29,10 +29,12 @@ class PermissionGuard extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       buildWhen: (prev, curr) =>
-          curr is AuthAuthenticated || curr is AuthUnauthenticated,
+          prev.runtimeType != curr.runtimeType ||
+          prev.authenticatedUser != curr.authenticatedUser,
       builder: (context, state) {
-        if (state is! AuthAuthenticated) return fallback;
-        return RBACConfig.can(state.user, permission) ? child : fallback;
+        final user = state.authenticatedUser;
+        if (user == null) return fallback;
+        return RBACConfig.can(user, permission) ? child : fallback;
       },
     );
   }

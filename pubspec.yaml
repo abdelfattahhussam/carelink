@@ -15,6 +15,7 @@ dependencies:
   # State Management
   flutter_bloc: ^9.1.0
   equatable: ^2.0.7
+  bloc_concurrency: ^0.3.0
 
   # Networking
   dio: ^5.4.0

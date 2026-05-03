@@ -48,6 +48,7 @@ class DonationCreateRequested extends DonationEvent {
     expiryDate,
     quantity,
     unit,
+    category,
     boxImagePath,
     pharmacyId,
     pharmacyName,
@@ -213,12 +214,18 @@ class DonationBloc extends Bloc<DonationEvent, DonationState> {
     DonationFinalizeRequested event,
     Emitter<DonationState> emit,
   ) async {
+    emit(DonationLoading());
     try {
       await _service.updateDonationStatus(event.id, 'delivered');
+    } catch (e) {
+      emit(DonationError(message: e.toString()));
+      return;
+    }
+    try {
       final donations = await _service.getDonations();
       emit(DonationsLoaded(donations: donations));
     } catch (e) {
-      emit(DonationError(message: e.toString()));
+      emit(DonationError(message: 'Finalized, but failed to refresh list.'));
     }
   }
 
@@ -229,6 +236,7 @@ class DonationBloc extends Bloc<DonationEvent, DonationState> {
     LoadMoreDonationsRequested event,
     Emitter<DonationState> emit,
   ) async {
-    if (state is DonationsLoaded) return;
+    if (state is! DonationsLoaded) return;
+    // TODO: implement cursor/offset pagination
   }
 }

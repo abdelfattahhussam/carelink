@@ -49,9 +49,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   UserModel? _getUser(BuildContext context) {
-    final state = context.read<AuthBloc>().state;
-    if (state is AuthAuthenticated) return state.user;
-    return null;
+    return context.read<AuthBloc>().state.authenticatedUser;
   }
 
   @override
@@ -100,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final l10n = AppLocalizations.of(context)!;
     // Use context.watch to make profile reactive to auth state changes
     final authState = context.watch<AuthBloc>().state;
-    final user = authState is AuthAuthenticated ? authState.user : null;
+    final user = authState.authenticatedUser;
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {

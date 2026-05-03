@@ -137,6 +137,7 @@
   "noNotifications": "No notifications yet",
   "pending": "Pending",
   "delivered": "Delivered",
+  "delivering": "Delivering",
   "expired": "Expired",
   "genericError": "Something went wrong. Please try again.",
   "networkError": "No internet connection.",

@@ -920,6 +920,12 @@ abstract class AppLocalizations {
   /// **'Delivered'**
   String get delivered;
 
+  /// No description provided for @delivering.
+  ///
+  /// In en, this message translates to:
+  /// **'Delivering'**
+  String get delivering;
+
   /// No description provided for @expired.
   ///
   /// In en, this message translates to:

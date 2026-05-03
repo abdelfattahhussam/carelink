@@ -3,6 +3,7 @@ import '../../data/models/user_model.dart';
 /// Enum representing all granular permissions in the application
 enum AppPermission {
   viewDashboard,
+  viewUserHome,
   reviewDonations,
   manageRequests,
   scanQr,
@@ -19,6 +20,7 @@ class RBACConfig {
   /// Map of roles to their allowed permissions
   static const Map<UserRole, Set<AppPermission>> _rolePermissions = {
     UserRole.user: {
+      AppPermission.viewUserHome,
       AppPermission.donate,
       AppPermission.viewMyDonations,
       AppPermission.requestMedicine,

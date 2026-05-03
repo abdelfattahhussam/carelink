@@ -1,8 +1,8 @@
 import 'package:dio/dio.dart';
 import '../../core/constants/api_endpoints.dart';
-import '../../core/errors/failures.dart';
 import '../../domain/repositories/request_repository.dart';
 import '../models/request_model.dart';
+import 'service_helpers.dart';
 
 /// Patient request API service
 class RequestService implements RequestRepository {
@@ -19,52 +19,44 @@ class RequestService implements RequestRepository {
     required String reason,
     String? prescriptionPath,
   }) async {
-    final response = await _dio.post(
-      ApiEndpoints.requests,
-      data: {
-        'medicineId': medicineId,
-        'patientNationalId': patientNationalId,
-        'quantity': quantity,
-        'isUrgent': isUrgent,
-        'reason': reason,
-        'prescriptionPath': ?prescriptionPath,
-      },
-    );
-
-    if (response.statusCode == 201 && response.data['success'] == true) {
-      return RequestModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(
-      message: response.data['error'] ?? 'Failed to create request',
+    return guardedDioCall(
+      () => _dio.post(
+        ApiEndpoints.requests,
+        data: {
+          'medicineId': medicineId,
+          'patientNationalId': patientNationalId,
+          'quantity': quantity,
+          'isUrgent': isUrgent,
+          'reason': reason,
+          'prescriptionPath': ?prescriptionPath,
+        },
+      ),
+      (data) => RequestModel.fromJson(data['data']),
     );
   }
 
   /// Update request status (for QR confirmation flow)
   @override
   Future<RequestModel> updateRequestStatus(String id, String status) async {
-    final response = await _dio.post(
-      '${ApiEndpoints.requests}/$id/status',
-      data: {'status': status},
-    );
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      return RequestModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(
-      message: response.data['error'] ?? 'Status update failed',
+    return guardedDioCall(
+      () => _dio.post(
+        '${ApiEndpoints.requests}/$id/status',
+        data: {'status': status},
+      ),
+      (data) => RequestModel.fromJson(data['data']),
     );
   }
 
   /// Get all requests (filtered by role on server side)
   @override
   Future<List<RequestModel>> getRequests() async {
-    final response = await _dio.get(ApiEndpoints.requests);
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      final list = response.data['data'] as List;
-      return list.map((e) => RequestModel.fromJson(e)).toList();
-    }
-    throw const ServerFailure(message: 'Failed to fetch requests');
+    return guardedDioCall(
+      () => _dio.get(ApiEndpoints.requests),
+      (data) {
+        final list = data['data'] as List;
+        return list.map((e) => RequestModel.fromJson(e)).toList();
+      },
+    );
   }
 
   /// Approve or reject a patient request — pharmacist only
@@ -76,20 +68,18 @@ class RequestService implements RequestRepository {
     int? approvedStrips,
     String? reviewReason,
   }) async {
-    final response = await _dio.post(
-      ApiEndpoints.approveRequest,
-      data: {
-        'requestId': requestId,
-        'action': action,
-        'approvedBoxes': ?approvedBoxes,
-        'approvedStrips': ?approvedStrips,
-        'reviewReason': ?reviewReason,
-      },
+    return guardedDioCall(
+      () => _dio.post(
+        ApiEndpoints.approveRequest,
+        data: {
+          'requestId': requestId,
+          'action': action,
+          'approvedBoxes': ?approvedBoxes,
+          'approvedStrips': ?approvedStrips,
+          'reviewReason': ?reviewReason,
+        },
+      ),
+      (data) => RequestModel.fromJson(data['data']),
     );
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      return RequestModel.fromJson(response.data['data']);
-    }
-    throw ServerFailure(message: response.data['error'] ?? 'Action failed');
   }
 }

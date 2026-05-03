@@ -1,18 +1,24 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import '../constants/api_endpoints.dart';
-import '../../presentation/blocs/auth/auth_bloc.dart';
+import '../constants/storage_keys.dart';
+import 'auth_storage.dart';
 import 'mock_interceptor.dart';
-import 'secure_storage.dart';
 
 const bool kUseMock = bool.fromEnvironment('USE_MOCK', defaultValue: false);
 
-/// Singleton Dio HTTP client with auth token injection and mock support
+/// Dio HTTP client with auth token injection and mock support.
+///
+/// No singleton — a single instance is managed by the DI layer in [app.dart].
+/// Accepts [AuthStorage] for testability and a [VoidCallback] for 401 handling
+/// so that the network layer is fully decoupled from the BLoC layer.
 class DioClient {
-  static DioClient? _instance;
   late final Dio dio;
 
-  DioClient._({required AuthBloc authBloc}) {
+  DioClient({
+    required AuthStorage storage,
+    required VoidCallback onUnauthorized,
+  }) {
     dio = Dio(
       BaseOptions(
         baseUrl: ApiEndpoints.baseUrl,
@@ -29,20 +35,19 @@ class DioClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final token = await SecureStorage.instance.read('auth_token');
+          final token = await storage.read(StorageKeys.authToken);
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
           handler.next(options);
         },
         onError: (error, handler) async {
-          // Handle 401 — clear token and notify AuthBloc to redirect to login
+          // Handle 401 — clear auth keys and notify caller to redirect to login
           if (error.response?.statusCode == 401) {
-            await SecureStorage.instance.delete('auth_token');
-            await SecureStorage.instance.delete('user_data');
-            authBloc.add(
-              AuthLogoutRequested(),
-            ); // NOTIFY AuthBloc → router reacts
+            for (final key in StorageKeys.all) {
+              await storage.delete(key);
+            }
+            onUnauthorized();
           }
           handler.next(error);
         },
@@ -53,16 +58,5 @@ class DioClient {
       dio.interceptors.add(MockInterceptor());
       debugPrint('⚠️ MockInterceptor ACTIVE');
     }
-  }
-
-  factory DioClient({required AuthBloc authBloc}) {
-    _instance ??= DioClient._(authBloc: authBloc);
-    return _instance!;
-  }
-
-  /// Reset singleton — for testing purposes only
-  @visibleForTesting
-  static void resetInstance() {
-    _instance = null;
   }
 }

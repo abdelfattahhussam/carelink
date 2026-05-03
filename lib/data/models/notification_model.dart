@@ -67,15 +67,11 @@ class NotificationModel extends Equatable {
       body: json['body'] ?? '',
       type: NotificationType.fromJson(json['type'] ?? ''),
       isRead: json['isRead'] ?? false,
-      userId:
-          json['userId']
-              as String?, // preserve null for role-wide notifications
+      userId: json['userId']?.toString(), // preserve null for role-wide notifications
       targetRole: json['targetRole'] != null
           ? UserRole.fromJson(json['targetRole'])
           : null,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
+      createdAt: DateTime.parse(json['createdAt'].toString()),
     );
   }
 

@@ -137,6 +137,7 @@
   "noNotifications": "لا توجد إشعارات بعد",
   "pending": "معلق",
   "delivered": "تم التسليم",
+  "delivering": "جاري التسليم",
   "expired": "منتهي الصلاحية",
   "genericError": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
   "networkError": "لا يوجد اتصال بالإنترنت.",

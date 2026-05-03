@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/theme/app_theme.dart';
 import 'core/router/app_router.dart';
 import 'core/network/dio_client.dart';
+import 'core/network/secure_storage.dart';
 import 'package:go_router/go_router.dart';
 // Concrete services — needed for instantiation only
 import 'data/services/auth_service.dart';
@@ -35,7 +37,8 @@ import 'presentation/blocs/pharmacy/pharmacy_bloc.dart';
 
 /// Root application widget with all BLoC providers
 class CareLinkApp extends StatefulWidget {
-  const CareLinkApp({super.key});
+  final SharedPreferences prefs;
+  const CareLinkApp({super.key, required this.prefs});
 
   @override
   State<CareLinkApp> createState() => _CareLinkAppState();
@@ -60,8 +63,11 @@ class _CareLinkAppState extends State<CareLinkApp> {
     // 1. Create AuthBloc first (empty — no service yet)
     _authBloc = AuthBloc.empty();
 
-    // 2. Create DioClient with AuthBloc so 401s dispatch AuthLogoutRequested
-    final dio = DioClient(authBloc: _authBloc).dio;
+    // 2. Create DioClient — closure captures _authBloc lazily
+    final dio = DioClient(
+      storage: const SecureStorage(),
+      onUnauthorized: () => _authBloc.add(AuthLogoutRequested()),
+    ).dio;
 
     // 3. Create all services with the shared Dio instance
     _authService = AuthService(dio: dio);
@@ -80,10 +86,16 @@ class _CareLinkAppState extends State<CareLinkApp> {
   }
 
   @override
+  void dispose() {
+    _authBloc.close();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (_) => SettingsCubit()..loadSettings()),
+        BlocProvider(create: (_) => SettingsCubit(widget.prefs)..loadSettings()),
         BlocProvider.value(value: _authBloc),
         BlocProvider(create: (_) => DonationBloc(service: _donationService)),
         BlocProvider(create: (_) => MedicineBloc(service: _medicineService)),

@@ -10,6 +10,7 @@ import '../../blocs/request/request_bloc.dart';
 import '../../blocs/notification/notification_bloc.dart';
 import '../../../data/models/request_model.dart';
 import 'widgets/request_decision_bottom_sheet.dart';
+import '../../shared/extensions/medicine_unit_x.dart';
 
 /// Pharmacist screen to manage patient requests
 class ManageRequestsScreen extends StatefulWidget {
@@ -257,7 +258,7 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
                               const SizedBox(height: 20),
                               Row(
                                 children: [
-                                  StatusBadge(status: r.status),
+                                  StatusBadge(status: r.status.displayStatus),
                                   const Spacer(),
                                   if (r.isPending) ...[
                                     Row(

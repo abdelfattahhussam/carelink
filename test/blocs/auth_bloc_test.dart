@@ -136,4 +136,71 @@ void main() {
       expect: () => [isA<AuthLoading>(), isA<AuthUnauthenticated>()],
     );
   });
+
+  group('AuthBloc — init() guard', () {
+    test('init() on AuthBloc.empty() succeeds', () {
+      final bloc = AuthBloc.empty(authStorage: fakeStorage);
+      // Should not throw
+      bloc.init(service: mockRepo);
+      bloc.close();
+    });
+
+    test('init() on fully-constructed AuthBloc throws StateError', () {
+      final bloc = buildBloc();
+      expect(
+        () => bloc.init(service: mockRepo),
+        throwsA(isA<StateError>().having(
+          (e) => e.message,
+          'message',
+          contains('AuthBloc.init()'),
+        )),
+      );
+      bloc.close();
+    });
+
+    test('double init() on AuthBloc.empty() throws StateError', () {
+      final bloc = AuthBloc.empty(authStorage: fakeStorage);
+      bloc.init(service: mockRepo);
+      expect(
+        () => bloc.init(service: mockRepo),
+        throwsA(isA<StateError>()),
+      );
+      bloc.close();
+    });
+  });
+
+  group('AuthState — authenticatedUser contract', () {
+    test('AuthInitial.isAuthenticated is false', () {
+      expect(const AuthInitial().isAuthenticated, isFalse);
+      expect(const AuthInitial().authenticatedUser, isNull);
+    });
+
+    test('AuthLoading.isAuthenticated is false', () {
+      expect(const AuthLoading().isAuthenticated, isFalse);
+      expect(const AuthLoading().authenticatedUser, isNull);
+    });
+
+    test('AuthUnauthenticated.isAuthenticated is false', () {
+      expect(const AuthUnauthenticated().isAuthenticated, isFalse);
+      expect(const AuthUnauthenticated().authenticatedUser, isNull);
+    });
+
+    test('AuthError.isAuthenticated is false', () {
+      const state = AuthError(message: 'fail');
+      expect(state.isAuthenticated, isFalse);
+      expect(state.authenticatedUser, isNull);
+    });
+
+    test('AuthAuthenticated.isAuthenticated is true and exposes user', () {
+      final state = AuthAuthenticated(user: testUser);
+      expect(state.isAuthenticated, isTrue);
+      expect(state.authenticatedUser, equals(testUser));
+    });
+
+    test('AuthProfileUpdateSuccess.isAuthenticated is true and exposes user', () {
+      final state = AuthProfileUpdateSuccess(user: testUser);
+      expect(state.isAuthenticated, isTrue);
+      expect(state.authenticatedUser, equals(testUser));
+    });
+  });
 }

@@ -440,6 +440,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get delivered => 'Delivered';
 
   @override
+  String get delivering => 'Delivering';
+
+  @override
   String get expired => 'Expired';
 
   @override

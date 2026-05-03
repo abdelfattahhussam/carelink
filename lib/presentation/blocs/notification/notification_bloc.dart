@@ -37,6 +37,11 @@ class NotificationDismissRequested extends NotificationEvent {
 /// Pagination scaffolding — dispatched when the user scrolls near the bottom.
 class LoadMoreNotificationsRequested extends NotificationEvent {}
 
+/// Internal event dispatched when auth state transitions to unauthenticated.
+/// Replaces the previous direct emit() call from the StreamSubscription,
+/// which bypassed BLoC's event pipeline and concurrency guards.
+class _NotificationReset extends NotificationEvent {}
+
 // ─── STATES ───
 
 abstract class NotificationState extends Equatable {
@@ -80,13 +85,11 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     on<NotificationMarkReadRequested>(_onMarkRead);
     on<NotificationDismissRequested>(_onDismiss);
     on<LoadMoreNotificationsRequested>(_onLoadMore);
+    on<_NotificationReset>((_, emit) => emit(NotificationInitial()));
 
-    // Reset state on logout
+    // Reset state on logout — dispatches event instead of calling emit() directly
     _authSubscription = _authBloc.stream.listen((state) {
-      if (state is AuthUnauthenticated) {
-        // ignore: invalid_use_of_visible_for_testing_member
-        emit(NotificationInitial());
-      }
+      if (state is AuthUnauthenticated) add(_NotificationReset());
     });
   }
 
@@ -152,19 +155,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     NotificationDismissRequested event,
     Emitter<NotificationState> emit,
   ) async {
-    // Optimistically remove from list immediately
-    NotificationModel? removedNotification;
-    int removedIndex = -1;
+    // Capture full pre-optimistic state for safe rollback
+    final previousState = state;
 
-    if (state is NotificationsLoaded) {
+    // Optimistically remove from list immediately
+    if (previousState is NotificationsLoaded) {
       final currentList = List<NotificationModel>.from(
-        (state as NotificationsLoaded).notifications,
+        previousState.notifications,
       );
-      removedIndex = currentList.indexWhere(
+      final removedIndex = currentList.indexWhere(
         (n) => n.id == event.notificationId,
       );
       if (removedIndex >= 0) {
-        removedNotification = currentList[removedIndex];
         currentList.removeAt(removedIndex);
       }
       emit(NotificationsLoaded(notifications: currentList));
@@ -175,16 +177,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       await _service.dismissNotification(event.notificationId);
     } catch (e) {
       debugPrint('NotificationBloc: Failed to dismiss notification: $e');
-      // Rollback: re-insert the notification on failure
-      if (removedNotification != null && state is NotificationsLoaded) {
-        final rollbackList = List<NotificationModel>.from(
-          (state as NotificationsLoaded).notifications,
-        );
-        rollbackList.insert(
-          removedIndex.clamp(0, rollbackList.length),
-          removedNotification,
-        );
-        emit(NotificationsLoaded(notifications: rollbackList));
+      // Rollback: restore full original state — avoids race with concurrent events
+      if (previousState is NotificationsLoaded) {
+        emit(previousState);
       }
     }
   }
@@ -194,6 +189,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     LoadMoreNotificationsRequested event,
     Emitter<NotificationState> emit,
   ) async {
-    if (state is NotificationsLoaded) return;
+    if (state is! NotificationsLoaded) return;
+    // TODO: implement cursor/offset pagination
   }
 }

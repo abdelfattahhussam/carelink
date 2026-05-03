@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:carelink_app/data/models/medicine_unit.dart';
+import 'package:carelink_app/data/models/request_status.dart';
 
 /// Request model — a patient's request for a specific medicine
 class RequestModel extends Equatable {
@@ -11,7 +12,7 @@ class RequestModel extends Equatable {
   final String medicineName;
   final int quantity;
   final MedicineUnit unit;
-  final String status; // 'pending', 'approved', 'rejected', 'delivered'
+  final RequestStatus status;
   final bool isUrgent;
   final String reason;
   final String? qrCode; // Generated after pharmacist approval
@@ -52,11 +53,11 @@ class RequestModel extends Equatable {
     required this.createdAt,
   });
 
-  bool get isPending => status == 'pending';
-  bool get isApproved => status == 'approved';
-  bool get isRejected => status == 'rejected';
-  bool get isDelivered => status == 'delivered';
-  bool get isDelivering => status == 'delivering';
+  bool get isPending => status == RequestStatus.pending;
+  bool get isApproved => status == RequestStatus.approved;
+  bool get isRejected => status == RequestStatus.rejected;
+  bool get isDelivered => status == RequestStatus.delivered;
+  bool get isDelivering => status == RequestStatus.delivering;
   bool get hasQrCode => qrCode != null && qrCode!.isNotEmpty;
 
   /// Whether the QR code should be visible — only for active (non-finalized) statuses
@@ -72,7 +73,7 @@ class RequestModel extends Equatable {
       medicineName: json['medicineName'] ?? '',
       quantity: json['quantity'] ?? 1,
       unit: MedicineUnit.fromJson(json['unit']?.toString()),
-      status: json['status'] ?? 'pending',
+      status: RequestStatus.fromJson(json['status']?.toString()),
       isUrgent: json['isUrgent'] ?? false,
       reason: json['reason'] ?? '',
       qrCode: json['qrCode'],
@@ -86,9 +87,7 @@ class RequestModel extends Equatable {
       reviewedAt: json['reviewedAt'] != null
           ? DateTime.parse(json['reviewedAt'])
           : null,
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
+      createdAt: DateTime.parse(json['createdAt'].toString()),
     );
   }
 
@@ -102,7 +101,7 @@ class RequestModel extends Equatable {
       'medicineName': medicineName,
       'quantity': quantity,
       'unit': unit.toJson(),
-      'status': status,
+      'status': status.toJson(),
       'isUrgent': isUrgent,
       'reason': reason,
       'qrCode': qrCode,
@@ -121,16 +120,25 @@ class RequestModel extends Equatable {
   @override
   List<Object?> get props => [
     id,
+    patientId,
+    patientName,
+    patientNationalId,
+    medicineId,
+    medicineName,
+    quantity,
+    unit,
     status,
     isUrgent,
+    reason,
     qrCode,
-    unit,
     prescriptionPath,
+    pharmacyId,
+    pharmacyName,
     approvedBoxes,
     approvedStrips,
     reviewReason,
+    reviewedBy,
     reviewedAt,
-    pharmacyId,
-    pharmacyName,
+    createdAt,
   ];
 }

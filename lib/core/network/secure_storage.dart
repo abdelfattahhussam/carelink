@@ -13,9 +13,6 @@ class SecureStorage implements AuthStorage {
   /// Default const constructor for DI / inline instantiation.
   const SecureStorage();
 
-  /// Convenience singleton for use outside of DI contexts (e.g., DioClient).
-  static final instance = const SecureStorage();
-
   @override
   Future<String?> read(String key) => _storage.read(key: key);
 

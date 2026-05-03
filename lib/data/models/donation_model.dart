@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:carelink_app/data/models/donation_status.dart';
 import 'package:carelink_app/data/models/medicine_unit.dart';
 
 /// Donation model — tracks a medicine donation through the review pipeline
@@ -8,7 +9,7 @@ class DonationModel extends Equatable {
   final String medicineName;
   final String donorId;
   final String donorName;
-  final String status; // 'pending', 'approved', 'rejected', 'rejectedPermanent'
+  final DonationStatus status;
   final String? qrCode; // Generated only after approval
   final int quantity;
   final MedicineUnit unit;
@@ -39,13 +40,15 @@ class DonationModel extends Equatable {
     required this.createdAt,
   });
 
-  bool get isPending => status == 'pending';
-  bool get isApproved => status == 'approved';
-  bool get isRejected => status == 'rejected' || status == 'rejectedPermanent';
-  bool get isRejectedPermanent => status == 'rejectedPermanent';
+  bool get isPending => status == DonationStatus.pending;
+  bool get isApproved => status == DonationStatus.approved;
+  bool get isRejected =>
+      status == DonationStatus.rejected ||
+      status == DonationStatus.rejectedPermanent;
+  bool get isRejectedPermanent => status == DonationStatus.rejectedPermanent;
   bool get canResubmit => isRejected && !isRejectedPermanent;
-  bool get isDelivered => status == 'delivered';
-  bool get isDelivering => status == 'delivering';
+  bool get isDelivered => status == DonationStatus.delivered;
+  bool get isDelivering => status == DonationStatus.delivering;
   bool get hasQrCode => qrCode != null && qrCode!.isNotEmpty;
 
   /// Whether the QR code should be visible — only for active (non-finalized) statuses
@@ -58,7 +61,7 @@ class DonationModel extends Equatable {
       medicineName: json['medicineName'] ?? '',
       donorId: json['donorId'] ?? '',
       donorName: json['donorName'] ?? '',
-      status: json['status'] ?? 'pending',
+      status: DonationStatus.fromJson(json['status']?.toString()),
       qrCode: json['qrCode'],
       quantity: json['quantity'] ?? 0,
       unit: MedicineUnit.fromJson(json['unit']?.toString()),
@@ -68,9 +71,7 @@ class DonationModel extends Equatable {
       reviewedBy: json['reviewedBy'],
       pharmacyId: json['pharmacyId'],
       pharmacyName: json['pharmacyName'],
-      createdAt: json['createdAt'] != null
-          ? DateTime.parse(json['createdAt'])
-          : DateTime.now(),
+      createdAt: DateTime.parse(json['createdAt'].toString()),
     );
   }
 
@@ -81,7 +82,7 @@ class DonationModel extends Equatable {
       'medicineName': medicineName,
       'donorId': donorId,
       'donorName': donorName,
-      'status': status,
+      'status': status.toJson(),
       'qrCode': qrCode,
       'quantity': quantity,
       'unit': unit.toJson(),

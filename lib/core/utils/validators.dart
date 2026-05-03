@@ -61,7 +61,7 @@ class Validators {
     if (value == null || value.isEmpty) {
       return requiredMsg;
     }
-    final phoneRegex = RegExp(r'^\d{11}$');
+    final phoneRegex = RegExp(r'^(\+20|0)\d{10}$');
     if (!phoneRegex.hasMatch(value)) {
       return invalidMsg;
     }

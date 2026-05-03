@@ -5,6 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:carelink_app/presentation/blocs/donation/donation_bloc.dart';
 import 'package:carelink_app/domain/repositories/donation_repository.dart';
 import 'package:carelink_app/data/models/donation_model.dart';
+import 'package:carelink_app/data/models/donation_status.dart';
 import 'package:carelink_app/data/models/medicine_unit.dart';
 
 class MockDonationRepository extends Mock implements DonationRepository {}
@@ -18,7 +19,7 @@ void main() {
     medicineName: 'Aspirin',
     donorId: 'u1',
     donorName: 'Ahmed',
-    status: 'pending',
+    status: DonationStatus.pending,
     quantity: 10,
     unit: MedicineUnit.box,
     notes: '',

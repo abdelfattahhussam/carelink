@@ -1,3 +1,4 @@
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import '../../../data/models/medicine_model.dart';
@@ -58,7 +59,7 @@ class MedicineBloc extends Bloc<MedicineEvent, MedicineState> {
     : _service = service,
       super(MedicineInitial()) {
     on<MedicinesFetchRequested>(_onFetch);
-    on<MedicinesSearchRequested>(_onSearch);
+    on<MedicinesSearchRequested>(_onSearch, transformer: restartable());
     on<LoadMoreMedicinesRequested>(_onLoadMore);
   }
 
@@ -93,7 +94,7 @@ class MedicineBloc extends Bloc<MedicineEvent, MedicineState> {
     LoadMoreMedicinesRequested event,
     Emitter<MedicineState> emit,
   ) async {
-    // Currently a no-op if already loaded — avoids redundant fetches.
-    if (state is MedicinesLoaded) return;
+    if (state is! MedicinesLoaded) return;
+    // TODO: implement cursor/offset pagination
   }
 }

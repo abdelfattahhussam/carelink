@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import '../../core/constants/api_endpoints.dart';
-import '../../core/errors/failures.dart';
 import '../../domain/repositories/qr_repository.dart';
+import 'service_helpers.dart';
 
 /// QR code verification service
 class QrService implements QrRepository {
@@ -11,16 +11,12 @@ class QrService implements QrRepository {
   /// Verify a scanned QR code against the backend
   @override
   Future<Map<String, dynamic>> verifyQr(String qrCode) async {
-    final response = await _dio.post(
-      ApiEndpoints.verifyQr,
-      data: {'qrCode': qrCode},
-    );
-
-    if (response.statusCode == 200 && response.data['success'] == true) {
-      return response.data;
-    }
-    throw ServerFailure(
-      message: response.data['error'] ?? 'QR verification failed',
+    return guardedDioCall(
+      () => _dio.post(
+        ApiEndpoints.verifyQr,
+        data: {'qrCode': qrCode},
+      ),
+      (data) => data as Map<String, dynamic>,
     );
   }
 
@@ -30,6 +26,12 @@ class QrService implements QrRepository {
     final endpoint = type == 'donation'
         ? ApiEndpoints.donations
         : ApiEndpoints.requests;
-    await _dio.post('$endpoint/$id/status', data: {'status': status});
+    return guardedDioCall(
+      () => _dio.post(
+        '$endpoint/$id/status',
+        data: {'status': status},
+      ),
+      (_) {},
+    );
   }
 }

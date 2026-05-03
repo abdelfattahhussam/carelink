@@ -8,6 +8,7 @@ import 'package:carelink_app/data/models/request_model.dart';
 import 'package:carelink_app/data/models/medicine_model.dart';
 import 'package:carelink_app/presentation/blocs/medicine/medicine_bloc.dart';
 import 'package:carelink_app/presentation/blocs/request/request_bloc.dart';
+import 'package:carelink_app/presentation/shared/extensions/medicine_unit_x.dart';
 
 class RequestDecisionBottomSheet extends StatefulWidget {
   final RequestModel request;
@@ -102,7 +103,7 @@ class _RequestDecisionBottomSheetState
                       ),
                     ),
                   ),
-                  StatusBadge(status: widget.request.status),
+                  StatusBadge(status: widget.request.status.displayStatus),
                 ],
               ),
               const SizedBox(height: 24),

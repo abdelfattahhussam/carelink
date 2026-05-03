@@ -30,7 +30,7 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
     context.read<MedicineBloc>().add(MedicinesFetchRequested());
     context.read<RequestBloc>().add(RequestsFetchRequested());
     final authState = context.read<AuthBloc>().state;
-    if (authState is AuthAuthenticated) {
+    if (authState.isAuthenticated) {
       context.read<DonationBloc>().add(PendingDonationsFetchRequested());
     }
   }
@@ -39,12 +39,12 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
   Widget build(BuildContext context) {
     return BlocBuilder<AuthBloc, AuthState>(
       builder: (context, authState) {
-        if (authState is! AuthAuthenticated) {
+        final user = authState.authenticatedUser;
+        if (user == null) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        final user = authState.user;
         return Scaffold(
           extendBody: true,
           appBar: HomeAppBar(user: user),
