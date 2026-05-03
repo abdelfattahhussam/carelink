@@ -399,13 +399,20 @@ class _LoginScreenState extends State<LoginScreen>
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             const SizedBox(width: 4),
-                            GestureDetector(
+                            InkWell(
                               onTap: () => context.push('/register'),
-                              child: Text(
-                                AppLocalizations.of(context)!.signUp,
-                                style: const TextStyle(
-                                  color: AppColors.primary,
-                                  fontWeight: FontWeight.w700,
+                              borderRadius: BorderRadius.circular(8),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 12,
+                                ),
+                                child: Text(
+                                  AppLocalizations.of(context)!.signUp,
+                                  style: const TextStyle(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.w700,
+                                  ),
                                 ),
                               ),
                             ),

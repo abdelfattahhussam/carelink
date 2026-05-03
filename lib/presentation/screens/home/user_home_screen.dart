@@ -962,8 +962,10 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                       subtitle: Text(
                         "${item.quantity} ${item.unit.localizedName(context)}",
                       ),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios_rounded,
+                      trailing: Icon(
+                        Directionality.of(context) == TextDirection.rtl
+                            ? Icons.arrow_back_ios_rounded
+                            : Icons.arrow_forward_ios_rounded,
                         size: 16,
                       ),
                       onTap: () {
@@ -1002,7 +1004,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
       onTap: onTap,
       borderRadius: BorderRadius.circular(20),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [

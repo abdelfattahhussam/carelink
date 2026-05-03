@@ -4,7 +4,7 @@ import 'package:carelink_app/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:intl/intl.dart';
+import '../../../core/utils/date_formatters.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/validators.dart';
 import '../../../core/widgets/shared_widgets.dart';
@@ -101,7 +101,10 @@ class _DonationScreenState extends State<DonationScreen> {
     if (date != null) {
       setState(() {
         _expiryDate = date;
-        _expiryCtrl.text = DateFormat('MMM dd, yyyy').format(date);
+        _expiryCtrl.text = DateFormatters.formatDate(
+          date,
+          Localizations.localeOf(context).languageCode,
+        );
       });
     }
   }

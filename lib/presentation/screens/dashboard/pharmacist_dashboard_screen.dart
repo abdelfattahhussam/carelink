@@ -418,7 +418,9 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
                   ),
                 ),
                 Icon(
-                  Icons.chevron_right_rounded,
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.chevron_left_rounded
+                      : Icons.chevron_right_rounded,
                   color: Theme.of(context).dividerColor,
                   size: 20,
                 ),
