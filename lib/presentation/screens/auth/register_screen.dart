@@ -162,14 +162,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_new,
-              size: 20,
-              color: Colors.white,
-            ),
-            onPressed: () => context.pop(),
-          ),
+          iconTheme: const IconThemeData(color: Colors.white),
         ),
         extendBodyBehindAppBar: true,
         body: Stack(

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/shared_widgets.dart';
@@ -39,10 +38,6 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
-        ),
       ),
       body: BlocConsumer<RequestBloc, RequestState>(
         listener: (context, state) {

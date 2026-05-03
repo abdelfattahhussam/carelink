@@ -130,10 +130,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-            onPressed: () => Navigator.pop(context),
-          ),
         ),
         body: _isEditing
             ? _buildEditForm(l10n, user)
@@ -375,7 +371,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Row(
               children: [
                 IconButton(
-                  icon: const Icon(Icons.arrow_back_ios_new, size: 20),
+                  icon: const Icon(Icons.arrow_back, size: 20),
                   onPressed: () => setState(() => _isEditing = false),
                 ),
                 Text(

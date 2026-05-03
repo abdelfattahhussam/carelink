@@ -207,10 +207,6 @@ class _DonationScreenState extends State<DonationScreen> {
           centerTitle: true,
           backgroundColor: Colors.transparent,
           elevation: 0,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-            onPressed: () => context.pop(),
-          ),
         ),
         body: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
