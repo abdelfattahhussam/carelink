@@ -3,6 +3,7 @@ import 'package:carelink_app/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/utils/name_utils.dart';
 import '../../../data/models/user_model.dart';
 import '../../../core/widgets/shared_widgets.dart';
 import '../../blocs/auth/auth_bloc.dart';
@@ -156,7 +157,7 @@ class _PharmacistDashboardScreenState extends State<PharmacistDashboardScreen> {
                       child: Text(
                         AppLocalizations.of(
                           context,
-                        )!.welcomeWithName(user.name.split(' ').first),
+                        )!.welcomeWithName(NameUtils.firstName(user.name)),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 26,

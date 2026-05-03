@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatters.dart';
+import '../../../core/utils/name_utils.dart';
 import '../../../core/widgets/shared_widgets.dart';
 import '../../../data/models/donation_model.dart';
 import '../../../data/models/request_model.dart';
@@ -341,7 +342,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                       child: Text(
                         AppLocalizations.of(
                           context,
-                        )!.welcomeWithName(user.name.split(' ').first),
+                        )!.welcomeWithName(NameUtils.firstName(user.name)),
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 26,

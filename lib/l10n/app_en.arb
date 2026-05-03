@@ -366,5 +366,6 @@
     }
   },
   "recentDonations": "Recent Donations",
-  "recentRequests": "Recent Requests"
+  "recentRequests": "Recent Requests",
+  "comingSoon": "Coming soon!"
 }

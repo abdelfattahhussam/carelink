@@ -244,15 +244,27 @@ class _LoginScreenState extends State<LoginScreen>
 
                                 // Forgot Password (Future usage)
                                 Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    )!.forgotPassword,
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.w600,
+                                  alignment: AlignmentDirectional.centerEnd,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            AppLocalizations.of(context)!.comingSoon,
+                                          ),
+                                          behavior: SnackBarBehavior.floating,
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.forgotPassword,
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        color: AppColors.primary,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
                                 ),

@@ -1048,4 +1048,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get recentRequests => 'الطلبات الأخيرة';
+
+  @override
+  String get comingSoon => 'قريبًا!';
 }

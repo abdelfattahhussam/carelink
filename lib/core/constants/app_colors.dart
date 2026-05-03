@@ -49,7 +49,7 @@ class AppColors {
   // Text colors
   static const Color textPrimary = Color(0xFF0F172A);
   static const Color textSecondary = Color(0xFF596878);
-  static const Color textLight = Color(0xFF8494A7);
+  static const Color textLight = Color(0xFF6B7B8F); // WCAG AA 4.5:1 min
   static const Color textDisabled = Color(0xFFCBD5E1);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
 
@@ -60,6 +60,8 @@ class AppColors {
   static const Color textDisabledDark = Color(0xFF475569);
 
   // Status-specific colors
+  // TODO(cleanup): pending == warning, approved == success, rejected == error.
+  // Consider removing these aliases in a future refactor.
   static const Color pending = Color(0xFFF59E0B);
   static const Color approved = Color(0xFF22C55E);
   static const Color rejected = Color(0xFFEF4444);
