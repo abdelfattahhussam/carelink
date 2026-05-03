@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/date_formatters.dart';
 import '../../../core/widgets/shared_widgets.dart';
@@ -26,17 +25,18 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
 
   void _review(String donationId, String action) {
     final rootContext = context; // Capture context safely
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (dialogCtx) {
         final notesCtrl = TextEditingController();
         String? selectedReason;
         final rejectReasons = [
-          "Medicine box is visibly damaged",
-          "Medicine is expired or nearing expiry",
-          "Information on box is unreadable",
-          "Medicine batch is recalled",
-          "Other reason",
+          l10n.rejectReasonDamaged,
+          l10n.rejectReasonExpired,
+          l10n.rejectReasonUnreadable,
+          l10n.rejectReasonRecalled,
+          l10n.rejectReasonOther,
         ];
 
         return AlertDialog(
@@ -44,7 +44,7 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
             borderRadius: BorderRadius.circular(20),
           ),
           title: Text(
-            '${action[0].toUpperCase()}${action.substring(1)} Donation',
+            l10n.reviewDonationTitle('${action[0].toUpperCase()}${action.substring(1)}'),
             style: const TextStyle(fontWeight: FontWeight.w700),
           ),
           content: StatefulBuilder(
@@ -55,14 +55,14 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Are you sure you want to $action this donation?',
+                      l10n.confirmActionDonation(action),
                       style: const TextStyle(fontSize: 15),
                     ),
                     const SizedBox(height: 20),
                     if (action == 'reject') ...[
-                      const Text(
-                        "Select Rejection Reason:",
-                        style: TextStyle(
+                      Text(
+                        l10n.selectRejectionReasonLabel,
+                        style: const TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 13,
                         ),
@@ -96,7 +96,7 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                               .toList(),
                         ),
                       ),
-                      if (selectedReason == 'Other reason') ...[
+                      if (selectedReason == l10n.rejectReasonOther) ...[
                         const SizedBox(height: 12),
                         TextField(
                           controller: notesCtrl,
@@ -168,20 +168,20 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                 if (action == 'reject') {
                   if (selectedReason == null) {
                     ScaffoldMessenger.of(dialogCtx).showSnackBar(
-                      const SnackBar(
-                        content: Text("Rejection reason is required"),
+                      SnackBar(
+                        content: Text(l10n.rejectionReasonRequired),
                         backgroundColor: AppColors.error,
                       ),
                     );
                     return;
                   }
-                  notes = selectedReason == 'Other reason'
+                  notes = selectedReason == l10n.rejectReasonOther
                       ? notesCtrl.text.trim()
                       : selectedReason!;
-                  if (selectedReason == 'Other reason' && notes.isEmpty) {
+                  if (selectedReason == l10n.rejectReasonOther && notes.isEmpty) {
                     ScaffoldMessenger.of(dialogCtx).showSnackBar(
-                      const SnackBar(
-                        content: Text("Custom reason is required"),
+                      SnackBar(
+                        content: Text(l10n.customReasonRequired),
                         backgroundColor: AppColors.error,
                       ),
                     );
@@ -226,17 +226,14 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
-        ),
+
       ),
       body: BlocConsumer<DonationBloc, DonationState>(
         listener: (context, state) {
           if (state is DonationReviewed) {
             final msg = state.action == DonationReviewAction.approve
-                ? 'Donation approved! QR code generated.'
-                : 'Donation rejected.';
+                ? AppLocalizations.of(context)!.donationApprovedQr
+                : AppLocalizations.of(context)!.donationRejectedMsg;
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(msg),
@@ -363,9 +360,9 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                         ),
                         if (d.boxImagePath != null) ...[
                           const SizedBox(height: 16),
-                          const Text(
-                            "Box Image",
-                            style: TextStyle(
+                          Text(
+                            AppLocalizations.of(context)!.boxImageLabel,
+                            style: const TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
                             ),

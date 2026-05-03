@@ -322,5 +322,28 @@
   "roleUser": "User",
   "recentActivity": "Recent Activity",
   "seeAll": "See All",
-  "browseMedicines": "Browse Medicines"
+  "browseMedicines": "Browse Medicines",
+  "reviewDonationTitle": "{action} Donation",
+  "@reviewDonationTitle": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
+  "confirmActionDonation": "Are you sure you want to {action} this donation?",
+  "@confirmActionDonation": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
+  "selectRejectionReasonLabel": "Select Rejection Reason:",
+  "rejectionReasonRequired": "Rejection reason is required",
+  "customReasonRequired": "Custom reason is required",
+  "donationApprovedQr": "Donation approved! QR code generated.",
+  "donationRejectedMsg": "Donation rejected.",
+  "boxImageLabel": "Box Image",
+  "rejectReasonDamaged": "Medicine box is visibly damaged",
+  "rejectReasonExpired": "Medicine is expired or nearing expiry",
+  "rejectReasonUnreadable": "Information on box is unreadable",
+  "rejectReasonRecalled": "Medicine batch is recalled",
+  "rejectReasonOther": "Other reason"
 }

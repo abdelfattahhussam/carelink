@@ -1951,6 +1951,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Browse Medicines'**
   String get browseMedicines;
+
+  /// No description provided for @reviewDonationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{action} Donation'**
+  String reviewDonationTitle(String action);
+
+  /// No description provided for @confirmActionDonation.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to {action} this donation?'**
+  String confirmActionDonation(String action);
+
+  /// No description provided for @selectRejectionReasonLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Rejection Reason:'**
+  String get selectRejectionReasonLabel;
+
+  /// No description provided for @rejectionReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Rejection reason is required'**
+  String get rejectionReasonRequired;
+
+  /// No description provided for @customReasonRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom reason is required'**
+  String get customReasonRequired;
+
+  /// No description provided for @donationApprovedQr.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation approved! QR code generated.'**
+  String get donationApprovedQr;
+
+  /// No description provided for @donationRejectedMsg.
+  ///
+  /// In en, this message translates to:
+  /// **'Donation rejected.'**
+  String get donationRejectedMsg;
+
+  /// No description provided for @boxImageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Box Image'**
+  String get boxImageLabel;
+
+  /// No description provided for @rejectReasonDamaged.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine box is visibly damaged'**
+  String get rejectReasonDamaged;
+
+  /// No description provided for @rejectReasonExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine is expired or nearing expiry'**
+  String get rejectReasonExpired;
+
+  /// No description provided for @rejectReasonUnreadable.
+  ///
+  /// In en, this message translates to:
+  /// **'Information on box is unreadable'**
+  String get rejectReasonUnreadable;
+
+  /// No description provided for @rejectReasonRecalled.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine batch is recalled'**
+  String get rejectReasonRecalled;
+
+  /// No description provided for @rejectReasonOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other reason'**
+  String get rejectReasonOther;
 }
 
 class _AppLocalizationsDelegate

@@ -980,4 +980,48 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get browseMedicines => 'تصفح الأدوية';
+
+  @override
+  String reviewDonationTitle(String action) {
+    return '$action التبرع';
+  }
+
+  @override
+  String confirmActionDonation(String action) {
+    return 'هل أنت متأكد أنك تريد $action هذا التبرع؟';
+  }
+
+  @override
+  String get selectRejectionReasonLabel => 'اختر سبب الرفض:';
+
+  @override
+  String get rejectionReasonRequired => 'سبب الرفض مطلوب';
+
+  @override
+  String get customReasonRequired => 'السبب المخصص مطلوب';
+
+  @override
+  String get donationApprovedQr => 'تمت الموافقة على التبرع! تم إنشاء رمز QR.';
+
+  @override
+  String get donationRejectedMsg => 'تم رفض التبرع.';
+
+  @override
+  String get boxImageLabel => 'صورة العبوة';
+
+  @override
+  String get rejectReasonDamaged => 'عبوة الدواء تالفة بشكل واضح';
+
+  @override
+  String get rejectReasonExpired =>
+      'الدواء منتهي الصلاحية أو قارب على الانتهاء';
+
+  @override
+  String get rejectReasonUnreadable => 'المعلومات على العبوة غير مقروءة';
+
+  @override
+  String get rejectReasonRecalled => 'تم سحب هذه الدفعة من الدواء';
+
+  @override
+  String get rejectReasonOther => 'سبب آخر';
 }

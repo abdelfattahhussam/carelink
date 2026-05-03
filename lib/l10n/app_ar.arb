@@ -308,5 +308,28 @@
   "roleUser": "مستخدم",
   "recentActivity": "النشاط الأخير",
   "seeAll": "عرض الكل",
-  "browseMedicines": "تصفح الأدوية"
+  "browseMedicines": "تصفح الأدوية",
+  "reviewDonationTitle": "{action} التبرع",
+  "@reviewDonationTitle": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
+  "confirmActionDonation": "هل أنت متأكد أنك تريد {action} هذا التبرع؟",
+  "@confirmActionDonation": {
+    "placeholders": {
+      "action": {"type": "String"}
+    }
+  },
+  "selectRejectionReasonLabel": "اختر سبب الرفض:",
+  "rejectionReasonRequired": "سبب الرفض مطلوب",
+  "customReasonRequired": "السبب المخصص مطلوب",
+  "donationApprovedQr": "تمت الموافقة على التبرع! تم إنشاء رمز QR.",
+  "donationRejectedMsg": "تم رفض التبرع.",
+  "boxImageLabel": "صورة العبوة",
+  "rejectReasonDamaged": "عبوة الدواء تالفة بشكل واضح",
+  "rejectReasonExpired": "الدواء منتهي الصلاحية أو قارب على الانتهاء",
+  "rejectReasonUnreadable": "المعلومات على العبوة غير مقروءة",
+  "rejectReasonRecalled": "تم سحب هذه الدفعة من الدواء",
+  "rejectReasonOther": "سبب آخر"
 }

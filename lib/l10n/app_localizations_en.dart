@@ -990,4 +990,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get browseMedicines => 'Browse Medicines';
+
+  @override
+  String reviewDonationTitle(String action) {
+    return '$action Donation';
+  }
+
+  @override
+  String confirmActionDonation(String action) {
+    return 'Are you sure you want to $action this donation?';
+  }
+
+  @override
+  String get selectRejectionReasonLabel => 'Select Rejection Reason:';
+
+  @override
+  String get rejectionReasonRequired => 'Rejection reason is required';
+
+  @override
+  String get customReasonRequired => 'Custom reason is required';
+
+  @override
+  String get donationApprovedQr => 'Donation approved! QR code generated.';
+
+  @override
+  String get donationRejectedMsg => 'Donation rejected.';
+
+  @override
+  String get boxImageLabel => 'Box Image';
+
+  @override
+  String get rejectReasonDamaged => 'Medicine box is visibly damaged';
+
+  @override
+  String get rejectReasonExpired => 'Medicine is expired or nearing expiry';
+
+  @override
+  String get rejectReasonUnreadable => 'Information on box is unreadable';
+
+  @override
+  String get rejectReasonRecalled => 'Medicine batch is recalled';
+
+  @override
+  String get rejectReasonOther => 'Other reason';
 }
