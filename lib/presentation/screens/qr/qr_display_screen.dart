@@ -1,12 +1,13 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:go_router/go_router.dart';
 import 'package:carelink_app/presentation/blocs/qr/qr_bloc.dart';
 import 'package:carelink_app/presentation/blocs/request/request_bloc.dart';
 import 'package:carelink_app/presentation/blocs/donation/donation_bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/network/dio_client.dart';
 
 /// Displays a QR code for pickup/delivery confirmation
 class QrDisplayScreen extends StatelessWidget {
@@ -28,10 +29,6 @@ class QrDisplayScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
-        ),
       ),
       body: Center(
         child: Padding(
@@ -150,8 +147,8 @@ class QrDisplayScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: 48),
-              // --- DEBUG SIMULATION BUTTON ---
+              if (kDebugMode || kUseMock) ...[              const SizedBox(height: 48),
+              // --- DEBUG SIMULATION BUTTON (only in debug/mock builds) ---
               TextButton.icon(
                 onPressed: () async {
                   if (itemId != null && itemType != null) {
@@ -207,6 +204,7 @@ class QrDisplayScreen extends StatelessWidget {
                 ),
               ),
               // -------------------------------
+              ],
             ],
           ),
         ),

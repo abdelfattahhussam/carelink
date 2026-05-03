@@ -1945,6 +1945,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'See All'**
   String get seeAll;
+
+  /// No description provided for @browseMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Medicines'**
+  String get browseMedicines;
 }
 
 class _AppLocalizationsDelegate

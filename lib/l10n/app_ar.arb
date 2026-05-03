@@ -307,5 +307,6 @@
   "registrationSuccess": "تم إنشاء الحساب بنجاح!",
   "roleUser": "مستخدم",
   "recentActivity": "النشاط الأخير",
-  "seeAll": "عرض الكل"
+  "seeAll": "عرض الكل",
+  "browseMedicines": "تصفح الأدوية"
 }

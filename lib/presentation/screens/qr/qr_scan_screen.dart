@@ -1,9 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:carelink_app/l10n/app_localizations.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import '../../../core/constants/app_colors.dart';
+import '../../../core/network/dio_client.dart';
 import '../../blocs/qr/qr_bloc.dart';
 
 /// QR scanner screen — pharmacists scan QR to verify pickup/delivery
@@ -15,7 +16,7 @@ class QrScanScreen extends StatefulWidget {
 
 class _QrScanScreenState extends State<QrScanScreen> {
   final _manualCtrl = TextEditingController();
-  bool _manualMode = true; // Default to manual since emulators lack cameras
+  bool _manualMode = kDebugMode || kUseMock; // Show manual mode only in debug/mock builds
   late final MobileScannerController _scannerController;
 
   @override
@@ -52,10 +53,6 @@ class _QrScanScreenState extends State<QrScanScreen> {
         centerTitle: true,
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => context.pop(),
-        ),
         actions: [
           TextButton.icon(
             style: TextButton.styleFrom(foregroundColor: AppColors.primary),
@@ -193,7 +190,8 @@ class _QrScanScreenState extends State<QrScanScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  // Quick test codes
+                  if (kDebugMode || kUseMock) ...[
+                  // Quick test codes (only in debug/mock builds)
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -227,6 +225,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                       ],
                     ),
                   ),
+                  ],
                 ] else ...[
                   // Real Mobile Scanner
                   Container(

@@ -321,5 +321,6 @@
   "registrationSuccess": "Account created successfully!",
   "roleUser": "User",
   "recentActivity": "Recent Activity",
-  "seeAll": "See All"
+  "seeAll": "See All",
+  "browseMedicines": "Browse Medicines"
 }

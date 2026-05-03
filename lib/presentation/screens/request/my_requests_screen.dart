@@ -80,6 +80,22 @@ class _MyRequestsScreenState extends State<MyRequestsScreen> {
                 subtitle: AppLocalizations.of(
                   context,
                 )!.browseMedicinesAndSubmit,
+                action: ElevatedButton.icon(
+                  onPressed: () => context.push('/medicines'),
+                  icon: const Icon(Icons.search_rounded),
+                  label: Text(AppLocalizations.of(context)!.browseMedicines),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
               );
             } else {
               var filteredRequests = state.requests.toList();

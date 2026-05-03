@@ -977,4 +977,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get seeAll => 'عرض الكل';
+
+  @override
+  String get browseMedicines => 'تصفح الأدوية';
 }
