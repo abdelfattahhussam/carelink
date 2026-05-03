@@ -246,7 +246,7 @@ class _ManageRequestsScreenState extends State<ManageRequestsScreen> {
                                         ),
                                         const SizedBox(height: 10),
                                         Text(
-                                          '${r.reason} • ${DateFormatters.timeAgo(r.createdAt)}',
+                                          '${r.reason} • ${DateFormatters.timeAgo(r.createdAt, context: context)}',
                                           style: Theme.of(context)
                                               .textTheme
                                               .bodySmall

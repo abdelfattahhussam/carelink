@@ -1024,4 +1024,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get rejectReasonOther => 'سبب آخر';
+
+  @override
+  String get justNow => 'الآن';
+
+  @override
+  String minutesAgo(int count) {
+    return 'منذ $count دقيقة';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return 'منذ $count ساعة';
+  }
+
+  @override
+  String daysAgo(int count) {
+    return 'منذ $count يوم';
+  }
 }

@@ -694,7 +694,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  DateFormatters.timeAgo(date),
+                  DateFormatters.timeAgo(date, context: context),
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: AppColors.textSecondary,
                   ),

@@ -195,7 +195,7 @@ class _MyDonationsScreenState extends State<MyDonationsScreen> {
                                           ),
                                           const SizedBox(height: 6),
                                           Text(
-                                            "${d.quantity} ${d.unit.localizedName(context)} • ${DateFormatters.timeAgo(d.createdAt)}",
+                                            "${d.quantity} ${d.unit.localizedName(context)} • ${DateFormatters.timeAgo(d.createdAt, context: context)}",
                                             style: const TextStyle(
                                               fontSize: 13,
                                               color: AppColors.textSecondary,

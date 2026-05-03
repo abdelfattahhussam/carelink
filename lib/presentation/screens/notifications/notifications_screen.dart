@@ -251,7 +251,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                       ),
                                       const SizedBox(height: 12),
                                       Text(
-                                        DateFormatters.timeAgo(n.createdAt),
+                                        DateFormatters.timeAgo(n.createdAt, context: context),
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelSmall

@@ -331,5 +331,24 @@
   "rejectReasonExpired": "الدواء منتهي الصلاحية أو قارب على الانتهاء",
   "rejectReasonUnreadable": "المعلومات على العبوة غير مقروءة",
   "rejectReasonRecalled": "تم سحب هذه الدفعة من الدواء",
-  "rejectReasonOther": "سبب آخر"
+  "rejectReasonOther": "سبب آخر",
+  "justNow": "الآن",
+  "minutesAgo": "منذ {count} دقيقة",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "hoursAgo": "منذ {count} ساعة",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "daysAgo": "منذ {count} يوم",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  }
 }

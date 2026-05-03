@@ -345,5 +345,24 @@
   "rejectReasonExpired": "Medicine is expired or nearing expiry",
   "rejectReasonUnreadable": "Information on box is unreadable",
   "rejectReasonRecalled": "Medicine batch is recalled",
-  "rejectReasonOther": "Other reason"
+  "rejectReasonOther": "Other reason",
+  "justNow": "Just now",
+  "minutesAgo": "{count}m ago",
+  "@minutesAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "hoursAgo": "{count}h ago",
+  "@hoursAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "daysAgo": "{count}d ago",
+  "@daysAgo": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  }
 }

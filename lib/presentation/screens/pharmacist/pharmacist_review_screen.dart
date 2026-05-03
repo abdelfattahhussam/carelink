@@ -345,7 +345,7 @@ class _PharmacistReviewScreenState extends State<PharmacistReviewScreen> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    DateFormatters.timeAgo(d.createdAt),
+                                    DateFormatters.timeAgo(d.createdAt, context: context),
                                     style: Theme.of(context).textTheme.bodySmall
                                         ?.copyWith(
                                           fontSize: 12,
