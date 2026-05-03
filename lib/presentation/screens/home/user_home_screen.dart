@@ -235,7 +235,14 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(dialogContext).pop(),
+            onPressed: () {
+              Navigator.of(dialogContext).pop();
+              if (isRequest) {
+                context.read<RequestBloc>().add(RequestsFetchRequested());
+              } else {
+                context.read<DonationBloc>().add(DonationsFetchRequested());
+              }
+            },
             child: Text(
               AppLocalizations.of(context)!.cancel,
               style: const TextStyle(color: AppColors.textSecondary),
@@ -250,16 +257,12 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               ),
             ),
             onPressed: () {
-              if (isRequest) {
-                context.read<RequestBloc>().add(
-                  RequestFinalizeRequested(id: id),
-                );
-              } else {
-                context.read<DonationBloc>().add(
-                  DonationFinalizeRequested(id: id),
-                );
-              }
               Navigator.of(dialogContext).pop();
+              if (isRequest) {
+                context.read<RequestBloc>().add(RequestsFetchRequested());
+              } else {
+                context.read<DonationBloc>().add(DonationsFetchRequested());
+              }
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
