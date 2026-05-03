@@ -418,14 +418,15 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
     required Color color,
     required VoidCallback onTap,
   }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
+          color: color.withValues(alpha: isDark ? 0.15 : 0.08),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: color.withValues(alpha: 0.2)),
+          border: Border.all(color: color.withValues(alpha: isDark ? 0.35 : 0.2)),
         ),
         child: Column(
           children: [
@@ -476,7 +477,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           mainAxisSpacing: 12,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1.15,
+          childAspectRatio: 1.5,
           children: [
             _stat(
               AppLocalizations.of(context)!.myDonations,
@@ -533,7 +534,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
           mainAxisSpacing: 12,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          childAspectRatio: 1.15,
+          childAspectRatio: 1.5,
           children: [
             _stat(
               AppLocalizations.of(context)!.myRequests,
@@ -584,7 +585,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  AppLocalizations.of(context)!.recentActivity,
+                  AppLocalizations.of(context)!.recentDonations,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -627,7 +628,7 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  AppLocalizations.of(context)!.recentActivity,
+                  AppLocalizations.of(context)!.recentRequests,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -740,30 +741,27 @@ class _UserHomeScreenState extends State<UserHomeScreen> {
             child: Icon(icon, size: 20, color: color),
           ),
           const SizedBox(height: 4),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    color: Theme.of(context).textTheme.bodyLarge?.color,
-                  ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                value,
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: Theme.of(context).textTheme.bodyLarge?.color,
                 ),
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+              ),
+              Text(
+                label,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 11,
                 ),
-              ],
-            ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ],
           ),
         ],
       ),

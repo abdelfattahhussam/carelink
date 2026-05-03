@@ -364,5 +364,7 @@
     "placeholders": {
       "count": {"type": "int"}
     }
-  }
+  },
+  "recentDonations": "Recent Donations",
+  "recentRequests": "Recent Requests"
 }

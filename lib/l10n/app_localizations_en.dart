@@ -1051,4 +1051,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String daysAgo(int count) {
     return '${count}d ago';
   }
+
+  @override
+  String get recentDonations => 'Recent Donations';
+
+  @override
+  String get recentRequests => 'Recent Requests';
 }

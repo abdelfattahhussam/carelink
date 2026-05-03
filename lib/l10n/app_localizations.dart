@@ -2053,6 +2053,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count}d ago'**
   String daysAgo(int count);
+
+  /// No description provided for @recentDonations.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Donations'**
+  String get recentDonations;
+
+  /// No description provided for @recentRequests.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Requests'**
+  String get recentRequests;
 }
 
 class _AppLocalizationsDelegate

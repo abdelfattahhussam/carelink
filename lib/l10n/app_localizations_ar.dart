@@ -1042,4 +1042,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String daysAgo(int count) {
     return 'منذ $count يوم';
   }
+
+  @override
+  String get recentDonations => 'التبرعات الأخيرة';
+
+  @override
+  String get recentRequests => 'الطلبات الأخيرة';
 }

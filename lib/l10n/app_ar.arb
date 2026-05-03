@@ -350,5 +350,7 @@
     "placeholders": {
       "count": {"type": "int"}
     }
-  }
+  },
+  "recentDonations": "التبرعات الأخيرة",
+  "recentRequests": "الطلبات الأخيرة"
 }
